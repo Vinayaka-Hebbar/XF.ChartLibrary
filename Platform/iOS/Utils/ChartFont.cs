@@ -21,15 +21,15 @@
             return new ChartFont(UIKit.UIFont.SystemFontOfSize((float)size));
         }
 
-        public ChartSize Measure(ChartString text)
+        public ChartSize Measure(string text)
         {
-            var size = UIKit.NSStringDrawing.GetSizeUsingAttributes(text.Value, new UIKit.UIStringAttributes { Font = Value });
+            var size = UIKit.UIStringDrawing.StringSize(text, Value);
             return new ChartSize((float)size.Width, (float)size.Height);
         }
 
-        public float MeasureWidth(ChartString text)
+        public float MeasureWidth(string text)
         {
-            return (float)(UIKit.NSStringDrawing.GetSizeUsingAttributes(text.Value, new UIKit.UIStringAttributes { Font = Value }).Width);
+            return (float)(UIKit.UIStringDrawing.StringSize(text, Value).Width);
         }
     }
 }

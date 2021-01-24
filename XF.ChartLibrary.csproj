@@ -34,15 +34,18 @@
     <None Remove="Platform\NetStandard\Data\Entry.cs" />
     <None Remove="Platform\NetStandard\Data\EntryBase.cs" />
     <None Remove="Platform\NetStandard\Jobs\ViewPortJob.cs" />
+    <None Remove="Platform\NetStandard\Renderer\AxisRenderer.cs" />
     <None Remove="Platform\NetStandard\Renderer\DataRenderer.cs" />
+    <None Remove="Platform\NetStandard\Renderer\LineChartRenderer.cs" />
+    <None Remove="Platform\NetStandard\Renderer\LineRadarRenderer.cs" />
+    <None Remove="Platform\NetStandard\Renderer\LineScatterCandleRadarRenderer.cs" />
+    <None Remove="Platform\NetStandard\Renderer\XAxisRenderer.cs" />
+    <None Remove="Platform\NetStandard\Renderer\YAxisRenderer.cs" />
     <None Remove="Platform\NetStandard\Utils\ChartFont.cs" />
     <None Remove="Platform\NetStandard\Utils\ChartUtil.cs" />
     <None Remove="Platform\NetStandard\Utils\MatrixUtil.cs" />
+    <None Remove="Platform\NetStandard\Utils\Transformer.cs" />
     <None Remove="Platform\NetStandard\Utils\ViewPortHandler.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Interfaces\DataSets\" />
   </ItemGroup>
 
 </Project>

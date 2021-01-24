@@ -11,7 +11,7 @@ namespace XF.ChartLibrary.Formatter
 
         public int Decimals { get; set; }
 
-        public string GetFormattedValue(double value, AxisBase axis)
+        public string GetFormattedValue(float value, AxisBase axis)
         {
             return value.ToString();
         }

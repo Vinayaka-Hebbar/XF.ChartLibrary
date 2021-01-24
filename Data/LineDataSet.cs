@@ -19,7 +19,7 @@ using ColorList = SkiaSharp.SKColors;
 
 namespace XF.ChartLibrary.Data
 {
-    public class LineDataSet : LineRadarDataSet<Entry>, ILineDataSet
+    public class LineDataSet : LineRadarDataSet<Entry>, Interfaces.DataSets.ILineDataSet
     {
         private IList<Color> circleColors;
 

@@ -10,7 +10,7 @@ namespace XF.ChartLibrary.Data
 #elif NETSTANDARD
     using Color = SkiaSharp.SKColor;
 #endif
-    public abstract class LineRadarDataSet<TEntry> : LineScatterCandleRadarDataSet<TEntry>, ILineRadarDataSet<TEntry> where TEntry : Entry
+    public abstract class LineRadarDataSet<TEntry> : LineScatterCandleRadarDataSet<TEntry>, Interfaces.DataSets.ILineRadarDataSet<TEntry> where TEntry : Entry
     {
         private Color fillColor = ChartUtil.FromRGB(140, 234, 255);
         private IFill fill;
@@ -29,7 +29,7 @@ namespace XF.ChartLibrary.Data
         }
 
 
-        public Color FillCOlor
+        public Color FillColor
         {
             get => fillColor;
             set
@@ -61,6 +61,12 @@ namespace XF.ChartLibrary.Data
             get => drawFilled;
             set => drawFilled = value;
         }
+
+#if __IOS__ || __TVOS__
+        public float FillAlpha { get; set; } = 0.33f; 
+#else
+        public byte FillAlpha { get; set; } = 85;
+#endif
 
         protected LineRadarDataSet(IList<TEntry> yVals, string label) : base(yVals, label)
         {

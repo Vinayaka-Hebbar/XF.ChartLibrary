@@ -1,5 +1,5 @@
-﻿using XF.ChartLibrary.Data;
-using XF.ChartLibrary.Interfaces.DataProvider;
+﻿using XF.ChartLibrary.Interfaces.DataProvider;
+using XF.ChartLibrary.Interfaces.DataSets;
 
 namespace XF.ChartLibrary.Formatter
 {
@@ -8,7 +8,7 @@ namespace XF.ChartLibrary.Formatter
         /// <summary>
         /// The vertical (y-axis) position where the filled-line of the LineDataSet should end.
         /// </summary>
-        double GetFillLinePosition(ILineDataSet dataSet, ILineChartDataProvider dataProvider);
+        float GetFillLinePosition(ILineDataSet dataSet, ILineChartDataProvider dataProvider);
 
     }
 }

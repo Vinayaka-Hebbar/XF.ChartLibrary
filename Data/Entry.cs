@@ -10,18 +10,18 @@ namespace XF.ChartLibrary.Data
         {
         }
 
-        public Entry(double x, double y) : base(y)
+        public Entry(float x, float y) : base(y)
         {
             X = x;
         }
 
-        public Entry(double x, double y, object data) : base(y)
+        public Entry(float x, float y, object data) : base(y)
         {
             X = x;
             Data = data;
         }
 
-        public double X { get; set; }
+        public float X { get; set; }
 
         public object Clone()
         {

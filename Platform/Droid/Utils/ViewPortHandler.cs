@@ -4,7 +4,7 @@ namespace XF.ChartLibrary.Utils
 {
     public partial class ViewPortHandler
     {
-        private Matrix touchMatrix = new Matrix();
+        internal Matrix touchMatrix = new Matrix();
 
         private System.Drawing.RectangleF contentRect = new System.Drawing.RectangleF();
 

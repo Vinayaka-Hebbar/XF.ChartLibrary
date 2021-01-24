@@ -6,6 +6,8 @@ using XF.ChartLibrary.Formatter;
 using XF.ChartLibrary.Utils;
 using XF.ChartLibrary.Components;
 using System.Collections;
+using XF.ChartLibrary.Interfaces;
+using XF.ChartLibrary.Interfaces.DataSets;
 
 #if __IOS__ || __TVOS__
 using Point = CoreGraphics.CGPoint;
@@ -36,7 +38,7 @@ namespace XF.ChartLibrary.Charts
 
         private Listener.IChartSelectionListener selectionListener;
 
-        readonly IList ViewPortJobs = ArrayList.Synchronized(new List<ChartLibrary.Jobs.ViewPortJob>());
+        readonly IList ViewPortJobs = ArrayList.Synchronized(new List<Jobs.ViewPortJob>());
 
         protected ViewPortHandler ViewPortHandler = new ViewPortHandler();
 

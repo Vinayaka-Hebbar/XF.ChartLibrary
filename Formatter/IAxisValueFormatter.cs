@@ -18,6 +18,6 @@ namespace XF.ChartLibrary.Formatter
         /// <param name="value">the value to be formatted</param>
         /// <param name="axis">the axis the value belongs to</param>
         /// <returns></returns>
-        String GetFormattedValue(double value, AxisBase axis);
+        String GetFormattedValue(float value, AxisBase axis);
     }
 }

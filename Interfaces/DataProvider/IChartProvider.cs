@@ -1,16 +1,14 @@
-﻿using XF.ChartLibrary.Data;
+﻿using XF.ChartLibrary.Interfaces.DataSets;
 
 namespace XF.ChartLibrary.Interfaces.DataProvider
 {
     public interface IChartProvider
     {
-        IChartData<TDataSet> GetData<TDataSet>() where TDataSet : IDataSet;
-
         IDataSet GetData();
 
-        double YChartMax { get; }
+        float YChartMax { get; }
 
-        double YChartMin { get; }
+        float YChartMin { get; }
 
         int MaxVisibleCount { get; }
 

@@ -153,32 +153,44 @@ namespace XF.ChartLibrary.Utils
 
         public float TransY => transY;
 
+        /// <summary>
+        /// if the chart is fully zoomed out, return true
+        /// </summary>
+        public bool IsFullyZoomedOut => IsFullyZoomedOutX && IsFullyZoomedOutY;
+
+        /// <summary>
+        /// Returns true if the chart is fully zoomed out on it's y-axis (vertical).
+        /// </summary>
+        public bool IsFullyZoomedOutY => !(scaleY > minScaleY || minScaleY > 1f);
+
+        /// <summary>
+        /// Returns true if the chart is fully zoomed out on it's x-axis
+        /// (horizontal).
+        /// </summary>
+        public bool IsFullyZoomedOutX => !(scaleX > minScaleX || minScaleX > 1f);
+
+
         public Matrix ZoomIn(float x, float y)
         {
             return Zoom(1.4f, 1.4f, x, y);
         }
 
-        /**
-         * Zooms out by 0.7f, x and y are the coordinates (in pixels) of the zoom
-         * center.
-         */
+        /// <summary>
+        /// Zooms out by 0.7f, x and y are the coordinates (in pixels) of the zoom
+        /// center.
+        /// </summary>
         public Matrix ZoomOut(float x, float y)
         {
             return Zoom(0.7f, 0.7f, x, y);
         }
 
-        /**
-         * Zooms out to original size.
-         * @param outputMatrix
-         */
+        /// <summary>
+        /// Zooms out to original size.
+        /// </summary>
         public void ResetZoom()
         {
             Zoom(1.0f, 1.0f, 0.0f, 0.0f);
         }
-
-
-
-
 
     }
 }

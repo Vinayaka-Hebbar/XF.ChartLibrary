@@ -50,17 +50,17 @@ namespace XF.ChartLibrary.Utils
 
         static Rect calcTextHeightRect = new Rect();
 
-        public ChartSize Measure(ChartString text)
+        public ChartSize Measure(string text)
         {
             var r = calcTextHeightRect;
-            Value.GetTextBounds(text.Value, 0, text.Length, r);
+            Value.GetTextBounds(text, 0, text.Length, r);
             return new ChartSize(r.Width(), r.Height());
         }
 
-        public float MeasureWidth(ChartString text)
+        public float MeasureWidth(string text)
         {
             var r = calcTextHeightRect;
-            Value.GetTextBounds(text.Value, 0, text.Length, r);
+            Value.GetTextBounds(text, 0, text.Length, r);
             return r.Width();
         }
     }

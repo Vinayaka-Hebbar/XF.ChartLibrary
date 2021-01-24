@@ -1,5 +1,6 @@
 ﻿using XF.ChartLibrary.Data;
 using XF.ChartLibrary.Interfaces.DataProvider;
+using XF.ChartLibrary.Interfaces.DataSets;
 
 namespace XF.ChartLibrary.Formatter
 {
@@ -7,14 +8,14 @@ namespace XF.ChartLibrary.Formatter
     {
         public static readonly DefaultFillFormatter Instance = new DefaultFillFormatter();
 
-        public double GetFillLinePosition(ILineDataSet dataSet, ILineChartDataProvider dataProvider)
+        public float GetFillLinePosition(ILineDataSet dataSet, ILineChartDataProvider dataProvider)
         {
             var chartMaxY = dataProvider.YChartMax;
             var chartMinY = dataProvider.YChartMin;
 
             LineData data = dataProvider.Data;
 
-            double fillMin;
+            float fillMin;
             if (dataSet.YMax > 0 && dataSet.YMin < 0)
             {
                 fillMin = 0f;
@@ -22,7 +23,7 @@ namespace XF.ChartLibrary.Formatter
             else
             {
 
-                double max, min;
+                float max, min;
 
                 if (data.YMax > 0)
                     max = 0f;

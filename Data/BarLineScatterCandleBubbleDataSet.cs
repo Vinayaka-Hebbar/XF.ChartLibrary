@@ -15,9 +15,8 @@ namespace XF.ChartLibrary.Data
     /// Baseclass of all DataSets for Bar-, Line-, Scatter- and CandleStickChart.
     /// </summary>
     public abstract class BarLineScatterCandleBubbleDataSet<TEntry>
-        : DataSet<TEntry>, IBarLineScatterCandleBubbleDataSet<TEntry> where TEntry : Entry
+        : DataSet<TEntry>, Interfaces.DataSets.IBarLineScatterCandleBubbleDataSet<TEntry> where TEntry : Entry
     {
-
         /// <summary>
         /// Sets the color that is used for drawing the highlight indicators.
         /// </summary>

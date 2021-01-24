@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
+using XF.ChartLibrary.Data;
 
-namespace XF.ChartLibrary.Data
+namespace XF.ChartLibrary.Interfaces
 {
-    public interface IChartData<TDataSet> where TDataSet : IDataSet
+    public interface IChartData<TDataSet> where TDataSet : DataSets.IDataSet
     {
         void NotifyDataSetChanged();
         /// <summary>

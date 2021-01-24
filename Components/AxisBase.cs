@@ -4,6 +4,11 @@ using XF.ChartLibrary.Formatter;
 
 namespace XF.ChartLibrary.Components
 {
+#if __ANDROID__
+    using DashPathEffect = Android.Graphics.DashPathEffect;
+#elif NETSTANDARD
+using DashPathEffect = SkiaSharp.SKPathEffect;
+#endif
     public partial class AxisBase : ComponentBase
     {
         /**
@@ -15,21 +20,35 @@ namespace XF.ChartLibrary.Components
 
         private float axisLineWidth = 1f;
 
-        /**
-         * the actual array of entries
-         */
-        public IList<float> Entries { get; } = Array.Empty<float>();
+        private int axisMinLabels = 2;
 
-        /**
-         * axis label entries only used for centered labels
-         */
-        public float[] CenteredEntries { get; } = Array.Empty<float>();
+        private int axisMaxLabels = 25;
 
+        private bool drawGridLines = true;
+
+        private bool drawAxisLine = true;
+
+        private bool forceLabels = false;
+
+        private bool granularityEnabled = false;
+
+        internal float[] centeredEntries = Array.Empty<float>();
+
+        internal IList<float> entries = Array.Empty<float>();
+
+        /// <summary>
+        /// the actual array of entries
+        /// </summary>
+        public IList<float> Entries => entries;
+
+        /// <summary>
+        /// axis label entries only used for centered labels
+        /// </summary>
+        public float[] CenteredEntries => centeredEntries;
         /**
          * the number of entries the legend contains
          */
-        public int EntryCount { get; set; }
-
+        public int EntryCount => entryCount;
         /**
          * the number of decimal digits to use
          */
@@ -96,51 +115,103 @@ namespace XF.ChartLibrary.Components
          */
         protected bool CustomAxisMax = false;
 
-        /**
-         * don't touch this direclty, use setter
-         */
-        public float axisMaximum = 0f;
+        internal float axisMaximum = 0f;
 
-        /**
-         * don't touch this directly, use setter
-         */
-        public float axisMinimum = 0f;
+        internal float axisMinimum = 0f;
+
+        internal int entryCount;
 
         /**
          * the total range of values this axis covers
          */
         public float AxisRange { get; set; } = 0f;
 
-        private int mAxisMinLabels = 2;
-        private int mAxisMaxLabels = 25;
-        private bool drawGridLines = true;
-        private bool drawAxisLine = true;
-        private bool forceLabels = false;
-        private bool granularityEnabled = false;
-
         /**
          * The minumum number of labels on the axis
          */
         public int AxisMinLabels
         {
-            get => mAxisMinLabels;
+            get => axisMinLabels;
             set
             {
                 if (value > 0)
-                    mAxisMinLabels = value;
+                    axisMinLabels = value;
             }
         }
+
+
+
+#if __ANDROID__ || NETSTANDARD
+        private DashPathEffect axisLineDashPathEffect;
+
+        private DashPathEffect gridDashPathEffect;
+
+        /// <summary>
+        ///  Enables the grid line to be drawn in dashed mode, e.g.like this
+        /// "- - - - - -". THIS ONLY WORKS IF HARDWARE-ACCELERATION IS TURNED OFF.
+        /// Keep in mind that hardware acceleration boosts performance.
+        /// </summary>
+        public DashPathEffect GridDashedLine
+        {
+            get => gridDashPathEffect;
+            set => gridDashPathEffect = value;
+        }
+
+        /// <summary>
+        /// Disables the grid line to be drawn in dashed mode.
+        /// </summary>
+        public void DisableGridDashedLine()
+        {
+            gridDashPathEffect = null;
+        }
+
+        /// <summary>
+        /// Returns true if the grid dashed-line effect is enabled, false if not.
+        /// </summary>
+        public bool IsGridDashedLineEnabled
+        {
+            get => gridDashPathEffect != null;
+        }
+        
+        /// <summary>
+         ///  Enables the axis line to be drawn in dashed mode, e.g.like this
+         /// "- - - - - -". THIS ONLY WORKS IF HARDWARE-ACCELERATION IS TURNED OFF.
+         /// Keep in mind that hardware acceleration boosts performance.
+         /// </summary>
+        public DashPathEffect AxisLineDashedLine
+        {
+            get => axisLineDashPathEffect;
+            set => axisLineDashPathEffect = value;
+        }
+
+        /// <summary>
+        /// Disables the axis line to be drawn in dashed mode.
+        /// </summary>
+        public void DisableAxisLineDashedLine()
+        {
+            axisLineDashPathEffect = null;
+        }
+
+        /// <summary>
+        /// Returns true if the axis dashed-line effect is enabled, false if not.
+        /// </summary>
+        public bool IsAxisLineDashedLineEnabled
+        {
+            get => axisLineDashPathEffect != null;
+        }
+
+#endif
 
         /**
          * The maximum number of labels on the axis
          */
         public int AxisMaxLabels
         {
-            get => mAxisMaxLabels;
+            get => axisMaxLabels;
             set
             {
                 if (value > 0)
-                    mAxisMaxLabels = value;
+                    axisMaxLabels = value;
             }
         }
 
@@ -198,8 +269,7 @@ namespace XF.ChartLibrary.Components
         public bool IsDrawAxisLineEnabled => drawAxisLine;
 
 
-        public bool IsCenterAxisLabelsEnabled => CenterAxisLabels && EntryCount > 0;
-
+        public bool IsCenterAxisLabelsEnabled => CenterAxisLabels && entryCount > 0;
 
         /// <summary>
         /// Gets or Sets the width of the border surrounding the chart in dp.
@@ -262,7 +332,7 @@ namespace XF.ChartLibrary.Components
          */
         public int LabelCount
         {
-
+            get => labelCount;
             set
             {
                 if (value > AxisMaxLabels)

@@ -2,12 +2,13 @@
 using System.Drawing;
 using XF.ChartLibrary.Components;
 using XF.ChartLibrary.Formatter;
+using XF.ChartLibrary.Interfaces.DataSets;
 
 #if __IOS__ || __TVOS
 using Color = UIKit.UIColor;
 using Font = UIKit.UIFont;
 #elif __ANDROID__
-    using Color = Android.Graphics.Color;
+using Color = Android.Graphics.Color;
     using Font = Android.Graphics.Typeface;
 #elif NETSTANDARD
 using Color = SkiaSharp.SKColor;
@@ -33,21 +34,21 @@ namespace XF.ChartLibrary.Data
 
         public abstract TEntry this[int i] { get; }
 
-        internal double yMax = -double.MaxValue;
+        internal float yMax = -float.MaxValue;
 
-        internal double yMin = double.MaxValue;
+        internal float yMin = float.MaxValue;
 
-        internal double xMax = -double.MaxValue;
+        internal float xMax = -float.MaxValue;
 
-        internal double xMin = double.MaxValue;
+        internal float xMin = float.MaxValue;
 
-        public double XMin { get => xMin; }
+        public float XMin { get => xMin; }
 
-        public double XMax { get => xMax; }
+        public float XMax { get => xMax; }
 
-        public double YMin { get => yMin; }
+        public float YMin { get => yMin; }
 
-        public double YMax { get => yMax; }
+        public float YMax { get => yMax; }
 
         public abstract int EntryCount { get; }
 
@@ -90,9 +91,7 @@ namespace XF.ChartLibrary.Data
             }
         }
 
-        public bool HighlightEnabled { get; set; } = true;
-
-        public bool IsHighlightEnabled { get; }
+        public bool IsHighlightEnabled { get; set; } = true;
 
         public IValueFormatter ValueFormatter
         {
@@ -160,19 +159,13 @@ namespace XF.ChartLibrary.Data
 
         public IList<float> FormLineDashLengths { get; }
 
-        public bool DrawValuesEnabled { get; set; }
+        public bool IsDrawValuesEnabled { get; set; } = true;
 
-        public bool IsDrawValuesEnabled { get; }
-
-        public bool DrawIconsEnabled { get; set; }
-
-        public bool IsDrawIconsEnabled { get; }
+        public bool IsDrawIconsEnabled { get; set; }
 
         public Point IconsOffset { get; set; }
 
-        public bool Visible { get; set; }
-
-        public bool IsVisible { get; }
+        public bool IsVisible { get; set; }
 
         public abstract bool AddEntry(TEntry e);
 
@@ -180,7 +173,7 @@ namespace XF.ChartLibrary.Data
 
         public abstract void CalcMinMax();
 
-        public abstract void CalcMinMaxY(double fromX, double toX);
+        public abstract void CalcMinMaxY(float fromX, float toX);
 
         public abstract void Clear();
 
@@ -191,51 +184,27 @@ namespace XF.ChartLibrary.Data
             return colors[index % colors.Count];
         }
 
-        public bool Contains(Entry e)
-        {
-            int entryCount = EntryCount;
-            for (int i = 0; i < entryCount; i++)
-            {
-                if (this[i].Equals(e))
-                    return true;
-            }
+        public abstract IList<TEntry> EntriesForXValue(float xValue);
 
-            return false;
-        }
+        public abstract TEntry EntryForXValue(float xValue, float yValue, DataSetRounding rounding);
 
-        public abstract IList<TEntry> EntriesForXValue(double xValue);
-
-        public abstract TEntry EntryForXValue(double xValue, double yValue, DataSetRounding rounding);
-
-        public virtual TEntry EntryForXValue(double xValue, double yValue)
+        public virtual TEntry EntryForXValue(float xValue, float yValue)
         {
             return EntryForXValue(xValue, yValue, DataSetRounding.Closest);
         }
 
-        public abstract int EntryIndex(Entry e);
-
-        public abstract int EntryIndex(double xValue, double yValue, DataSetRounding rounding);
+        public abstract int EntryIndex(float xValue, float yValue, DataSetRounding rounding);
 
         public void NotifyDataSetChanged()
         {
             CalcMinMax();
         }
 
-        public virtual bool RemoveEntry(Entry e)
-        {
-            int index = EntryIndex(e);
-            if (index > -1)
-            {
-                return RemoveEntry(index);
-            }
-            return false;
-        }
-
         public abstract bool RemoveEntry(int index);
 
-        public bool RemoveEntry(double x)
+        public bool RemoveEntry(float x)
         {
-            var e = EntryForXValue(x, double.NaN);
+            var e = EntryForXValue(x, float.NaN);
             if (e == null)
                 return false;
             return RemoveEntry(e);
@@ -270,5 +239,19 @@ namespace XF.ChartLibrary.Data
                 return default;
             return valueColors[index % valueColors.Count];
         }
+
+        public abstract int EntryIndex(TEntry e);
+
+        public virtual bool RemoveEntry(TEntry e)
+        {
+            int index = EntryIndex(e);
+            if (index > -1)
+            {
+                return RemoveEntry(index);
+            }
+            return false;
+        }
+
+        public abstract bool Contains(TEntry e);
     }
 }

@@ -4,7 +4,7 @@ namespace XF.ChartLibrary.Utils
 {
     public partial class ViewPortHandler
     {
-        private CGAffineTransform _touchMatrix = CGAffineTransform.MakeIdentity();
+        internal CGAffineTransform touchMatrix = CGAffineTransform.MakeIdentity();
 
         private CGRect contentRect = new CGRect();
 
@@ -17,7 +17,7 @@ namespace XF.ChartLibrary.Utils
 
         public CGAffineTransform Zoom(float scaleX, float scaleY, float x, float y)
         {
-            var matrix = _touchMatrix;
+            var matrix = touchMatrix;
             matrix.Translate(x, y);
             matrix.Scale(scaleX, scaleY);
             matrix.Translate(-x, -y);

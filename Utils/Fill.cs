@@ -19,6 +19,6 @@ namespace XF.ChartLibrary.Utils
 {
     public interface IFill
     {
-        void Draw(Canvas c, Rect rect);
+        void Draw(Canvas c, Rect rect, byte alpha);
     }
 }

@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using XF.ChartLibrary.Interfaces.DataSets;
 
 #if __IOS__ || __TVOS
 using Color = UIKit.UIColor;
 using Font = UIKit.UIFont;
 #elif __ANDROID__
-    using Color = Android.Graphics.Color;
-    using Font = Android.Graphics.Typeface;
+using Color = Android.Graphics.Color;
+using Font = Android.Graphics.Typeface;
 #elif NETSTANDARD
 using Color = SkiaSharp.SKColor;
 using Font = SkiaSharp.SKTypeface;
@@ -14,35 +15,35 @@ using Font = SkiaSharp.SKTypeface;
 
 namespace XF.ChartLibrary.Data
 {
-    public abstract class ChartData<TDataSet, TEntry> where TDataSet : IDataSet<TEntry> where TEntry : Entry
+    public abstract class ChartData<TDataSet, TEntry> : Interfaces.IChartData<TDataSet> where TDataSet : IDataSet<TEntry>, IDataSet where TEntry : Entry
     {
-        protected double LeftAxisMin = double.MaxValue;
+        protected float LeftAxisMin = float.MaxValue;
 
-        protected double LeftAxisMax = -double.MaxValue;
+        protected float LeftAxisMax = -float.MaxValue;
 
-        protected double RightAxisMax = -double.MaxValue;
+        protected float RightAxisMax = -float.MaxValue;
 
-        protected double RightAxisMin = double.MaxValue;
+        protected float RightAxisMin = float.MaxValue;
 
-        internal double yMax = -double.MaxValue;
+        internal float yMax = -float.MaxValue;
 
-        internal double yMin = double.MaxValue;
+        internal float yMin = float.MaxValue;
 
-        internal double xMax = -double.MaxValue;
+        internal float xMax = -float.MaxValue;
 
-        internal double xMin = double.MaxValue;
+        internal float xMin = float.MaxValue;
 
         private IList<TDataSet> dataSets;
 
         public IList<TDataSet> DataSets => dataSets;
 
-        public double XMin { get => xMin; }
+        public float XMin { get => xMin; }
 
-        public double XMax { get => xMax; }
+        public float XMax { get => xMax; }
 
-        public double YMin { get => yMin; }
+        public float YMin { get => yMin; }
 
-        public double YMax { get => yMax; }
+        public float YMax { get => yMax; }
 
         /// <summary>
         /// Enables / disables highlighting values for all DataSets this data object
@@ -56,7 +57,7 @@ namespace XF.ChartLibrary.Data
             {
                 if (dataSets == null)
                     return false;
-                foreach (IDataSet set in dataSets)
+                foreach (var set in dataSets)
                 {
                     if (!set.IsHighlightEnabled)
                         return false;
@@ -67,9 +68,9 @@ namespace XF.ChartLibrary.Data
             {
                 if (dataSets == null)
                     return;
-                foreach (IDataSet set in dataSets)
+                foreach (var set in dataSets)
                 {
-                    set.HighlightEnabled = value;
+                    set.IsHighlightEnabled = value;
                 }
             }
         }
@@ -140,23 +141,23 @@ namespace XF.ChartLibrary.Data
             if (dataSets == null)
                 return;
 
-            yMax = -double.MaxValue;
-            yMin = double.MaxValue;
-            xMax = -double.MaxValue;
-            xMin = double.MaxValue;
+            yMax = -float.MaxValue;
+            yMin = float.MaxValue;
+            xMax = -float.MaxValue;
+            xMin = float.MaxValue;
 
             foreach (TDataSet set in dataSets)
             {
                 CalcMinMax(set);
             }
 
-            LeftAxisMax = -double.MaxValue;
-            LeftAxisMin = double.MaxValue;
-            RightAxisMax = -double.MaxValue;
-            RightAxisMin = double.MaxValue;
+            LeftAxisMax = -float.MaxValue;
+            LeftAxisMin = float.MaxValue;
+            RightAxisMax = -float.MaxValue;
+            RightAxisMin = float.MaxValue;
 
             // left axis
-            TDataSet firstLeft = GetFirstLeft(dataSets);
+            var firstLeft = GetFirstLeft(dataSets);
 
             if (firstLeft != null)
             {
@@ -178,7 +179,7 @@ namespace XF.ChartLibrary.Data
             }
 
             // right axis
-            TDataSet firstRight = GetFirstRight(dataSets);
+            var firstRight = GetFirstRight(dataSets);
 
             if (firstRight != null)
             {
@@ -354,7 +355,8 @@ namespace XF.ChartLibrary.Data
                 return null;
             else
             {
-                return dataSets[highlight.DataSetIndex].EntryForXValue(highlight.X, highlight.Y);
+                IDataSet<TEntry> dataSet = dataSets[highlight.DataSetIndex];
+                return dataSet.EntryForXValue(highlight.X, highlight.Y);
             }
         }
 
@@ -467,15 +469,15 @@ namespace XF.ChartLibrary.Data
         /// <summary>
         /// Returns the minimum y-value for the specified axis.
         /// </summary>
-        public double GetYMin(Components.YAxisDependency axis)
+        public float GetYMin(Components.YAxisDependency axis)
         {
             if (axis == Components.YAxisDependency.Left)
             {
-                return LeftAxisMin == double.MaxValue ? RightAxisMin : LeftAxisMin;
+                return LeftAxisMin == float.MaxValue ? RightAxisMin : LeftAxisMin;
             }
             else
             {
-                return RightAxisMin == double.MaxValue ? LeftAxisMin : RightAxisMin;
+                return RightAxisMin == float.MaxValue ? LeftAxisMin : RightAxisMin;
             }
         }
 
@@ -483,16 +485,16 @@ namespace XF.ChartLibrary.Data
         /// <summary>
         /// Returns the maximum y-value for the specified axis.
         /// </summary>
-        public double GetYMax(Components.YAxisDependency axis)
+        public float GetYMax(Components.YAxisDependency axis)
         {
             if (axis == Components.YAxisDependency.Left)
             {
 
-                return LeftAxisMax == -double.MaxValue ? RightAxisMax : LeftAxisMax;
+                return LeftAxisMax == -float.MaxValue ? RightAxisMax : LeftAxisMax;
             }
             else
             {
-                return RightAxisMax == -double.MaxValue ? LeftAxisMax : RightAxisMax;
+                return RightAxisMax == -float.MaxValue ? LeftAxisMax : RightAxisMax;
             }
         }
 
@@ -507,7 +509,7 @@ namespace XF.ChartLibrary.Data
             if (dataSets.Count > dataSetIndex && dataSetIndex >= 0)
             {
 
-                TDataSet set = dataSets[dataSetIndex];
+                var set = dataSets[dataSetIndex];
                 // add the entry to the dataset
                 if (!set.AddEntry(e))
                     return;
@@ -524,7 +526,7 @@ namespace XF.ChartLibrary.Data
         /// <summary>
         /// Removes the given Entry object from the DataSet at the specified index.
         /// </summary>
-        public bool RemoveEntry(Entry e, int dataSetIndex)
+        public bool RemoveEntry(TEntry e, int dataSetIndex)
         {
             if (dataSets == null)
                 return false;
@@ -532,7 +534,7 @@ namespace XF.ChartLibrary.Data
             if (e == null || dataSetIndex >= dataSets.Count)
                 return false;
 
-            TDataSet set = dataSets[dataSetIndex];
+            var set = dataSets[dataSetIndex];
 
             if (set != null)
             {
@@ -555,15 +557,15 @@ namespace XF.ChartLibrary.Data
         /// specified index.Returns true if an Entry was removed, false if no Entry
         ///was found that meets the specified requirements.
         /// </summary>
-        public bool RemoveEntry(double xValue, int dataSetIndex)
+        public bool RemoveEntry(float xValue, int dataSetIndex)
         {
             if (dataSets == null)
                 return false;
             if (dataSetIndex >= dataSets.Count)
                 return false;
 
-            TDataSet dataSet = dataSets[dataSetIndex];
-            TEntry e = dataSet.EntryForXValue(xValue, double.NaN);
+            IDataSet<TEntry> dataSet = dataSets[dataSetIndex];
+            TEntry e = dataSet.EntryForXValue(xValue, float.NaN);
 
             if (e == null)
                 return false;
@@ -626,6 +628,8 @@ namespace XF.ChartLibrary.Data
             }
         }
 
+        public TDataSet this[int index] => throw new NotImplementedException();
+
         /// <summary>
         /// Returns the DataSet object with the maximum number of entries or null if there are no DataSets.
         /// </summary>
@@ -634,7 +638,7 @@ namespace XF.ChartLibrary.Data
             if (dataSets == null || dataSets.Count == 0)
                 return default;
 
-            TDataSet max = dataSets[0];
+            var max = dataSets[0];
 
             foreach (TDataSet set in dataSets)
             {
@@ -643,6 +647,11 @@ namespace XF.ChartLibrary.Data
             }
 
             return max;
+        }
+
+        public void NotifyDataSetChanged()
+        {
+            throw new NotImplementedException();
         }
     }
 }

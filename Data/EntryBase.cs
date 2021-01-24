@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace XF.ChartLibrary.Data
+﻿namespace XF.ChartLibrary.Data
 {
     public partial class EntryBase
     {
@@ -8,17 +6,17 @@ namespace XF.ChartLibrary.Data
         {
         }
 
-        public EntryBase(double y)
+        public EntryBase(float y)
         {
             Y = y;
         }
 
-        public EntryBase(double y, object data) : this(y)
+        public EntryBase(float y, object data) : this(y)
         {
             Data = data;
         }
 
-        public double Y { get; set; }
+        public float Y { get; set; }
 
         public object Data { get; set; }
 

@@ -10,7 +10,5 @@ namespace XF.ChartLibrary.Interfaces.DataProvider
 
         float LowestVisibleX { get; }
         float HighestVisibleX { get; }
-
-
     }
 }

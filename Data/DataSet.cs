@@ -1,20 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using XF.ChartLibrary.Interfaces.DataSets;
 
 namespace XF.ChartLibrary.Data
 {
-    public abstract class DataSet<TEntry> : DataSetBase<TEntry> where TEntry : Entry
+    public abstract class DataSet<TEntry> : DataSetBase<TEntry>, IDataSet where TEntry : Entry
     {
         private IList<TEntry> entries;
 
-        public override TEntry this[int i]
-        {
-            get
-            {
-                return entries == null ? default : entries[i];
-            }
-        }
+        public override TEntry this[int i] => entries == null ? default : entries[i];
+
+        Entry IDataSet.this[int i] => entries == null ? default : entries[i];
 
         /// <summary>
         ///  Creates a new DataSet object with the given values (entries) it represents. Also, a
@@ -32,10 +29,10 @@ namespace XF.ChartLibrary.Data
 
         public override void CalcMinMax()
         {
-            yMax = -double.MaxValue;
-            yMin = double.MaxValue;
-            xMax = -double.MaxValue;
-            xMin = double.MaxValue;
+            yMax = -float.MaxValue;
+            yMin = float.MaxValue;
+            xMax = -float.MaxValue;
+            xMin = float.MaxValue;
 
             if (entries == null || entries.Count == 0)
                 return;
@@ -92,16 +89,16 @@ namespace XF.ChartLibrary.Data
                 yMax = e.Y;
         }
 
-        public override void CalcMinMaxY(double fromX, double toX)
+        public override void CalcMinMaxY(float fromX, float toX)
         {
-            yMax = -double.MaxValue;
-            yMin = double.MaxValue;
+            yMax = -float.MaxValue;
+            yMin = float.MaxValue;
 
             if (entries == null || entries.Count == 0)
                 return;
 
-            int indexFrom = EntryIndex(fromX, double.NaN, rounding: DataSetRounding.Down);
-            int indexTo = EntryIndex(toX, double.NaN, DataSetRounding.Up);
+            int indexFrom = EntryIndex(fromX, float.NaN, rounding: DataSetRounding.Down);
+            int indexTo = EntryIndex(toX, float.NaN, DataSetRounding.Up);
 
             if (indexTo < indexFrom)
                 return;
@@ -167,6 +164,27 @@ namespace XF.ChartLibrary.Data
             return true;
         }
 
+        bool IDataSet.Contains(Entry e)
+        {
+            if (entries == null)
+                return false;
+            int entryCount = EntryCount;
+            for (int i = 0; i < entryCount; i++)
+            {
+                if (entries[i].Equals(e))
+                    return true;
+            }
+
+            return false;
+        }
+
+        public override bool Contains(TEntry e)
+        {
+            if (entries == null)
+                return false;
+            return entries.Contains(e);
+        }
+
         public override bool RemoveEntry(int index)
         {
             if (entries == null || index < entries.Count)
@@ -177,7 +195,7 @@ namespace XF.ChartLibrary.Data
             return true;
         }
 
-        public override int EntryIndex(Entry e)
+        int IDataSet.EntryIndex(Entry e)
         {
             if (entries != null)
             {
@@ -192,7 +210,17 @@ namespace XF.ChartLibrary.Data
             return -1;
         }
 
-        public override IList<TEntry> EntriesForXValue(double xValue)
+        public override int EntryIndex(TEntry e)
+        {
+            if (entries != null)
+            {
+                return entries.IndexOf(e);
+            }
+
+            return -1;
+        }
+
+        public override IList<TEntry> EntriesForXValue(float xValue)
         {
             List<TEntry> entries = new List<TEntry>();
 
@@ -240,7 +268,55 @@ namespace XF.ChartLibrary.Data
             return entries;
         }
 
-        public override TEntry EntryForXValue(double xValue, double yValue, DataSetRounding rounding)
+        IList<Entry> IDataSet.EntriesForXValue(double xValue)
+        {
+            List<Entry> entries = new List<Entry>();
+
+            int low = 0;
+            int high = entries.Count - 1;
+
+            while (low <= high)
+            {
+                int m = (high + low) / 2;
+                Entry entry = entries[m];
+
+                // if we have a match
+                if (xValue == entry.X)
+                {
+                    while (m > 0 && entries[m - 1].X == xValue)
+                        m--;
+
+                    high = entries.Count;
+
+                    // loop over all "equal" entries
+                    for (; m < high; m++)
+                    {
+                        entry = entries[m];
+                        if (entry.X == xValue)
+                        {
+                            entries.Add(entry);
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+
+                    break;
+                }
+                else
+                {
+                    if (xValue > entry.X)
+                        low = m + 1;
+                    else
+                        high = m - 1;
+                }
+            }
+
+            return entries;
+        }
+
+        public override TEntry EntryForXValue(float xValue, float yValue, DataSetRounding rounding)
         {
             int index = EntryIndex(xValue, yValue, rounding);
             if (index > -1)
@@ -248,7 +324,21 @@ namespace XF.ChartLibrary.Data
             return default;
         }
 
-        public override int EntryIndex(double xValue, double yValue, DataSetRounding rounding)
+
+        Entry IDataSet.EntryForXValue(float xValue, float yValue, DataSetRounding rounding)
+        {
+            int index = EntryIndex(xValue, yValue, rounding);
+            if (index > -1)
+                return entries[index];
+            return default;
+        }
+
+        Entry IDataSet.EntryForXValue(float xValue, float yValue)
+        {
+            return EntryForXValue(xValue, yValue, DataSetRounding.Closest);
+        }
+
+        public override int EntryIndex(float xValue, float yValue, DataSetRounding rounding)
         {
             if (entries == null || entries.Count == 0)
                 return -1;

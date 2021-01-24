@@ -4,13 +4,13 @@ namespace XF.ChartLibrary.Data
 {
     public partial class Entry
     {
-        public Entry(double x, double y, Drawable icon) : base(y)
+        public Entry(float x, float y, Drawable icon) : base(y)
         {
             X = x;
             Icon = icon;
         }
 
-        public Entry(double x, double y, Drawable icon, object data) : base(y)
+        public Entry(float x, float y, Drawable icon, object data) : base(y)
         {
             X = x;
             Icon = icon;

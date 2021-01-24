@@ -4,9 +4,13 @@ namespace XF.ChartLibrary.Utils
 {
     public partial class ViewPortHandler
     {
-        private SKMatrix touchMatrix = SKMatrix.CreateIdentity();
+        protected SKMatrix TouchMatrix = SKMatrix.CreateIdentity();
 
         private SKRect contentRect = new SKRect();
+
+        public SKMatrix MatrixTouch => TouchMatrix;
+
+        public SKRect ContentRect => contentRect;
 
         public void RestrainViewPort(float offsetLeft, float offsetTop, float offsetRight, float offsetBottom)
         {

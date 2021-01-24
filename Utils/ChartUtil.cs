@@ -25,7 +25,7 @@ namespace XF.ChartLibrary
         public static Color FromRGB(byte r, byte g, byte b)
         {
 #if __IOS__ || __TVOS__
-            return Color.FromRGB(r, g, b);
+            return Color.FromRGB(r/255f, g/255f, b/255f);
 #else
             return new Color(r, g, b);
 #endif

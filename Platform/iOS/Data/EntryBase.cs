@@ -5,12 +5,12 @@
 #endif
     public partial class EntryBase
     {
-        public EntryBase(double y, NSUIImage icon) : this(y)
+        public EntryBase(float y, NSUIImage icon) : this(y)
         {
             Icon = icon;
         }
 
-        public EntryBase(double y, NSUIImage icon, object data) : this(y)
+        public EntryBase(float y, NSUIImage icon, object data) : this(y)
         {
             Icon = icon;
             Data = data;

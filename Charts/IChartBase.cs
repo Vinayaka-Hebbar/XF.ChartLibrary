@@ -14,7 +14,7 @@ namespace XF.ChartLibrary.Charts
 
 #if __ANDROID__
         void Invalidate();
-        bool Post(Java.Lang.IRunnable? r);
+        bool Post(Java.Lang.IRunnable r);
 #elif __IOS__ || __TVOS__
         void SetNeedsDisplay();
 #elif NETSTANDARD

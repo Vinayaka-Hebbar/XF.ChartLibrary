@@ -9,13 +9,13 @@ namespace XF.ChartLibrary.Data
 #endif
     public partial class Entry 
     {
-        public Entry(double x, double y, NSUIImage icon) : base(y)
+        public Entry(float x, float y, NSUIImage icon) : base(y)
         {
             X = x;
             Icon = icon;
         }
 
-        public Entry(double x, double y, NSUIImage icon, object data) : base(y)
+        public Entry(float x, float y, NSUIImage icon, object data) : base(y)
         {
             X = x;
             Icon = icon;

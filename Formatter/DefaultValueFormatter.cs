@@ -30,7 +30,7 @@ namespace XF.ChartLibrary.Formatter
             Format = b.ToString();
         }
 
-        public string GetFormattedValue(double value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler)
+        public string GetFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler)
         {
             return value.ToString(Format);
         }

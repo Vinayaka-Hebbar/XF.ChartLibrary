@@ -9,10 +9,6 @@ namespace XF.ChartLibrary.Components
         public Color GridColor { get; set; } = Color.Gray.WithAlpha(240);
         public Color AxisLineColor { get; set; } = Color.Gray;
 
-        private DashPathEffect axisLineDashPathEffect = null;
-
-        private DashPathEffect gridDashPathEffect = null;
-
         public AxisBase()
         {
             yOffset = xOffset = 5f.DpToPixel();
@@ -34,34 +30,6 @@ namespace XF.ChartLibrary.Components
             }, phase);
         }
 
-
-        /// <summary>
-        ///  Enables the grid line to be drawn in dashed mode, e.g.like this
-        /// "- - - - - -". THIS ONLY WORKS IF HARDWARE-ACCELERATION IS TURNED OFF.
-        /// Keep in mind that hardware acceleration boosts performance.
-        /// </summary>
-        public DashPathEffect GridDashedLine
-        {
-            get => gridDashPathEffect;
-            set => gridDashPathEffect = value;
-        }
-
-        /// <summary>
-        /// Disables the grid line to be drawn in dashed mode.
-        /// </summary>
-        public void DisableGridDashedLine()
-        {
-            gridDashPathEffect = null;
-        }
-
-        /// <summary>
-        /// Returns true if the grid dashed-line effect is enabled, false if not.
-        /// </summary>
-        public bool IsGridDashedLineEnabled
-        {
-            get => gridDashPathEffect != null;
-        }
-
         /// <summary>
         /// Enables the axis line to be drawn in dashed mode, e.g.like this
         /// "- - - - - -". THIS ONLY WORKS IF HARDWARE-ACCELERATION IS TURNED OFF.
@@ -77,32 +45,7 @@ namespace XF.ChartLibrary.Components
             }, phase);
         }
 
-        /// <summary>
-        ///  Enables the axis line to be drawn in dashed mode, e.g.like this
-        /// "- - - - - -". THIS ONLY WORKS IF HARDWARE-ACCELERATION IS TURNED OFF.
-        /// Keep in mind that hardware acceleration boosts performance.
-        /// </summary>
-        public DashPathEffect AxisLineDashedLine
-        {
-            get => axisLineDashPathEffect;
-            set => axisLineDashPathEffect = value;
-        }
-
-        /// <summary>
-        /// Disables the axis line to be drawn in dashed mode.
-        /// </summary>
-        public void DisableAxisLineDashedLine()
-        {
-            axisLineDashPathEffect = null;
-        }
-
-        /// <summary>
-        /// Returns true if the axis dashed-line effect is enabled, false if not.
-        /// </summary>
-        public bool IsAxisLineDashedLineEnabled
-        {
-            get => axisLineDashPathEffect != null;
-        }
+        
 
     }
 }

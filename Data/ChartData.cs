@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using XF.ChartLibrary.Interfaces;
 using XF.ChartLibrary.Interfaces.DataSets;
 
 #if __IOS__ || __TVOS
@@ -15,7 +16,7 @@ using Font = SkiaSharp.SKTypeface;
 
 namespace XF.ChartLibrary.Data
 {
-    public abstract class ChartData<TDataSet, TEntry> : Interfaces.IChartData<TDataSet> where TDataSet : IDataSet<TEntry>, IDataSet where TEntry : Entry
+    public abstract class ChartData<TDataSet, TEntry> : IChartData, IChartData<TDataSet> where TDataSet : IDataSet<TEntry>, IDataSet where TEntry : Entry
     {
         protected float LeftAxisMin = float.MaxValue;
 
@@ -78,7 +79,7 @@ namespace XF.ChartLibrary.Data
         /// <summary>
         /// returns the number of LineDataSets this object contains
         /// </summary>
-        public int GetDataSetCount
+        public int DataSetCount
         {
             get
             {
@@ -611,10 +612,8 @@ namespace XF.ChartLibrary.Data
         /// </summary>
         public int EntryCount
         {
-
             get
             {
-
                 int count = 0;
                 if (dataSets != null)
                 {
@@ -628,7 +627,9 @@ namespace XF.ChartLibrary.Data
             }
         }
 
-        public TDataSet this[int index] => throw new NotImplementedException();
+        public TDataSet this[int index] => dataSets[index];
+
+        IDataSet IChartData.this[int index] => dataSets[index];
 
         /// <summary>
         /// Returns the DataSet object with the maximum number of entries or null if there are no DataSets.

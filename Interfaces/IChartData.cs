@@ -3,7 +3,23 @@ using XF.ChartLibrary.Data;
 
 namespace XF.ChartLibrary.Interfaces
 {
-    public interface IChartData<TDataSet> where TDataSet : DataSets.IDataSet
+    public interface IChartData<TDataSet> : IChartDataBase where TDataSet : DataSets.IDataSet
+    {
+        IList<TDataSet> DataSets { get; }
+
+        TDataSet this[int index] { get; }
+
+        bool Contains(TDataSet dataSet);
+
+        TDataSet GetMaxEntryCountSet();
+    }
+
+    public interface IChartData : IChartDataBase
+    { 
+        DataSets.IDataSet this[int index] { get; }
+    }
+
+    public interface IChartDataBase
     {
         void NotifyDataSetChanged();
         /// <summary>
@@ -26,20 +42,16 @@ namespace XF.ChartLibrary.Interfaces
         /// </summary>
         float XMin { get; }
 
-        IList<TDataSet> DataSets { get; }
+        int EntryCount { get; }
 
-        TDataSet this[int index] { get; }
+        int DataSetCount { get; }
 
         /// <summary>
         /// Get the Entry for a corresponding highlight object
         /// </summary>
         /// <returns>the entry that is highlighted</returns>
-        public Entry GetEntryForHighlight(Highlight.Highlight highlight);
+        Entry GetEntryForHighlight(Highlight.Highlight highlight);
 
         void ClearValues();
-
-        bool Contains(TDataSet dataSet);
-
-        TDataSet GetMaxEntryCountSet();
     }
 }

@@ -1,14 +1,21 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using XF.ChartLibrary.Utils;
 
 namespace XF.ChartLibrary.Components
 {
 #if __IOS__ || __TVOS
     using Paint = UIKit.UIFont;
+    using Color = UIKit.UIColor;
+    using DashPathEffect = XF.ChartLibrary.Utils.DashPathEffect;
 #elif __ANDROID__
     using Paint = Android.Graphics.Paint;
+    using DashPathEffect = Android.Graphics.DashPathEffect;
+    using Color = Android.Graphics.Color;
 #elif NETSTANDARD
     using Paint = SkiaSharp.SKPaint;
+    using DashPathEffect = SkiaSharp.SKPathEffect;
+    using Color = SkiaSharp.SKColor;
 #endif
     public enum Form
     {
@@ -47,9 +54,17 @@ namespace XF.ChartLibrary.Components
         LeftToRight, RightToLeft
     }
 
-    public partial class Legend : IComponent
+    public partial class Legend : ComponentBase
     {
         private bool _isLegendCustom;
+        private IList<LegendEntry> entries;
+
+        /// <summary>
+        /// Entries that will be appended to the end of the auto calculated entries after calculating the legend.
+        /// (if the legend has already been calculated, you will need to call notifyDataSetChanged() to let the changes take effect)
+        /// </summary>
+        private IList<LegendEntry> extraEntries;
+        private bool drawInside = false;
 
         /// <summary>
         ///  The horizontal alignment of the legend
@@ -72,10 +87,16 @@ namespace XF.ChartLibrary.Components
         public Orientation Orientation { get; set; } = Orientation.Horizontal;
 
         /// Flag indicating whether the legend will draw inside the chart or outside
-        public bool DrawInside { get; set; } = false;
+        public bool DrawInside
+        {
+            get => drawInside;
+            set => drawInside = value;
+        }
 
         /// Flag indicating whether the legend will draw inside the chart or outside
-        public bool IsDrawInsideEnabled => DrawInside;
+        public bool IsDrawInsideEnabled => drawInside;
+
+        public bool IsLegendCustom => _isLegendCustom;
 
         /// The text direction of the legend
         public Direction Direction { get; set; } = Direction.LeftToRight;
@@ -89,45 +110,73 @@ namespace XF.ChartLibrary.Components
         /// The line width for forms that consist of lines
         public float FormLineWidth { get; set; } = 3.0f;
 
-        /// Line dash configuration for shapes that consist of lines.
-        ///
-        /// This is how much (in pixels) into the dash pattern are we starting from.
-        public float FormLineDashPhase { get; set; }
-
-        /// Line dash configuration for shapes that consist of lines.
-        ///
-        /// This is the actual dash pattern.
-        /// I.e. [2, 3] will paint [--   --   ]
-        /// [1, 3, 4, 2] will paint [-   ----  -   ----  ]
-        public IList<float> FormLineDashLengths { get; set; }
+        /// dash path effect used for shapes that consist of lines.
+        public DashPathEffect FormLineDashEffect { get; set; }
 
         public float XEntrySpace { get; set; } = 6.0f;
         public float YEntrySpace { get; set; } = 0.0f;
         public float FormToTextSpace { get; set; } = 5.0f;
         public float StackSpace { get; set; } = 3.0f;
 
-
         public IList<ChartSize> CalculatedLabelSizes { get; set; } = new List<ChartSize>();
+
         public IList<bool> CalculatedLabelBreakPoints { get; set; } = new List<bool>();
+
         public IList<ChartSize> CalculatedLineSizes { get; set; } = new List<ChartSize>();
 
         public Legend(IList<LegendEntry> entries)
         {
-            Entries = entries;
+            this.entries = entries;
         }
 
         public Legend()
         {
-            Entries = new List<LegendEntry>();
+            this.entries = new List<LegendEntry>();
         }
 
-        public IList<LegendEntry> Entries { get; }
+        public IList<LegendEntry> Entries
+        {
+            get => entries;
+            set
+            {
+                entries = value;
+                _isLegendCustom = true;
+            }
+        }
 
-        public float XOffset { get; set; } = 5.0f;
+        public IList<LegendEntry> ExtraEntries
+        {
+            get => extraEntries;
+            set => extraEntries = value;
+        }
 
-        public float YOffset { get; set; } = 3.0f;
+        /// <summary>
+        ///  Entries that will be appended to the end of the auto calculated
+        ///   entries after calculating the legend.
+        /// (if the legend has already been calculated, you will need to call notifyDataSetChanged()
+        ///   to let the changes take effect)
+        /// </summary>
+        public void SetExtra(IList<Color> colors, IList<string> labels)
+        {
 
-        public bool IsEnabled { get; set; } = true;
+            List<LegendEntry> entries = new List<LegendEntry>();
+
+            for (int i = 0; i < Math.Min(colors.Count, labels.Count); i++)
+            {
+                var entry = new LegendEntry
+                {
+                    FormColor = colors[i],
+                    Label = labels[i]
+                };
+
+                if (entry.FormColor == default)
+                    entry.Form = Form.Empty;
+
+                entries.Add(entry);
+            }
+
+            extraEntries = entries;
+        }
 
         public ChartSize GetMaximumEntrySize(Paint paint)
         {
@@ -201,6 +250,9 @@ namespace XF.ChartLibrary.Components
         /// **default**: 0.95 (95%)
         public float MaxSizePercent { get; set; } = 0.95f;
 
-        
+        public void ResetCustom()
+        {
+            _isLegendCustom = false;
+        }
     }
 }

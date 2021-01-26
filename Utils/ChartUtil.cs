@@ -30,5 +30,7 @@ namespace XF.ChartLibrary
             return new Color(r, g, b);
 #endif
         }
+
+        public static float Hypot(float x, float y) => MathF.Sqrt(x * x + y * y);
     }
 }

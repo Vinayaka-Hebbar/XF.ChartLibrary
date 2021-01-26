@@ -4,15 +4,19 @@ using XF.ChartLibrary.Data;
 using XF.ChartLibrary.Formatter;
 
 #if __IOS__ || __TVOS
-    using Color = UIKit.UIColor;
-    using Font = UIKit.UIFont;
+using Color = UIKit.UIColor;
+using Font = UIKit.UIFont;
+using DashPathEffect = XF.ChartLibrary.Utils.DashPathEffect;
 #elif __ANDROID__
 using Color = Android.Graphics.Color;
 using Font = Android.Graphics.Typeface;
+     using DashPathEffect = Android.Graphics.DashPathEffect;
 #elif NETSTANDARD
 using Color = SkiaSharp.SKColor;
 using Font = SkiaSharp.SKTypeface;
+using DashPathEffect = SkiaSharp.SKPathEffect;
 #endif
+
 
 namespace XF.ChartLibrary.Interfaces.DataSets
 {
@@ -154,16 +158,7 @@ namespace XF.ChartLibrary.Interfaces.DataSets
         float FormLineWidth { get; }
 
         /// Line dash configuration for legend shapes that consist of lines.
-        ///
-        /// This is how much (in pixels) into the dash pattern are we starting from.
-        float FormLineDashPhase { get; }
-
-        /// Line dash configuration for legend shapes that consist of lines.
-        ///
-        /// This is the actual dash pattern.
-        /// I.e. [2, 3] will paint [--   --   ]
-        /// [1, 3, 4, 2] will paint [-   ----  -   ----  ]
-        IList<float> FormLineDashLengths { get; }
+        public DashPathEffect FormLineDashEffect { get; set; }
 
         /// `true` if y-value drawing is enabled, `false` ifnot
         bool IsDrawValuesEnabled { get; set; }

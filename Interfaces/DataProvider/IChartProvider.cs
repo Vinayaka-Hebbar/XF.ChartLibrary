@@ -2,15 +2,20 @@
 
 namespace XF.ChartLibrary.Interfaces.DataProvider
 {
-    public interface IChartProvider
+    public interface IChartProvider 
     {
-        IDataSet GetData();
-
         float YChartMax { get; }
 
         float YChartMin { get; }
 
         int MaxVisibleCount { get; }
 
+        float MaxHighlightDistance { get; }
+
+    }
+
+    public interface IChartDataProvider : IChartProvider
+    {
+        IChartData<IDataSet> Data { get; }
     }
 }

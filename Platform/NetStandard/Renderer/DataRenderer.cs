@@ -21,7 +21,7 @@ namespace XF.ChartLibrary.Renderer
         /// </summary>
         protected SKPaint HighlightPaint;
 
-        protected virtual void Initialize()
+        protected override void Initialize()
         {
             RenderPaint = new SKPaint
             {

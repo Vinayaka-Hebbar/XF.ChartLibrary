@@ -24,6 +24,7 @@ namespace XF.ChartLibrary.Charts
                 IsAntialias = true
             };
             DescPaint = new SKPaint { IsAntialias = false };
+            Initialize();
         }
 
 

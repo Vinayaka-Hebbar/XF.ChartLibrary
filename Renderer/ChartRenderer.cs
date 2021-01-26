@@ -11,6 +11,11 @@ namespace XF.ChartLibrary.Renderer
         protected ChartRenderer(ViewPortHandler viewPortHandler)
         {
             ViewPortHandler = viewPortHandler;
+            Initialize();
+        }
+
+        protected virtual void Initialize()
+        {
         }
     }
 }

@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using XF.ChartLibrary.Data;
-#if __IOS__ || __TVOS__
+﻿#if __IOS__ || __TVOS__
 using Point = CoreGraphics.CGPoint;
 using Matrix = CoreGraphics.CGAffineTransform;
 #elif __ANDROID__
 using Point = Android.Graphics.PointF;
 using Matrix = Android.Graphics.Matrix;
 #elif NETSTANDARD
-using Point = SkiaSharp.SKPoint;
 using Matrix = SkiaSharp.SKMatrix;
+using Point = SkiaSharp.SKPoint;
 #endif
 namespace XF.ChartLibrary.Utils
 {

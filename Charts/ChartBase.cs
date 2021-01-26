@@ -8,6 +8,7 @@ using XF.ChartLibrary.Components;
 using System.Collections;
 using XF.ChartLibrary.Interfaces;
 using XF.ChartLibrary.Interfaces.DataSets;
+using XF.ChartLibrary.Interfaces.DataProvider;
 
 #if __IOS__ || __TVOS__
 using Point = CoreGraphics.CGPoint;
@@ -23,12 +24,16 @@ using Canvas = SkiaSharp.SKCanvas;
 
 namespace XF.ChartLibrary.Charts
 {
-    public abstract partial class ChartBase<TData, TDataSet> : IChartBase where TData : class, IChartData<TDataSet> where TDataSet : IDataSet
+    public abstract partial class ChartBase<TData, TDataSet> : IChartBase, IChartDataProvider where TData : IChartData<TDataSet> where TDataSet : IDataSet
     {
         /// flag that indicates if offsets calculation has already been done or not
         private bool offsetsCalculated = false;
         private Animator animator;
         private Description description = new Description();
+
+        private Legend legend;
+
+        protected XAxis xAxis;
 
         private Highlight.Highlight lastHighlighted;
 
@@ -38,9 +43,17 @@ namespace XF.ChartLibrary.Charts
 
         private Listener.IChartSelectionListener selectionListener;
 
-        readonly IList ViewPortJobs = ArrayList.Synchronized(new List<Jobs.ViewPortJob>());
+        protected readonly IList ViewPortJobs = ArrayList.Synchronized(new List<Jobs.ViewPortJob>());
 
         protected ViewPortHandler ViewPortHandler = new ViewPortHandler();
+
+        protected Highlight.IHighlighter highlighter;
+
+        public Highlight.IHighlighter Highlighter
+        {
+            get => highlighter;
+            set => highlighter = value;
+        }
 
         private IList<Highlight.Highlight> indicesToHighlight;
 
@@ -59,6 +72,8 @@ namespace XF.ChartLibrary.Charts
         /// default value-formatter, number of digits depends on provided chart-data
         /// </summary>
         protected DefaultValueFormatter DefaultValueFormatter = new DefaultValueFormatter(0);
+
+        private float maxHighlightDistance;
 
         public TData Data
         {
@@ -91,6 +106,26 @@ namespace XF.ChartLibrary.Charts
 
         public string NoDataText { get; set; }
 
+        public abstract float YChartMax { get; }
+
+        public abstract float YChartMin { get; }
+
+        public abstract int MaxVisibleCount { get; }
+
+        public float MaxHighlightDistance
+        {
+            get => maxHighlightDistance;
+            set => maxHighlightDistance = value;
+        }
+
+        IChartData<IDataSet> IChartDataProvider.Data => (IChartData<IDataSet>)data;
+
+        public virtual void Initialize()
+        {
+            maxHighlightDistance = 500f;
+            xAxis = new XAxis();
+            legend = new Legend();
+        }
 
         /// calculates the required number of digits for the values that might be drawn in the chart (if enabled), and creates the default value formatter
         internal void SetUpDefaultFormatter(float min, float max)
@@ -119,7 +154,7 @@ namespace XF.ChartLibrary.Charts
         /// </summary>
         public void Clear()
         {
-            data = null;
+            data = default;
             offsetsCalculated = false;
             indicesToHighlight = null;
             lastHighlighted = null;

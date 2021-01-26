@@ -15,16 +15,15 @@ namespace XF.ChartLibrary.Renderer
     {
         protected DataRenderer(ViewPortHandler viewPortHandler) : base(viewPortHandler)
         {
-            Initialize();
         }
 
         public abstract void DrawValues(Canvas c);
         public abstract void DrawData(Canvas c);
         public abstract void DrawExtras(Canvas c);
 
-        public bool IsDrawingValuesAllowed(IChartProvider dataProvider)
+        public bool IsDrawingValuesAllowed(IChartDataProvider dataProvider)
         {
-            return dataProvider.GetData().EntryCount > dataProvider.MaxVisibleCount
+            return dataProvider.Data.EntryCount > dataProvider.MaxVisibleCount
                 * ViewPortHandler.ScaleX;
         }
 

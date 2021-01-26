@@ -36,6 +36,7 @@
     <None Remove="Platform\NetStandard\Jobs\ViewPortJob.cs" />
     <None Remove="Platform\NetStandard\Renderer\AxisRenderer.cs" />
     <None Remove="Platform\NetStandard\Renderer\DataRenderer.cs" />
+    <None Remove="Platform\NetStandard\Renderer\LegendRenderer.cs" />
     <None Remove="Platform\NetStandard\Renderer\LineChartRenderer.cs" />
     <None Remove="Platform\NetStandard\Renderer\LineRadarRenderer.cs" />
     <None Remove="Platform\NetStandard\Renderer\LineScatterCandleRadarRenderer.cs" />

@@ -4,7 +4,7 @@ using XF.ChartLibrary.Utils;
 
 namespace XF.ChartLibrary
 {
-    public  static partial class ChartUtil
+    public static partial class ChartUtil
     {
         public const double DEG2RAD = Math.PI / 180.0;
         public const float FDEG2RAD = MathF.PI / 180.0f;

@@ -14,7 +14,6 @@ namespace XF.ChartLibrary.Renderer
         {
             Axis = axis;
             Trasformer = trans;
-            Initialize();
         }
 
         /// <summary>

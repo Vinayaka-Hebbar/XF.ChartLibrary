@@ -7,12 +7,15 @@ using XF.ChartLibrary.Interfaces.DataSets;
 #if __IOS__ || __TVOS
 using Color = UIKit.UIColor;
 using Font = UIKit.UIFont;
+    using DashPathEffect = XF.ChartLibrary.Utils.DashPathEffect;
 #elif __ANDROID__
 using Color = Android.Graphics.Color;
-    using Font = Android.Graphics.Typeface;
+using Font = Android.Graphics.Typeface;
+using DashPathEffect = Android.Graphics.DashPathEffect;
 #elif NETSTANDARD
 using Color = SkiaSharp.SKColor;
 using Font = SkiaSharp.SKTypeface;
+using DashPathEffect = SkiaSharp.SKPathEffect;
 #endif
 
 namespace XF.ChartLibrary.Data
@@ -155,9 +158,7 @@ namespace XF.ChartLibrary.Data
 
         public float FormLineWidth { get; }
 
-        public float FormLineDashPhase { get; }
-
-        public IList<float> FormLineDashLengths { get; }
+        public DashPathEffect FormLineDashEffect { get; set; }
 
         public bool IsDrawValuesEnabled { get; set; } = true;
 

@@ -12,7 +12,7 @@ namespace XF.ChartLibrary.Renderer
 
         protected SKPaint LimitLinePaint;
 
-        protected virtual void Initialize()
+        protected override void Initialize()
         {
             if (ViewPortHandler != null)
             {

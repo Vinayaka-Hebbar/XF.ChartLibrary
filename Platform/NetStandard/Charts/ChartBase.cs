@@ -5,17 +5,18 @@ using XF.ChartLibrary.Jobs;
 
 namespace XF.ChartLibrary.Charts
 {
-    public abstract partial class ChartBase<TData, TDataSet> : SKCanvasView, IAnimator
+    public abstract partial class ChartBase<TData, TDataSet> : SKCanvasView, ISKCanvasViewController, IAnimator
     {
+        public enum ChartGesture
+        {
+            None, Drag, XZoom, YZoom, PinchZoom, Rotate, SingleTap, DoubleTap, LongPress, Fling
+        }
+
         protected SKPaint InfoPaint;
         protected SKPaint DescPaint;
 
         protected ChartBase()
         {
-            animator = new Animator()
-            {
-                Delegate = this,
-            };
             InfoPaint = new SKPaint
             {
                 Color = new SKColor(247, 189, 51), // orange
@@ -27,10 +28,8 @@ namespace XF.ChartLibrary.Charts
             Initialize();
         }
 
-
         public virtual void AnimatorStopped(Animator animator)
         {
-
         }
 
         public void AnimatorUpdated(Animator animator)

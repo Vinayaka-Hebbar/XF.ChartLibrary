@@ -26,6 +26,7 @@
 
   <ItemGroup>
     <None Remove="Platform\NetStandard\Animation\Animator.cs" />
+    <None Remove="Platform\NetStandard\Charts\BarLineChartBase.cs" />
     <None Remove="Platform\NetStandard\Charts\ChartBase.cs" />
     <None Remove="Platform\NetStandard\Components\AxisBase.cs" />
     <None Remove="Platform\NetStandard\Components\ComponentBase.cs" />
@@ -33,7 +34,9 @@
     <None Remove="Platform\NetStandard\Components\Legend.cs" />
     <None Remove="Platform\NetStandard\Data\Entry.cs" />
     <None Remove="Platform\NetStandard\Data\EntryBase.cs" />
+    <None Remove="Platform\NetStandard\Jobs\AnimatedViewPortJob.cs" />
     <None Remove="Platform\NetStandard\Jobs\ViewPortJob.cs" />
+    <None Remove="Platform\NetStandard\Listeners\ChartTouchListener.cs" />
     <None Remove="Platform\NetStandard\Renderer\AxisRenderer.cs" />
     <None Remove="Platform\NetStandard\Renderer\DataRenderer.cs" />
     <None Remove="Platform\NetStandard\Renderer\LegendRenderer.cs" />

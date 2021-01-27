@@ -14,20 +14,27 @@ using Canvas = SkiaSharp.SKCanvas;
 
 namespace XF.ChartLibrary.Jobs
 {
-    public partial class ViewPortJob
+    public abstract partial class ViewPortJob : IPoolable
     {
         protected float[] Points = new float[2];
 
+        private int ownerId;
         public readonly ViewPortHandler ViewPortHandler;
-        public double XValue { get; protected set; }
-        public double YValue { get; protected set; }
+        public float XValue { get; protected set; }
+        public float YValue { get; protected set; }
         public Transformer Transformer { get; }
         public IChartBase View { get; }
 
+        public int CurrentOwnerId
+        {
+            get => ownerId;
+            set => ownerId = value;
+        }
+
         public ViewPortJob(
            ViewPortHandler viewPortHandler,
-          double xValue,
-          double yValue,
+          float xValue,
+          float yValue,
           Transformer transformer,
           IChartBase view)
         {
@@ -36,6 +43,12 @@ namespace XF.ChartLibrary.Jobs
             YValue = yValue;
             Transformer = transformer;
             View = view;
+            ownerId = IPoolable.NoOwner;
+            Initialize();
+        }
+
+        protected virtual void Initialize()
+        {
         }
 
 #if __IOS__ || __TVOS__
@@ -46,5 +59,7 @@ namespace XF.ChartLibrary.Jobs
         {
             throw new NotImplementedException("`Run()` must be overridden by subclasses");
         }
+
+        public abstract IPoolable Instantiate();
     }
 }

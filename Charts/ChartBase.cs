@@ -9,6 +9,7 @@ using System.Collections;
 using XF.ChartLibrary.Interfaces;
 using XF.ChartLibrary.Interfaces.DataSets;
 using XF.ChartLibrary.Interfaces.DataProvider;
+using XF.ChartLibrary.Renderer;
 
 #if __IOS__ || __TVOS__
 using Point = CoreGraphics.CGPoint;
@@ -24,7 +25,8 @@ using Canvas = SkiaSharp.SKCanvas;
 
 namespace XF.ChartLibrary.Charts
 {
-    public abstract partial class ChartBase<TData, TDataSet> : IChartBase, IChartDataProvider where TData : IChartData<TDataSet> where TDataSet : IDataSet
+    public abstract partial class ChartBase<TData, TDataSet> : IChartBase, IChartDataProvider, IAnimator
+        where TData : IChartData<TDataSet> where TDataSet : IDataSet
     {
         /// flag that indicates if offsets calculation has already been done or not
         private bool offsetsCalculated = false;
@@ -34,6 +36,10 @@ namespace XF.ChartLibrary.Charts
         private Legend legend;
 
         protected XAxis xAxis;
+
+        protected LegendRenderer legendRenderer;
+
+        protected DataRenderer renderer;
 
         private Highlight.Highlight lastHighlighted;
 
@@ -125,6 +131,12 @@ namespace XF.ChartLibrary.Charts
             maxHighlightDistance = 500f;
             xAxis = new XAxis();
             legend = new Legend();
+            animator = new Animator()
+            {
+                Delegate = this
+            };
+            legendRenderer = new LegendRenderer(ViewPortHandler, legend);
+
         }
 
         /// calculates the required number of digits for the values that might be drawn in the chart (if enabled), and creates the default value formatter

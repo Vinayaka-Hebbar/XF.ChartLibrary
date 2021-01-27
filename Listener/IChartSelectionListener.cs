@@ -8,18 +8,17 @@ namespace XF.ChartLibrary.Listener
     /// </summary>
     public interface IChartSelectionListener
     {
-        /**
-     * Called when a value has been selected inside the chart.
-     *
-     * @param e The selected Entry
-     * @param h The corresponding highlight object that contains information
-     *          about the highlighted position such as dataSetIndex, ...
-     */
+        /// <summary>
+        ///  Called when a value has been selected inside the chart.
+        /// </summary>
+        /// <param name="e">The selected Entry</param>
+        /// <param name="h"> The corresponding highlight object that contains information
+        /// about the highlighted position such as dataSetIndex, ...</param>
         void OnValueSelected(Entry e, Highlight.Highlight h);
 
-        /**
-         * Called when nothing has been selected or an "un-select" has been made.
-         */
+        /// <summary>
+        /// Called when nothing has been selected or an "un-select" has been made.
+        /// </summary>
         void OnNothingSelected();
     }
 }

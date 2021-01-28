@@ -70,5 +70,14 @@ namespace XF.ChartLibrary.Charts
             mXAxisRenderer = new XAxisRenderer(ViewPortHandler, xAxis, mLeftAxisTransformer);
 
         }
+
+        public bool IsDragEnabled
+        {
+            get => mDragXEnabled || mDragYEnabled;
+        }
+
+        public bool IsScaleXEnabled => mScaleXEnabled;
+
+        public bool IsScaleYEnabled => mScaleYEnabled;
     }
 }

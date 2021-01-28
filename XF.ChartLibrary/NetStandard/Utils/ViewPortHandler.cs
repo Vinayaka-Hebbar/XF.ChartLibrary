@@ -4,7 +4,7 @@ namespace XF.ChartLibrary.Utils
 {
     public partial class ViewPortHandler
     {
-        protected SKMatrix TouchMatrix = SKMatrix.CreateIdentity();
+        protected internal SKMatrix TouchMatrix = SKMatrix.CreateIdentity();
 
         private SKRect contentRect = new SKRect();
 

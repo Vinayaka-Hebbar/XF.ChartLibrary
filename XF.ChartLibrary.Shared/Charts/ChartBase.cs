@@ -26,7 +26,7 @@ using Canvas = SkiaSharp.SKCanvas;
 namespace XF.ChartLibrary.Charts
 {
     public abstract partial class ChartBase<TData, TDataSet> : IChartBase, IChartDataProvider, IAnimator
-        where TData : IChartData<TDataSet> where TDataSet : IDataSet
+        where TData : IChartData<TDataSet> where TDataSet : IDataSet, IBarLineScatterCandleBubbleDataSet
     {
         /// flag that indicates if offsets calculation has already been done or not
         private bool offsetsCalculated = false;
@@ -45,7 +45,7 @@ namespace XF.ChartLibrary.Charts
 
         private IMarker marker;
 
-        private TData data;
+        protected TData data;
 
         private Listener.IChartSelectionListener selectionListener;
 
@@ -229,6 +229,34 @@ namespace XF.ChartLibrary.Charts
                 // draw the marker
                 marker.Draw(canvas, pos[0], pos[1]);
             }
+        }
+
+        /// <summary>
+        /// returns the DataSet object displayed at the touched position of the chart
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
+        public IBarLineScatterCandleBubbleDataSet GetDataSetByTouchPoint(float x, float y)
+        {
+            Highlight.Highlight h = GetHighlightByTouchPoint(x, y);
+            if (h != null)
+            {
+                return data[h.DataSetIndex];
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Returns the Highlight object (contains x-index and DataSet index) of the
+        /// selected value at the given touch point inside the Line-, Scatter-, or
+        /// CandleStick-Chart.
+        /// </summary>
+        public Highlight.Highlight GetHighlightByTouchPoint(float x, float y)
+        {
+            if (data == null)
+                return default;
+            return highlighter.GetHighlight(x, y);
         }
 
         /// <summary>

@@ -4,10 +4,10 @@ using XF.ChartLibrary.Formatter;
 
 namespace XF.ChartLibrary.Components
 {
-#if __ANDROID__
+#if NETSTANDARD || SKIASHARP
+    using DashPathEffect = SkiaSharp.SKPathEffect;
+#elif __ANDROID__
     using DashPathEffect = Android.Graphics.DashPathEffect;
-#elif NETSTANDARD
-using DashPathEffect = SkiaSharp.SKPathEffect;
 #endif
     public partial class AxisBase : ComponentBase
     {
@@ -141,7 +141,7 @@ using DashPathEffect = SkiaSharp.SKPathEffect;
 
 
 
-#if __ANDROID__ || NETSTANDARD
+#if __ANDROID__ || NETSTANDARD || SKIASHARP
         private DashPathEffect axisLineDashPathEffect;
 
         private DashPathEffect gridDashPathEffect;
@@ -172,12 +172,12 @@ using DashPathEffect = SkiaSharp.SKPathEffect;
         {
             get => gridDashPathEffect != null;
         }
-        
+
         /// <summary>
-         ///  Enables the axis line to be drawn in dashed mode, e.g.like this
-         /// "- - - - - -". THIS ONLY WORKS IF HARDWARE-ACCELERATION IS TURNED OFF.
-         /// Keep in mind that hardware acceleration boosts performance.
-         /// </summary>
+        ///  Enables the axis line to be drawn in dashed mode, e.g.like this
+        /// "- - - - - -". THIS ONLY WORKS IF HARDWARE-ACCELERATION IS TURNED OFF.
+        /// Keep in mind that hardware acceleration boosts performance.
+        /// </summary>
         public DashPathEffect AxisLineDashedLine
         {
             get => axisLineDashPathEffect;
@@ -279,7 +279,7 @@ using DashPathEffect = SkiaSharp.SKPathEffect;
             get => axisLineWidth;
             set
             {
-#if __ANDROID__
+#if __ANDROID__ || NATIVE
                 axisLineWidth = value.DpToPixel();
 #else
                 axisLineWidth = value;
@@ -299,7 +299,7 @@ using DashPathEffect = SkiaSharp.SKPathEffect;
             get => axisLineWidth;
             set
             {
-#if __ANDROID__
+#if __ANDROID__ && !SKIASHARP
                 gridLineWidth = value.DpToPixel();
 #else
                 gridLineWidth = value;
@@ -494,7 +494,7 @@ using DashPathEffect = SkiaSharp.SKPathEffect;
             {
                 CustomAxisMax = true;
                 axisMaximum = value;
-                AxisRange = MathF.Abs(value - axisMinimum);
+                AxisRange = Math.Abs(value - axisMinimum);
             }
         }
 
@@ -505,7 +505,7 @@ using DashPathEffect = SkiaSharp.SKPathEffect;
             {
                 CustomAxisMin = true;
                 axisMinimum = value;
-                AxisRange = MathF.Abs(axisMaximum - value);
+                AxisRange = Math.Abs(axisMaximum - value);
             }
         }
 
@@ -558,7 +558,7 @@ using DashPathEffect = SkiaSharp.SKPathEffect;
             float max = CustomAxisMax ? axisMaximum : (dataMax + spaceMax);
 
             // temporary range (before calculations)
-            float range = MathF.Abs(max - min);
+            float range = Math.Abs(max - min);
 
             // in case all values are equal
             if (range == 0f)
@@ -571,7 +571,7 @@ using DashPathEffect = SkiaSharp.SKPathEffect;
             axisMaximum = max;
 
             // actual range
-            AxisRange = MathF.Abs(max - min);
+            AxisRange = Math.Abs(max - min);
         }
 
         /**

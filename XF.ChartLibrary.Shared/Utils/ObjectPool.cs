@@ -3,8 +3,14 @@ using System.Collections.Generic;
 
 namespace XF.ChartLibrary.Utils
 {
+    public static class ObjectPool
+    {
+        public const int NoOwner = -1;
+    }
+
     public class ObjectPool<T> where T : IPoolable
     {
+
         private static volatile int ids = 0;
 
         private int poolId;
@@ -98,7 +104,7 @@ namespace XF.ChartLibrary.Utils
             }
 
             T result = (T)objects[objectsPointer];
-            result.CurrentOwnerId = IPoolable.NoOwner;
+            result.CurrentOwnerId = ObjectPool.NoOwner;
             objectsPointer--;
 
             return result;
@@ -111,7 +117,7 @@ namespace XF.ChartLibrary.Utils
         /// <param name="obj">An object of type T to recycle</param>
         public void Recycle(T obj)
         {
-            if (obj.CurrentOwnerId != IPoolable.NoOwner)
+            if (obj.CurrentOwnerId != ObjectPool.NoOwner)
             {
                 if (obj.CurrentOwnerId == poolId)
                 {
@@ -153,7 +159,7 @@ namespace XF.ChartLibrary.Utils
             for (int i = 0; i < objectsListSize; i++)
             {
                 T obj = objects[i];
-                if (obj.CurrentOwnerId != IPoolable.NoOwner)
+                if (obj.CurrentOwnerId != ObjectPool.NoOwner)
                 {
                     if (obj.CurrentOwnerId == poolId)
                     {
@@ -183,7 +189,6 @@ namespace XF.ChartLibrary.Utils
 
     public interface IPoolable
     {
-        public const int NoOwner = -1;
         int CurrentOwnerId { get; set; }
         IPoolable Instantiate();
     }

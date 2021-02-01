@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using XF.ChartLibrary.Components;
+﻿using XF.ChartLibrary.Components;
 using XF.ChartLibrary.Utils;
 
 namespace XF.ChartLibrary.Renderer
@@ -12,6 +9,7 @@ namespace XF.ChartLibrary.Renderer
 
         public XAxisRenderer(ViewPortHandler viewPortHandler, XAxis axis, Transformer trans) : base(viewPortHandler, axis, trans)
         {
+            XAxis = axis;
         }
 
         public override void ComputeAxis(float min, float max, bool inverted)

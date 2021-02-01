@@ -1,7 +1,12 @@
 ﻿namespace XF.ChartLibrary.Components
 {
     using System;
-#if __IOS__ || __TVOS
+
+#if NETSTANDARD || SKIASHARP
+    using Color = SkiaSharp.SKColor;
+    using Colors = SkiaSharp.SKColors;
+    using Paint = SkiaSharp.SKPaint;
+#elif __IOS__ || __TVOS
     using UIKit;
     using Color = UIKit.UIColor;
     using Colors = UIKit.UIColor;
@@ -9,10 +14,6 @@
     using Color = Android.Graphics.Color;
     using Colors = Android.Graphics.Color;
     using Paint = Android.Graphics.Paint;
-#elif NETSTANDARD
-    using Color = SkiaSharp.SKColor;
-    using Colors = SkiaSharp.SKColors;
-    using Paint = SkiaSharp.SKPaint;
 #endif
 
 
@@ -79,7 +80,7 @@
             get => zeroLineWidth;
             set
             {
-#if __ANDROID__
+#if __ANDROID__ && !SKIASHARP
                 zeroLineWidth = value.DpToPixel();
 #else
                 zeroLineWidth = value;
@@ -148,15 +149,37 @@
             yOffset = 0f;
         }
 
+        /// <summary>
+        /// This is for normal(not horizontal) charts horizontal spacing.
+        /// </summary>
+#if __ANDROID__ || NETSTANDARD || SKIASHARP
+        public float GetRequiredWidthSpace(Paint p)
+        {
+            p.TextSize = TextSize;
 
-        /**
-         * This is for normal (not horizontal) charts horizontal spacing.
-         *
-         * @param p
-         * @return
-         */
-#if __ANDROID__ || NETSTANDARD
-        public Utils.ChartSize GetRequiredWidthSpace(Paint p)
+            string label = GetLongestLabel();
+            var size = p.MeasureWidth(label);
+            float width = (float)size + XOffset * 2f;
+            float minWidth = MinWidth;
+            float maxWidth = MaxWidth;
+
+#if __ANDROID__ && !SKIASHARP
+            if (minWidth > 0.0f)
+                minWidth = minWidth.DpToPixel();
+            if (maxWidth > 0.0f && maxWidth != float.MaxValue)
+
+                maxWidth = maxWidth.DpToPixel();
+#endif
+
+            width = Math.Max(minWidth, Math.Min(width, maxWidth > 0.0 ? maxWidth : width));
+
+            return width;
+        }
+
+        /// <summary>
+        /// This is for normal(not horizontal) charts horizontal spacing.
+        /// </summary>
+        public Utils.ChartSize GetRequiredSpace(Paint p)
         {
             p.TextSize = TextSize;
 
@@ -167,7 +190,7 @@
             float minWidth = MinWidth;
             float maxWidth = MaxWidth;
 
-#if __ANDROID__
+#if __ANDROID__ && !SKIASHARP
             if (minWidth > 0.0f)
                 minWidth = minWidth.DpToPixel();
             if (maxWidth > 0.0f && maxWidth != float.MaxValue)
@@ -175,10 +198,11 @@
                 maxWidth = maxWidth.DpToPixel();
 #endif
 
-            width = MathF.Max(minWidth, Math.Min(width, maxWidth > 0.0 ? maxWidth : width));
+            width = Math.Max(minWidth, Math.Min(width, maxWidth > 0.0 ? maxWidth : width));
 
             return new Utils.ChartSize(width, height);
         }
+
 #elif __IOS__ || __TVOS__
         public Utils.ChartSize RequiredSize()
         {
@@ -238,7 +262,7 @@
                 }
             }
 
-            float range = MathF.Abs(max - min);
+            float range = Math.Abs(max - min);
 
             // in case all values are equal
             if (range == 0f)
@@ -248,13 +272,13 @@
             }
 
             // recalculate
-            range = MathF.Abs(max - min);
+            range = Math.Abs(max - min);
 
             // calc extra spacing
             AxisMinimum = CustomAxisMin ? AxisMinimum : min - (range / 100f) * SpacePercentBottom;
             AxisMaximum = CustomAxisMax ? AxisMaximum : max + (range / 100f) * SpacePercentTop;
 
-            AxisRange = MathF.Abs(AxisMinimum - AxisMaximum);
+            AxisRange = Math.Abs(AxisMinimum - AxisMaximum);
         }
     }
 }

@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-#if __IOS__ || __TVOS__
+﻿
+#if NETSTANDARD || SKIASHARP
+using Canvas = SkiaSharp.SKCanvas;
+#elif __IOS__ || __TVOS__
 using Canvas = CoreGraphics.CGContext;
 #elif __ANDROID__
 using Canvas = Android.Graphics.Canvas;
-#elif NETSTANDARD
-using Canvas = SkiaSharp.SKCanvas;
 #endif
 
 namespace XF.ChartLibrary.Renderer

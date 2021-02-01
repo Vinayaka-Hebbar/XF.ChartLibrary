@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using XF.ChartLibrary.Interfaces;
 using XF.ChartLibrary.Interfaces.DataSets;
 
-#if __IOS__ || __TVOS
+#if NETSTANDARD || SKIASHARP
+using Color = SkiaSharp.SKColor;
+using Font = SkiaSharp.SKTypeface;
+#elif __IOS__ || __TVOS
 using Color = UIKit.UIColor;
 using Font = UIKit.UIFont;
 #elif __ANDROID__
 using Color = Android.Graphics.Color;
 using Font = Android.Graphics.Typeface;
-#elif NETSTANDARD
-using Color = SkiaSharp.SKColor;
-using Font = SkiaSharp.SKTypeface;
 #endif
 
 namespace XF.ChartLibrary.Data

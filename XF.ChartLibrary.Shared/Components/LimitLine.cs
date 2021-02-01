@@ -1,13 +1,13 @@
 ﻿namespace XF.ChartLibrary.Components
 {
-#if __ANDROID__
-    using DashPathEffect = Android.Graphics.DashPathEffect;
-    using Color = Android.Graphics.Color;
-    using PaintStyle = Android.Graphics.Paint.Style;
-#elif NETSTANDARD
+#if NETSTANDARD || SKIASHARP
     using DashPathEffect = SkiaSharp.SKPathEffect;
     using PaintStyle = SkiaSharp.SKPaintStyle;
     using Color = SkiaSharp.SKColor;
+#elif __ANDROID__
+    using DashPathEffect = Android.Graphics.DashPathEffect;
+    using Color = Android.Graphics.Color;
+    using PaintStyle = Android.Graphics.Paint.Style;
 #elif __IOS__ || __TVOS__
     using DashPathEffect = XF.ChartLibrary.Utils.DashPathEffect;
     using Color = UIKit.UIColor;
@@ -23,10 +23,10 @@
         /** the color of the limit line */
         private Color _lineColor = ChartUtil.FromRGB(237, 91, 91);
 
-#if __ANDROID__ 
-        private PaintStyle _textStyle = PaintStyle.FillAndStroke;
-#elif NETSTANDARD
+#if NETSTANDARD || SKIASHARP
         private PaintStyle _textStyle = PaintStyle.StrokeAndFill;
+#elif __ANDROID__
+        private PaintStyle _textStyle = PaintStyle.FillAndStroke;
 #endif
 
         /** label string that is drawn next to the limit line */
@@ -71,7 +71,7 @@
                     value = 0.2f;
                 if (value > 12.0f)
                     value = 12.0f;
-#if __ANDROID__
+#if __ANDROID__ || SKIASHARP
                 _lineWidth = value.DpToPixel();
 #else
                 _lineWidth = value;
@@ -92,7 +92,7 @@
         }
 
 
-#if __ANDROID__ || NETSTANDARD
+#if __ANDROID__ || NETSTANDARD || SKIASHARP
         public PaintStyle TextStyle
         {
             get => _textStyle;

@@ -3,7 +3,12 @@ using XF.ChartLibrary.Data;
 
 namespace XF.ChartLibrary.Interfaces.DataProvider
 {
-    public interface ILineChartDataProvider : IBarLineScatterCandleBubbleDataProvider
+    public interface ILineChartDataProvider : IBarLineScatterCandleBubbleDataProvider, ILineChartProvider
+    {
+        
+    }
+
+    public interface ILineChartProvider
     {
         LineData Data { get; }
 

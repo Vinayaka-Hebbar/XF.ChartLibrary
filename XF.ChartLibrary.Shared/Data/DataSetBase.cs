@@ -1,21 +1,23 @@
 ﻿using System.Collections.Generic;
-using System.Drawing;
 using XF.ChartLibrary.Components;
 using XF.ChartLibrary.Formatter;
 using XF.ChartLibrary.Interfaces.DataSets;
 
-#if __IOS__ || __TVOS
-using Color = UIKit.UIColor;
-using Font = UIKit.UIFont;
-    using DashPathEffect = XF.ChartLibrary.Utils.DashPathEffect;
-#elif __ANDROID__
-using Color = Android.Graphics.Color;
-using Font = Android.Graphics.Typeface;
-using DashPathEffect = Android.Graphics.DashPathEffect;
-#elif NETSTANDARD
+#if NETSTANDARD || SKIASHARP
 using Color = SkiaSharp.SKColor;
+using Point = SkiaSharp.SKPoint;
 using Font = SkiaSharp.SKTypeface;
 using DashPathEffect = SkiaSharp.SKPathEffect;
+#elif __IOS__ || __TVOS
+using Color = UIKit.UIColor;
+using Font = UIKit.UIFont;
+using Point = CoreGraphics.CGPoint;
+using DashPathEffect = XF.ChartLibrary.Utils.DashPathEffect;
+#elif __ANDROID__
+using Color = Android.Graphics.Color;
+using Point = Android.Graphics.PointF;
+using Font = Android.Graphics.Typeface;
+using DashPathEffect = Android.Graphics.DashPathEffect;
 #endif
 
 namespace XF.ChartLibrary.Data
@@ -29,6 +31,7 @@ namespace XF.ChartLibrary.Data
 
     public abstract partial class DataSetBase<TEntry> : IDataSet<TEntry> where TEntry : Entry
     {
+
         private IList<Color> colors;
 
         private IList<Color> valueColors;
@@ -76,7 +79,9 @@ namespace XF.ChartLibrary.Data
             get
             {
                 if (colors == null || colors.Count == 0)
-                    return default;
+                {
+                    return Utils.ColorTemplate.DefaultColor;
+                }
                 return colors[0];
             }
             set
@@ -115,7 +120,9 @@ namespace XF.ChartLibrary.Data
             get
             {
                 if (valueColors == null || valueColors.Count == 0)
-                    return default;
+                {
+                    return Utils.ColorTemplate.Black;
+                }
                 return valueColors[0];
             }
             set
@@ -133,11 +140,12 @@ namespace XF.ChartLibrary.Data
             }
         }
 
-        public Font ValueFont { get; set; }
 
 #if !__IOS__ || !__TVOS__
 
-        private float valueTextSize;
+        public Font ValueTypeface { get; set; }
+
+        private float valueTextSize = 17f;
 
         protected DataSetBase(string label)
         {
@@ -147,8 +155,17 @@ namespace XF.ChartLibrary.Data
         public float ValueTextSize
         {
             get => valueTextSize;
-            set => valueTextSize = value;
+            set
+            {
+#if __ANDROID__ || SKIASHARP
+                valueTextSize = value.DpToPixel();
+#else
+                valueTextSize = value;
+#endif
+            }
         }
+#else
+        public Font ValueFont {get;set;}
 #endif
         public float ValueLabelAngle { get; set; }
 
@@ -166,7 +183,7 @@ namespace XF.ChartLibrary.Data
 
         public Point IconsOffset { get; set; }
 
-        public bool IsVisible { get; set; }
+        public bool IsVisible { get; set; } = true;
 
         public abstract bool AddEntry(TEntry e);
 
@@ -237,7 +254,7 @@ namespace XF.ChartLibrary.Data
         public Color ValueTextColorAt(int index)
         {
             if (valueColors == null)
-                return default;
+                return Utils.ColorTemplate.DefaultValueTextColor;
             return valueColors[index % valueColors.Count];
         }
 
@@ -254,5 +271,6 @@ namespace XF.ChartLibrary.Data
         }
 
         public abstract bool Contains(TEntry e);
+
     }
 }

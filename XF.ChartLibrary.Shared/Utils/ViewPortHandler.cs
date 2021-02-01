@@ -1,13 +1,14 @@
 ﻿using System;
-#if __IOS__ || __TVOS__
+
+#if NETSTANDARD || SKIASHARP
+using Point = SkiaSharp.SKPoint;
+using Matrix = SkiaSharp.SKMatrix;
+#elif __IOS__ || __TVOS__
 using Point = CoreGraphics.CGPoint;
 using Matrix = CoreGraphics.CGAffineTransform;
 #elif __ANDROID__
 using Point = Android.Graphics.PointF;
 using Matrix = Android.Graphics.Matrix;
-#elif NETSTANDARD
-using Point = SkiaSharp.SKPoint;
-using Matrix = SkiaSharp.SKMatrix;
 #endif
 namespace XF.ChartLibrary.Utils
 {
@@ -43,7 +44,6 @@ namespace XF.ChartLibrary.Utils
 
         public void SetChartDimens(float width, float height)
         {
-
             float offsetLeft = this.OffsetLeft;
             float offsetTop = this.OffsetTop;
             float offsetRight = this.OffsetRight;
@@ -105,7 +105,7 @@ namespace XF.ChartLibrary.Utils
 
         public float ChartWidth => chartWidth;
 
-        public float SmallestContentExtension => MathF.Min((float)contentRect.Width, (float)contentRect.Height);
+        public float SmallestContentExtension => Math.Min((float)contentRect.Width, (float)contentRect.Height);
 
         public bool IsInBoundsX(float x)
         {
@@ -168,7 +168,6 @@ namespace XF.ChartLibrary.Utils
         /// (horizontal).
         /// </summary>
         public bool IsFullyZoomedOutX => !(scaleX > minScaleX || minScaleX > 1f);
-
 
         public Matrix ZoomIn(float x, float y)
         {

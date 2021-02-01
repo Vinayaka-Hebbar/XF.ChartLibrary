@@ -1,13 +1,13 @@
 ﻿
-#if __IOS__ || __TVOS
+#if NETSTANDARD || SKIASHARP
+using Point = SkiaSharp.SKPoint;
+using Alignment = SkiaSharp.SKTextAlign;
+#elif __IOS__ || __TVOS
 using Alignment = UIKit.UITextAlignment;
 using Point = CoreGraphics.CGPoint;
 #elif __ANDROID__
 using Point = Android.Graphics.PointF;
 using Alignment = Android.Graphics.Paint.Align;
-#elif NETSTANDARD
-using Point = SkiaSharp.SKPoint;
-using Alignment = SkiaSharp.SKTextAlign;
 #endif
 
 namespace XF.ChartLibrary.Components
@@ -19,7 +19,7 @@ namespace XF.ChartLibrary.Components
         /// <summary>
         /// the text used in the description
         /// </summary>
-        public string Text { get; set; }
+        public string Text { get; set; } = string.Empty;
 
         /// <summary>
         /// the custom position of the description text

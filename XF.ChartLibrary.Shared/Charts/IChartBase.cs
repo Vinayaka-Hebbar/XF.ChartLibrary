@@ -11,14 +11,15 @@ namespace XF.ChartLibrary.Charts
 
         void Clear();
         void NotifyDataSetChanged();
-
-#if __ANDROID__
+#if SKIASHARP && !NATIVE
+        void InvalidateSurface();
+#elif __ANDROID__
         void Invalidate();
         bool Post(Java.Lang.IRunnable r);
 #elif __IOS__ || __TVOS__
         void SetNeedsDisplay();
-#elif NETSTANDARD
-        void InvalidateSurface();
+#elif WPF
+        void InvalidateVisual();
 #endif
     }
 }

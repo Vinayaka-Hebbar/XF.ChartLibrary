@@ -1,0 +1,10 @@
+<Project Sdk="MSBuild.Sdk.Extras/3.0.22">
+
+  <PropertyGroup>
+    <TargetFramework>xamarin.ios10</TargetFramework>
+    <LangVersion>8</LangVersion>
+  </PropertyGroup>
+
+  <Import Project="..\XF.ChartLibrary.Shared\XF.ChartLibrary.Shared.projitems" Label="Shared" />
+
+</Project>

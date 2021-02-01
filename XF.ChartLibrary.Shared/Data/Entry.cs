@@ -37,7 +37,11 @@ namespace XF.ChartLibrary.Data
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(X, Y);
+            int hashCode = 458382817;
+            hashCode = hashCode * -1521134295 + base.GetHashCode();
+            hashCode = hashCode * -1521134295 + Y.GetHashCode();
+            hashCode = hashCode * -1521134295 + X.GetHashCode();
+            return hashCode;
         }
 
         public override string ToString()

@@ -1,10 +1,11 @@
 ﻿using XF.ChartLibrary.Data;
 
-#if __ANDROID__
-using DashPathEffect = Android.Graphics.DashPathEffect;
-#elif NETSTANDARD
+#if NETSTANDARD || SKIASHARP
 using DashPathEffect = SkiaSharp.SKPathEffect;
+#elif __ANDROID__
+using DashPathEffect = Android.Graphics.DashPathEffect;
 #endif
+
 namespace XF.ChartLibrary.Interfaces.DataSets
 {
     public interface ILineScatterCandleRadarDataSet<TEntry> : IBarLineScatterCandleBubbleDataSet<TEntry> where TEntry : Entry
@@ -15,7 +16,7 @@ namespace XF.ChartLibrary.Interfaces.DataSets
     {
         bool DrawHorizontalHighlightIndicatorEnabled { get; }
         bool DrawVerticalHighlightIndicatorEnabled { get; }
-#if __ANDROID__ || NETSTANDARD
+#if __ANDROID__ || NETSTANDARD || SKIASHARP
         float HighlightLineWidth { get; }
         DashPathEffect DashPathEffectHighlight { get; }
 #endif

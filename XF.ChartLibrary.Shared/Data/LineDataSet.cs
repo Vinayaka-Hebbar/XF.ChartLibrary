@@ -3,7 +3,11 @@ using System.Collections.Generic;
 using System.Text;
 using XF.ChartLibrary.Formatter;
 
-#if __IOS__ || __TVOS
+#if NETSTANDARD || SKIASHARP
+using Color = SkiaSharp.SKColor;
+using DashPathEffect = SkiaSharp.SKPathEffect;
+using ColorList = SkiaSharp.SKColors;
+#elif __IOS__ || __TVOS
     using Color = UIKit.UIColor;
     using ColorList = UIKit.UIColor;
     using DashPathEffect = XF.ChartLibrary.Utils.DashPathEffect;
@@ -11,10 +15,6 @@ using XF.ChartLibrary.Formatter;
     using Color = Android.Graphics.Color;
     using ColorList = Android.Graphics.Color;
     using DashPathEffect = Android.Graphics.DashPathEffect;
-#elif NETSTANDARD
-using Color = SkiaSharp.SKColor;
-using DashPathEffect = SkiaSharp.SKPathEffect;
-using ColorList = SkiaSharp.SKColors;
 #endif
 
 namespace XF.ChartLibrary.Data
@@ -30,6 +30,10 @@ namespace XF.ChartLibrary.Data
         private bool drawCircleHole = true;
 
         private DashPathEffect dashPathEffect;
+
+        private float circleRadius = 8f;
+
+        private float circleHoleRadius = 4f;
 
         /// <summary>
         /// Drawing mode for this line dataset
@@ -63,13 +67,33 @@ namespace XF.ChartLibrary.Data
         /// <summary>
         /// the radius of the circle-shaped value indicators
         /// </summary>
-        public float CircleRadius { get; set; } = 8f;
-
+        public float CircleRadius
+        {
+            get => circleRadius;
+            set
+            {
+#if __ANDROID__ || SKIASHARP
+                circleRadius = value.DpToPixel();
+#else
+                circleRadius = value; 
+#endif
+            }
+        }
         /// <summary>
         ///  the hole radius of the circle-shaped value indicators
         /// </summary>
-        public float CircleHoleRadius { get; set; } = 4f;
-
+        public float CircleHoleRadius
+        {
+            get => circleHoleRadius;
+            set
+            {
+#if __ANDROID__ || SKIASHARP
+                circleHoleRadius = value.DpToPixel();
+#else
+                circleHoleRadius = value; 
+#endif
+            }
+        }
         /// <summary>
         /// sets the intensity of the cubic lines
         /// </summary>

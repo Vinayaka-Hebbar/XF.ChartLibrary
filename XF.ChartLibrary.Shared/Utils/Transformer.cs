@@ -1,12 +1,15 @@
-﻿#if __IOS__ || __TVOS__
+﻿
+#if NETSTANDARD || SKIASHARP
+using System;
+using XF.ChartLibrary.Interfaces.DataSets;
+using Matrix = SkiaSharp.SKMatrix;
+using Point = SkiaSharp.SKPoint;
+#elif __IOS__ || __TVOS__
 using Point = CoreGraphics.CGPoint;
 using Matrix = CoreGraphics.CGAffineTransform;
 #elif __ANDROID__
 using Point = Android.Graphics.PointF;
 using Matrix = Android.Graphics.Matrix;
-#elif NETSTANDARD
-using Matrix = SkiaSharp.SKMatrix;
-using Point = SkiaSharp.SKPoint;
 #endif
 namespace XF.ChartLibrary.Utils
 {
@@ -36,18 +39,12 @@ namespace XF.ChartLibrary.Utils
             this.ViewPortHandler = viewPortHandler;
         }
 
-        /**
-         * Prepares the matrix that transforms values to pixels. Calculates the
-         * scale factors from the charts size and offsets.
-         *
-         * @param xChartMin
-         * @param deltaX
-         * @param deltaY
-         * @param yChartMin
-         */
+        /// <summary>
+        ///  Prepares the matrix that transforms values to pixels. Calculates the
+        ///scale factors from the charts size and offsets.
+        /// </summary>
         public void PrepareMatrixValuePx(float xChartMin, float deltaX, float deltaY, float yChartMin)
         {
-
             float scaleX = (float)((ViewPortHandler.ContentWidth) / deltaX);
             float scaleY = (float)((ViewPortHandler.ContentHeight) / deltaY);
 
@@ -61,22 +58,21 @@ namespace XF.ChartLibrary.Utils
             }
 
             // setup all matrices
-            MatrixValueToPx = MatrixValueToPx.PostTranslateScale(scaleX ,scaleY, - xChartMin, -yChartMin);
+            MatrixValueToPx = MatrixValueToPx.PostTranslateScale(scaleX, -scaleY, -xChartMin, -yChartMin);
         }
 
-        /**
-         * Prepares the matrix that contains all offsets.
-         *
-         * @param inverted
-         */
+        /// <summary>
+        /// Prepares the matrix that contains all offsets.
+        /// </summary>
         public void PrepareMatrixOffset(bool inverted)
         {
+            var offset = MatrixOffset.Reset();
             if (!inverted)
-                MatrixOffset = MatrixUtil.PostTranslate(MatrixOffset, ViewPortHandler.OffsetLeft,
+                MatrixOffset = MatrixUtil.PostTranslate(offset, ViewPortHandler.OffsetLeft,
                         ViewPortHandler.ChartHeight - ViewPortHandler.OffsetBottom);
             else
             {
-                MatrixOffset = MatrixOffset.PostTranslateScale(1.0f, 1.0f, ViewPortHandler.OffsetLeft, -ViewPortHandler.OffsetTop);
+                MatrixOffset = offset.PostTranslateScale(1.0f, 1.0f, ViewPortHandler.OffsetLeft, -ViewPortHandler.OffsetTop);
             }
         }
     }

@@ -1,16 +1,6 @@
 ﻿using System;
 using XF.ChartLibrary.Utils;
 using XF.ChartLibrary.Charts;
-#if __IOS__ || __TVOS__
-using Point = CoreGraphics.CGPoint;
-using Canvas = CoreGraphics.CGContext;
-#elif __ANDROID__
-using Point = Android.Graphics.PointF;
-using Canvas = Android.Graphics.Canvas;
-#elif NETSTANDARD
-using Point = SkiaSharp.SKPoint;
-using Canvas = SkiaSharp.SKCanvas;
-#endif
 
 namespace XF.ChartLibrary.Jobs
 {
@@ -43,17 +33,13 @@ namespace XF.ChartLibrary.Jobs
             YValue = yValue;
             Transformer = transformer;
             View = view;
-            ownerId = IPoolable.NoOwner;
+            ownerId = ObjectPool.NoOwner;
             Initialize();
         }
 
         protected virtual void Initialize()
         {
         }
-
-#if __IOS__ || __TVOS__
-        public void DoJob() => Run();
-#endif
 
         public virtual void Run()
         {

@@ -13,15 +13,15 @@ namespace XF.ChartLibrary.Components
 
     public abstract partial class ComponentBase : IComponent
     {
-        protected float xOffset = 5.0f;
-        protected float yOffset = 5.0f;
+        protected float xOffset;
+        protected float yOffset;
 
         public float XOffset
         {
             get => xOffset;
             set
             {
-#if __ANDROID__
+#if __ANDROID__ || SKIASHARP
                 xOffset = value.DpToPixel();
 #else
                 xOffset = value;
@@ -34,7 +34,7 @@ namespace XF.ChartLibrary.Components
             get => yOffset;
             set
             {
-#if __ANDROID__
+#if __ANDROID__ || SKIASHARP
                 yOffset = value.DpToPixel();
 #else
                 yOffset = value;

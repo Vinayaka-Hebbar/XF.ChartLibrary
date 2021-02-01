@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 
-
-#if __ANDROID__
-using DashPathEffect = Android.Graphics.DashPathEffect;
-#elif NETSTANDARD
+#if NETSTANDARD || SKIASHARP
 using DashPathEffect = SkiaSharp.SKPathEffect;
+#elif __ANDROID__
+using DashPathEffect = Android.Graphics.DashPathEffect;
 #endif
 
 namespace XF.ChartLibrary.Data
@@ -44,7 +43,7 @@ namespace XF.ChartLibrary.Data
             }
         }
 
-#if __ANDROID__ || NETSTANDARD
+#if __ANDROID__ || NETSTANDARD || SKIASHARP
         public float HighlightLineWidth { get; }
         public DashPathEffect DashPathEffectHighlight { get; }
 #endif

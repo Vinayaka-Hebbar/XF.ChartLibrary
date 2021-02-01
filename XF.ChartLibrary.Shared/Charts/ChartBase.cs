@@ -11,15 +11,15 @@ using XF.ChartLibrary.Interfaces.DataSets;
 using XF.ChartLibrary.Interfaces.DataProvider;
 using XF.ChartLibrary.Renderer;
 
-#if __IOS__ || __TVOS__
+#if NETSTANDARD || SKIASHARP
+using Point = SkiaSharp.SKPoint;
+using Canvas = SkiaSharp.SKCanvas;
+#elif __IOS__ || __TVOS__
 using Point = CoreGraphics.CGPoint;
 using Canvas = CoreGraphics.CGContext;
 #elif __ANDROID__
 using Point = Android.Graphics.PointF;
 using Canvas = Android.Graphics.Canvas;
-#elif NETSTANDARD
-using Point = SkiaSharp.SKPoint;
-using Canvas = SkiaSharp.SKCanvas;
 #endif
 
 
@@ -33,19 +33,15 @@ namespace XF.ChartLibrary.Charts
         private Animator animator;
         private Description description = new Description();
 
-        private Legend legend;
+        protected Legend Legend;
 
-        protected XAxis xAxis;
+        protected LegendRenderer LegendRenderer;
 
-        protected LegendRenderer legendRenderer;
-
-        protected DataRenderer renderer;
+        protected DataRenderer Renderer;
 
         private Highlight.Highlight lastHighlighted;
 
         private IMarker marker;
-
-        protected TData data;
 
         private Listener.IChartSelectionListener selectionListener;
 
@@ -61,7 +57,7 @@ namespace XF.ChartLibrary.Charts
             set => highlighter = value;
         }
 
-        private IList<Highlight.Highlight> indicesToHighlight;
+        protected IList<Highlight.Highlight> indicesToHighlight;
 
         public IList<Highlight.Highlight> IndicesToHighlight
         {
@@ -72,7 +68,17 @@ namespace XF.ChartLibrary.Charts
             }
         }
 
+        public Animator Animator => animator;
+
         public bool IsDrawMarkersEnabled { get; set; }
+
+        public float ExtraTopOffset { get; set; }
+
+        public float ExtraLeftOffset { get; set; }
+
+        public float ExtraRightOffset { get; set; }
+
+        public float ExtraBottomOffset { get; set; }
 
         /// <summary>
         /// default value-formatter, number of digits depends on provided chart-data
@@ -81,26 +87,12 @@ namespace XF.ChartLibrary.Charts
 
         private float maxHighlightDistance;
 
-        public TData Data
-        {
-            get => data;
-            set
-            {
-                data = value;
-                offsetsCalculated = false;
-                if (value == null)
-                    return;
-                SetUpDefaultFormatter(value.YMin, value.YMax);
-                foreach (TDataSet set in value.DataSets)
-                {
-                    if (set.NeedsFormatter || set.ValueFormatter == DefaultValueFormatter)
-                        set.ValueFormatter = DefaultValueFormatter;
-                }
-                NotifyDataSetChanged();
-            }
-        }
 
-
+        /// <summary>
+        ///  Returns true if there are values to highlight, false if there are no
+        /// values to highlight.Checks if the highlight array is null, has a length
+        /// of zero or if the first object is null.
+        /// </summary>
         public bool ValuesToHighlight
         {
             get
@@ -110,13 +102,13 @@ namespace XF.ChartLibrary.Charts
             }
         }
 
-        public string NoDataText { get; set; }
+        public string NoDataText { get; set; } = "No Data";
 
         public abstract float YChartMax { get; }
 
         public abstract float YChartMin { get; }
 
-        public abstract int MaxVisibleCount { get; }
+        public abstract int MaxVisibleCount { get; set; }
 
         public float MaxHighlightDistance
         {
@@ -124,18 +116,17 @@ namespace XF.ChartLibrary.Charts
             set => maxHighlightDistance = value;
         }
 
-        IChartData<IDataSet> IChartDataProvider.Data => (IChartData<IDataSet>)data;
+        IChartData IChartDataProvider.Data => (IChartData)Data;
 
         public virtual void Initialize()
         {
             maxHighlightDistance = 500f;
-            xAxis = new XAxis();
-            legend = new Legend();
+            Legend = new Legend();
             animator = new Animator()
             {
                 Delegate = this
             };
-            legendRenderer = new LegendRenderer(ViewPortHandler, legend);
+            LegendRenderer = new LegendRenderer(ViewPortHandler, Legend);
 
         }
 
@@ -144,14 +135,15 @@ namespace XF.ChartLibrary.Charts
         {
             // check if a custom formatter is set or not
             float reference;
+            var data = Data;
             if (data == null || data.DataSets.Count < 2)
             {
 
-                reference = MathF.Max(MathF.Abs(min), MathF.Abs(max));
+                reference = Math.Max(Math.Abs(min), Math.Abs(max));
             }
             else
             {
-                reference = MathF.Abs(max - min);
+                reference = Math.Abs(max - min);
             }
 
             int digits = reference.Digits();
@@ -166,7 +158,7 @@ namespace XF.ChartLibrary.Charts
         /// </summary>
         public void Clear()
         {
-            data = default;
+            Data = default;
             offsetsCalculated = false;
             indicesToHighlight = null;
             lastHighlighted = null;
@@ -179,11 +171,16 @@ namespace XF.ChartLibrary.Charts
         /// </summary>
         public void ClearValues()
         {
-            data?.ClearValues();
+            Data?.ClearValues();
             this.InvalidateView();
         }
 
         protected abstract void CalculateOffsets();
+
+        /// <summary>
+        /// Calculates the y-min and y-max value and the y-delta and x-delta value
+        /// </summary>
+        protected abstract void CalcMinMax();
 
         /// <summary>
         /// Lets the chart know its underlying data has changed and performs all
@@ -202,7 +199,7 @@ namespace XF.ChartLibrary.Charts
             // if there is no marker view or drawing marker is disabled
             if (marker == null || !IsDrawMarkersEnabled || !ValuesToHighlight)
                 return;
-
+            var data = Data;
             for (int i = 0; i < indicesToHighlight.Count; i++)
             {
 
@@ -242,7 +239,7 @@ namespace XF.ChartLibrary.Charts
             Highlight.Highlight h = GetHighlightByTouchPoint(x, y);
             if (h != null)
             {
-                return data[h.DataSetIndex];
+                return Data[h.DataSetIndex];
             }
             return null;
         }
@@ -254,7 +251,7 @@ namespace XF.ChartLibrary.Charts
         /// </summary>
         public Highlight.Highlight GetHighlightByTouchPoint(float x, float y)
         {
-            if (data == null)
+            if (Data == null)
                 return default;
             return highlighter.GetHighlight(x, y);
         }
@@ -276,7 +273,7 @@ namespace XF.ChartLibrary.Charts
                 indicesToHighlight = null;
             else
             {
-                e = data.GetEntryForHighlight(high);
+                e = Data.GetEntryForHighlight(high);
                 if (e == null)
                 {
                     indicesToHighlight = null;

@@ -2,7 +2,7 @@
 
 namespace XF.ChartLibrary.Data
 {
-    public class LineData : BarLineScatterCandleBubbleData<LineDataSet, Entry>
+    public class LineData : BarLineScatterCandleBubbleData<LineDataSet, Entry>, Interfaces.IChartData<LineDataSet>
     {
         public LineData()
         {

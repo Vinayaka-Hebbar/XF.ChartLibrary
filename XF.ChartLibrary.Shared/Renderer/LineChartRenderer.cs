@@ -4,13 +4,17 @@ using XF.ChartLibrary.Utils;
 
 namespace XF.ChartLibrary.Renderer
 {
-    public abstract partial class LineChartRenderer : LineRadarRenderer
+    public partial class LineChartRenderer : LineRadarRenderer
     {
         protected readonly ILineChartDataProvider Chart;
 
-        protected LineChartRenderer(ILineChartDataProvider chart, Animator animator, ViewPortHandler viewPortHandler) : base(animator, viewPortHandler)
+        public LineChartRenderer(ILineChartDataProvider chart, Animator animator, ViewPortHandler viewPortHandler) : base(animator, viewPortHandler)
         {
             Chart = chart;
+        }
+
+        public override void InitBuffers()
+        {
         }
     }
 }

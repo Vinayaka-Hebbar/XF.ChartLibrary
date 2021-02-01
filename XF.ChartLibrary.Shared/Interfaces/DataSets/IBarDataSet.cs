@@ -2,12 +2,13 @@
 using XF.ChartLibrary.Data;
 using XF.ChartLibrary.Utils;
 
-#if __IOS__ || __TVOS
+
+#if NETSTANDARD || SKIASHARP
+using Color = SkiaSharp.SKColor;
+#elif __IOS__ || __TVOS
 using Color = UIKit.UIColor;
 #elif __ANDROID__
     using Color = Android.Graphics.Color;
-#elif NETSTANDARD
-    using Color = SkiaSharp.SKColor;
 #endif
 
 namespace XF.ChartLibrary.Interfaces.DataSets

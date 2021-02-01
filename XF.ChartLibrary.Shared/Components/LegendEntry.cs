@@ -1,14 +1,14 @@
 ﻿namespace XF.ChartLibrary.Components
 {
-#if __IOS__ || __TVOS
+#if NETSTANDARD || SKIASHARP
+    using Color = SkiaSharp.SKColor;
+    using DashPathEffect = SkiaSharp.SKPathEffect;
+#elif __IOS__ || __TVOS
     using Color = UIKit.UIColor;
     using DashPathEffect = XF.ChartLibrary.Utils.DashPathEffect;
 #elif __ANDROID__
     using Color = Android.Graphics.Color;
      using DashPathEffect = Android.Graphics.DashPathEffect;
-#elif NETSTANDARD
-    using Color = SkiaSharp.SKColor;
-    using DashPathEffect = SkiaSharp.SKPathEffect;
 #endif
 
     public class LegendEntry

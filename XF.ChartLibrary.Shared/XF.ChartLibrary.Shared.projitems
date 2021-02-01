@@ -15,6 +15,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Charts\BarLineChartBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Charts\ChartBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Charts\IChartBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Charts\LineChart.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Components\AxisBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Components\ComponentBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Components\Description.cs" />
@@ -82,8 +83,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)Utils\ChartFont.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utils\ChartSize.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utils\ChartUtil.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utils\ColorTemplate.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utils\Extensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utils\Fill.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utils\MathF.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utils\MatrixUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utils\NumberExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utils\ObjectPool.cs" />

@@ -3,18 +3,22 @@ using XF.ChartLibrary.Components;
 using XF.ChartLibrary.Data;
 using XF.ChartLibrary.Formatter;
 
-#if __IOS__ || __TVOS
+#if NETSTANDARD || SKIASHARP
+using Color = SkiaSharp.SKColor;
+using Point = SkiaSharp.SKPoint;
+using Font = SkiaSharp.SKTypeface;
+using DashPathEffect = SkiaSharp.SKPathEffect;
+#elif __IOS__ || __TVOS
 using Color = UIKit.UIColor;
 using Font = UIKit.UIFont;
+using Point = CoreGraphics.CGPoint;
 using DashPathEffect = XF.ChartLibrary.Utils.DashPathEffect;
 #elif __ANDROID__
 using Color = Android.Graphics.Color;
+using Point = Android.Graphics.PointF;
 using Font = Android.Graphics.Typeface;
-     using DashPathEffect = Android.Graphics.DashPathEffect;
-#elif NETSTANDARD
-using Color = SkiaSharp.SKColor;
-using Font = SkiaSharp.SKTypeface;
-using DashPathEffect = SkiaSharp.SKPathEffect;
+using DashPathEffect = Android.Graphics.DashPathEffect;
+
 #endif
 
 
@@ -132,11 +136,17 @@ namespace XF.ChartLibrary.Interfaces.DataSets
         /// - Returns: The color at the specified index that is used for drawing the values inside the chart. Uses modulus internally.
         Color ValueTextColorAt(int index);
 
+
+#if !__IOS__ || !__TVOS__ || SKIASHARP
+
+        /// the font for the value-text labels
+        Font ValueTypeface { get; set; }
+
+        float ValueTextSize { get; set; }
+#else
+
         /// the font for the value-text labels
         Font ValueFont { get; set; }
-
-#if !__IOS__ || !__TVOS__
-        float ValueTextSize { get; set; }
 #endif
 
         /// The rotation angle (in degrees) for value-text labels
@@ -171,7 +181,7 @@ namespace XF.ChartLibrary.Interfaces.DataSets
         /// For all charts except Pie and Radar it will be ordinary (x offset, y offset).
         ///
         /// For Pie and Radar chart it will be (y offset, distance from center offset); so if you want icon to be rendered under value, you should increase X component of CGPoint, and if you want icon to be rendered closet to center, you should decrease height component of CGPoint.
-        System.Drawing.Point IconsOffset { get; set; }
+        Point IconsOffset { get; set; }
 
         ///  Get Set the visibility of this DataSet. If not visible, the DataSet will not be drawn to the chart upon refreshing it.
         bool IsVisible { get; set; }

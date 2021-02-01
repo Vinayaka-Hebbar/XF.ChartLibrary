@@ -53,5 +53,23 @@ namespace XF.ChartLibrary.Interfaces
         Entry GetEntryForHighlight(Highlight.Highlight highlight);
 
         void ClearValues();
+
+        /// <summary>
+        /// Returns the minimum y-value for the specified axis.
+        /// </summary>
+        float GetYMin(Components.YAxisDependency axis);
+
+        /// <summary>
+        /// Returns the maximum y-value for the specified axis.
+        /// </summary>
+        float GetYMax(Components.YAxisDependency axis);
+
+        /// <summary>
+        ///  Calc minimum and maximum y-values over all DataSets.
+        /// Tell DataSets to recalculate their min and max y-values, this is only needed for autoScaleMinMax.
+        /// </summary>
+        /// <param name="fromX">the x-value to start the calculation from</param>
+        /// <param name="toX">the x-value to which the calculation should be performed</param>
+        void CalcMinMaxY(float fromX, float toX);
     }
 }

@@ -1,16 +1,17 @@
 ﻿using XF.ChartLibrary.Data;
-#if __IOS__ || __TVOS
-    using Color = UIKit.UIColor;
+
+#if NETSTANDARD || SKIASHARP
+using Color = SkiaSharp.SKColor;
+using DashPathEffect = SkiaSharp.SKPathEffect;
+using ColorList = SkiaSharp.SKColors;
+#elif __IOS__ || __TVOS
+using Color = UIKit.UIColor;
     using ColorList = UIKit.UIColor;
     using DashPathEffect = XF.ChartLibrary.Utils.DashPathEffect;
 #elif __ANDROID__
 using Color = Android.Graphics.Color;
 using ColorList = Android.Graphics.Color;
 using DashPathEffect = Android.Graphics.DashPathEffect;
-#elif NETSTANDARD
-using Color = SkiaSharp.SKColor;
-using DashPathEffect = SkiaSharp.SKPathEffect;
-using ColorList = SkiaSharp.SKColors;
 #endif
 namespace XF.ChartLibrary.Interfaces.DataSets
 {

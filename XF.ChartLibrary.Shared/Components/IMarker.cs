@@ -2,15 +2,16 @@
 using System.Collections.Generic;
 using System.Text;
 using XF.ChartLibrary.Data;
-#if __IOS__ || __TVOS__
+
+#if NETSTANDARD || SKIASHARP
+using Point = SkiaSharp.SKPoint;
+using Canvas = SkiaSharp.SKCanvas;
+#elif __IOS__ || __TVOS__
 using Point = CoreGraphics.CGPoint;
 using Canvas = CoreGraphics.CGContext;
 #elif __ANDROID__
 using Point = Android.Graphics.PointF;
 using Canvas = Android.Graphics.Canvas;
-#elif NETSTANDARD
-using Point = SkiaSharp.SKPoint;
-using Canvas = SkiaSharp.SKCanvas;
 #endif
 
 namespace XF.ChartLibrary.Components

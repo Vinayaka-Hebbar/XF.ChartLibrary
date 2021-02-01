@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>f1134dc1-f24e-461e-9f60-980558265a5f</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>XF.ChartLibrary.SkiaSharp</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Charts\BarLineChartBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Components\AxisBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Components\ComponentBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Components\Description.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Components\Legend.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Data\Entry.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Data\EntryBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Renderer\AxisRenderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Renderer\DataRenderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Renderer\LegendRenderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Renderer\LineChartRenderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Renderer\LineRadarRenderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Renderer\LineScatterCandleRadarRenderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Renderer\XAxisRenderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Renderer\YAxisRenderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utils\ChartFont.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utils\ChartUtil.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utils\MatrixUtil.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utils\Transformer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utils\ViewPortHandler.cs" />
+  </ItemGroup>
+</Project>

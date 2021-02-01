@@ -1,7 +1,7 @@
 ﻿namespace XF.ChartLibrary.Animation
 {
     public interface IAnimator
-#if __ANDROID__
+#if __ANDROID__ && !SKIASHARP
 : Android.Animation.ValueAnimator.IAnimatorUpdateListener { }
 #else
     {

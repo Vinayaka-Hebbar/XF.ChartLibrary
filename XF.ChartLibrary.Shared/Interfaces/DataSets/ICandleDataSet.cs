@@ -1,11 +1,13 @@
 ﻿namespace XF.ChartLibrary.Interfaces.DataSets
 {
-#if __IOS__ || __TVOS
+
+
+#if NETSTANDARD || SKIASHARP
+    using Color = SkiaSharp.SKColor;
+#elif __IOS__ || __TVOS
 using Color = UIKit.UIColor;
 #elif __ANDROID__
     using Color = Android.Graphics.Color;
-#elif NETSTANDARD
-    using Color = SkiaSharp.SKColor;
 #endif
 
     public interface ICandleDataSet : ILineScatterCandleRadarDataSet<Data.CandleEntry>

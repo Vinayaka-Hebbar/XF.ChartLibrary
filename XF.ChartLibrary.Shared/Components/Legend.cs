@@ -4,7 +4,11 @@ using XF.ChartLibrary.Utils;
 
 namespace XF.ChartLibrary.Components
 {
-#if __IOS__ || __TVOS
+#if NETSTANDARD || SKIASHARP
+    using Paint = SkiaSharp.SKPaint;
+    using DashPathEffect = SkiaSharp.SKPathEffect;
+    using Color = SkiaSharp.SKColor;
+#elif __IOS__ || __TVOS
     using Paint = UIKit.UIFont;
     using Color = UIKit.UIColor;
     using DashPathEffect = XF.ChartLibrary.Utils.DashPathEffect;
@@ -12,10 +16,6 @@ namespace XF.ChartLibrary.Components
     using Paint = Android.Graphics.Paint;
     using DashPathEffect = Android.Graphics.DashPathEffect;
     using Color = Android.Graphics.Color;
-#elif NETSTANDARD
-    using Paint = SkiaSharp.SKPaint;
-    using DashPathEffect = SkiaSharp.SKPathEffect;
-    using Color = SkiaSharp.SKColor;
 #endif
     public enum Form
     {
@@ -188,7 +188,7 @@ namespace XF.ChartLibrary.Components
 
             foreach (var entry in Entries)
             {
-#if __ANDROID__
+#if __ANDROID__ || SKIASHARP
                 var formSize = (entry.FormSize.IsNaN() ? FormSize : entry.FormSize).DpToPixel();
 #else
                 var formSize = entry.FormSize.IsNaN() ? FormSize : entry.FormSize;
@@ -213,8 +213,7 @@ namespace XF.ChartLibrary.Components
                 else
                 { continue; }
             }
-#if __ANDROID__
-
+#if __ANDROID__ && SKIASHARP
             return new ChartSize(
                 width: maxW + maxFormSize + FormToTextSpace.DpToPixel(),
                 height: maxH

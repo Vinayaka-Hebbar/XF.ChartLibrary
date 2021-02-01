@@ -1,8 +1,6 @@
-﻿using XF.ChartLibrary.Interfaces.DataSets;
-
-namespace XF.ChartLibrary.Interfaces.DataProvider
+﻿namespace XF.ChartLibrary.Interfaces.DataProvider
 {
-    public interface IChartProvider 
+    public interface IChartProvider
     {
         float YChartMax { get; }
 
@@ -16,6 +14,6 @@ namespace XF.ChartLibrary.Interfaces.DataProvider
 
     public interface IChartDataProvider : IChartProvider
     {
-        IChartData<IDataSet> Data { get; }
+        IChartData Data { get; }
     }
 }

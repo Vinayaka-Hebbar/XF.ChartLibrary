@@ -3,18 +3,20 @@ using XF.ChartLibrary.Utils;
 
 namespace XF.ChartLibrary.Data
 {
-#if __IOS__ || __TVOS
+
+#if NETSTANDARD || SKIASHARP
+    using Color = SkiaSharp.SKColor;
+#elif __IOS__ || __TVOS
     using Color = UIKit.UIColor;
 #elif __ANDROID__
     using Color = Android.Graphics.Color;
-#elif NETSTANDARD
-    using Color = SkiaSharp.SKColor;
 #endif
+
     public abstract class LineRadarDataSet<TEntry> : LineScatterCandleRadarDataSet<TEntry>, Interfaces.DataSets.ILineRadarDataSet<TEntry> where TEntry : Entry
     {
         private Color fillColor = ChartUtil.FromRGB(140, 234, 255);
         private IFill fill;
-#if __ANDROID__
+#if __ANDROID__ || SKIASHARP
         private float lineWidth = 2.5f;
 #else
         private float lineWidth = 1.0f;
@@ -48,7 +50,7 @@ namespace XF.ChartLibrary.Data
                     value = 0.0f;
                 if (value > 10.0f)
                     value = 10.0f;
-#if __ANDROID__
+#if __ANDROID__ || SKIASHARP
                 lineWidth = value.DpToPixel();
 #else
                 lineWidth = value;
@@ -62,7 +64,7 @@ namespace XF.ChartLibrary.Data
             set => drawFilled = value;
         }
 
-#if __IOS__ || __TVOS__
+#if (__IOS__ || __TVOS__) && !SKIASHARP
         public float FillAlpha { get; set; } = 0.33f; 
 #else
         public byte FillAlpha { get; set; } = 85;

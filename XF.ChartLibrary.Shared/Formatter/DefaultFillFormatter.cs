@@ -13,7 +13,7 @@ namespace XF.ChartLibrary.Formatter
             var chartMaxY = dataProvider.YChartMax;
             var chartMinY = dataProvider.YChartMin;
 
-            LineData data = dataProvider.Data;
+            LineData data = ((ILineChartProvider)dataProvider).Data;
 
             float fillMin;
             if (dataSet.YMax > 0 && dataSet.YMin < 0)

@@ -3,13 +3,16 @@ using System.Collections.Generic;
 using XF.ChartLibrary.Components;
 using XF.ChartLibrary.Data;
 using XF.ChartLibrary.Interfaces.DataSets;
-#if __IOS__ || __TVOS__
+
+
+#if NETSTANDARD || SKIASHARP
+using Point = SkiaSharp.SKPoint;
+#elif __IOS__ || __TVOS__
 using Point = CoreGraphics.CGPoint;
 #elif __ANDROID__
 using Point = Android.Graphics.PointF;
-#elif NETSTANDARD
-using Point = SkiaSharp.SKPoint;
 #endif
+
 namespace XF.ChartLibrary.Highlight
 {
     public class ChartHighlighter<T> : IHighlighter where T : Interfaces.DataProvider.IBarLineScatterCandleBubbleDataProvider
@@ -81,7 +84,7 @@ namespace XF.ChartLibrary.Highlight
                 if (high.Axis == axis)
                 {
 
-                    float tempDistance = MathF.Abs(GetHighlightPos(high) - pos);
+                    float tempDistance = Math.Abs(GetHighlightPos(high) - pos);
                     if (tempDistance < distance)
                     {
                         distance = tempDistance;

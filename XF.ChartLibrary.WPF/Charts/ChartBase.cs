@@ -30,6 +30,7 @@ namespace XF.ChartLibrary.Charts
         protected virtual void OnDataChanged(TData value)
         {
             offsetsCalculated = false;
+            data = value;
             if (value == null)
                 return;
             SetUpDefaultFormatter(value.YMin, value.YMax);

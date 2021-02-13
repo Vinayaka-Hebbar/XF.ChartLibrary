@@ -5,8 +5,6 @@ namespace XF.ChartLibrary.Charts
 {
     public abstract partial class ChartBase<TData, TDataSet> : UIKit.UIView
     {
-        protected TData data;
-
         public XAxis XAxis { get; set; }
 
         protected ChartBase()

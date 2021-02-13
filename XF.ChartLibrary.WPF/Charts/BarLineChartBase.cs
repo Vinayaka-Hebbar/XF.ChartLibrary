@@ -23,6 +23,8 @@ namespace XF.ChartLibrary.Charts
 
         public static readonly DependencyProperty MaxVisibleCountProperty = DependencyProperty.Register(nameof(MaxVisibleCount), typeof(int), typeof(BarLineChartBase<TData, TDataSet>), new PropertyMetadata(100));
 
+        public static readonly DependencyProperty HighlightPerDragEnabledProperty = DependencyProperty.Register(nameof(HighlightPerDragEnabled), typeof(bool), typeof(BarLineChartBase<TData, TDataSet>), new PropertyMetadata(true));
+
         private SKPoint decelerationVelocity = SKPoint.Empty;
 
         private SKPoint decelerationCurrentPoint = SKPoint.Empty;
@@ -64,7 +66,7 @@ namespace XF.ChartLibrary.Charts
 
         private void SaveTouchStart(SKPoint point)
         {
-            savedMatrix = ViewPortHandler.TouchMatrix;
+            savedMatrix = ViewPortHandler.touchMatrix;
             touchStartPoint = point;
             closestDatasetToTouch = GetDataSetByTouchPoint(point.X, point.Y);
         }

@@ -22,11 +22,6 @@
         {
             Value = value;
         }
-
-        public static implicit operator ChartColor(Xamarin.Forms.Color color)
-        {
-            return new ChartColor(SkiaSharp.Views.Forms.Extensions.ToSKColor(color));
-        }
 #endif
     }
 }

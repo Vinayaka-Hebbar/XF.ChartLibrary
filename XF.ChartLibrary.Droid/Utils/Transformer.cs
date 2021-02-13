@@ -74,5 +74,43 @@ namespace XF.ChartLibrary.Utils
 
         }
 
+        /// <summary>
+        /// Prepares the matrix that contains all offsets.
+        /// </summary>
+        public void PrepareMatrixOffset(bool inverted)
+        {
+            MatrixOffset.Reset();
+            if (!inverted)
+                MatrixOffset.PostTranslate(ViewPortHandler.OffsetLeft,
+                        ViewPortHandler.ChartHeight - ViewPortHandler.OffsetBottom);
+            else
+            {
+                MatrixOffset.SetTranslate(ViewPortHandler.OffsetLeft, -ViewPortHandler.OffsetTop);
+                MatrixOffset.PostScale(1f, -1f);
+            }
+        }
+
+        /// <summary>
+        ///  Prepares the matrix that transforms values to pixels. Calculates the
+        ///scale factors from the charts size and offsets.
+        /// </summary>
+        public void PrepareMatrixValuePx(float xChartMin, float deltaX, float deltaY, float yChartMin)
+        {
+            float scaleX = (float)((ViewPortHandler.ContentWidth) / deltaX);
+            float scaleY = (float)((ViewPortHandler.ContentHeight) / deltaY);
+
+            if (float.IsInfinity(scaleX))
+            {
+                scaleX = 0;
+            }
+            if (float.IsInfinity(scaleY))
+            {
+                scaleY = 0;
+            }
+            // setup all matrices
+            MatrixValueToPx.Reset();
+            MatrixValueToPx.PostTranslate(-xChartMin, -yChartMin);
+            MatrixValueToPx.PostScale(scaleX, -scaleY);
+        }
     }
 }

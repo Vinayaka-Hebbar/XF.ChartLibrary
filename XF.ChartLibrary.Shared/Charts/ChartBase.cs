@@ -33,13 +33,13 @@ namespace XF.ChartLibrary.Charts
         private Animator animator;
         private Description description = new Description();
 
-        protected Legend Legend;
+        protected Legend legend;
 
         protected LegendRenderer LegendRenderer;
 
         protected DataRenderer Renderer;
 
-        private Highlight.Highlight lastHighlighted;
+        protected Highlight.Highlight lastHighlighted;
 
         private IMarker marker;
 
@@ -47,7 +47,7 @@ namespace XF.ChartLibrary.Charts
 
         protected readonly IList ViewPortJobs = ArrayList.Synchronized(new List<Jobs.ViewPortJob>());
 
-        protected ViewPortHandler ViewPortHandler = new ViewPortHandler();
+        protected internal ViewPortHandler ViewPortHandler = new ViewPortHandler();
 
         protected Highlight.IHighlighter highlighter;
 
@@ -56,6 +56,8 @@ namespace XF.ChartLibrary.Charts
             get => highlighter;
             set => highlighter = value;
         }
+
+        protected TData data;
 
         protected IList<Highlight.Highlight> indicesToHighlight;
 
@@ -66,6 +68,11 @@ namespace XF.ChartLibrary.Charts
             {
                 indicesToHighlight = value;
             }
+        }
+
+        public Legend Lengend
+        {
+            get => legend;
         }
 
         public Animator Animator => animator;
@@ -116,17 +123,17 @@ namespace XF.ChartLibrary.Charts
             set => maxHighlightDistance = value;
         }
 
-        IChartData IChartDataProvider.Data => (IChartData)Data;
+        IChartData IChartDataProvider.Data => (IChartData)data;
 
         public virtual void Initialize()
         {
             maxHighlightDistance = 500f;
-            Legend = new Legend();
+            legend = new Legend();
             animator = new Animator()
             {
                 Delegate = this
             };
-            LegendRenderer = new LegendRenderer(ViewPortHandler, Legend);
+            LegendRenderer = new LegendRenderer(ViewPortHandler, legend);
 
         }
 
@@ -135,7 +142,6 @@ namespace XF.ChartLibrary.Charts
         {
             // check if a custom formatter is set or not
             float reference;
-            var data = Data;
             if (data == null || data.DataSets.Count < 2)
             {
 
@@ -171,7 +177,7 @@ namespace XF.ChartLibrary.Charts
         /// </summary>
         public void ClearValues()
         {
-            Data?.ClearValues();
+            data?.ClearValues();
             this.InvalidateView();
         }
 
@@ -239,7 +245,7 @@ namespace XF.ChartLibrary.Charts
             Highlight.Highlight h = GetHighlightByTouchPoint(x, y);
             if (h != null)
             {
-                return Data[h.DataSetIndex];
+                return data[h.DataSetIndex];
             }
             return null;
         }
@@ -251,7 +257,7 @@ namespace XF.ChartLibrary.Charts
         /// </summary>
         public Highlight.Highlight GetHighlightByTouchPoint(float x, float y)
         {
-            if (Data == null)
+            if (data == null)
                 return default;
             return highlighter.GetHighlight(x, y);
         }
@@ -273,7 +279,7 @@ namespace XF.ChartLibrary.Charts
                 indicesToHighlight = null;
             else
             {
-                e = Data.GetEntryForHighlight(high);
+                e = data.GetEntryForHighlight(high);
                 if (e == null)
                 {
                     indicesToHighlight = null;

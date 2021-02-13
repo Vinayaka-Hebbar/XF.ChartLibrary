@@ -5,10 +5,11 @@ using XF.ChartLibrary.Utils;
 namespace XF.ChartLibrary.Components
 {
     public partial class Legend
-    {/// <summary>
-     /// Calculates the dimensions of the Legend. This includes the maximum width
-     /// and height of a single entry, as well as the total width and height of
-     /// the Legend.
+    {
+        /// <summary>
+        /// Calculates the dimensions of the Legend. This includes the maximum width
+        /// and height of a single entry, as well as the total width and height of
+        /// the Legend.
         public void CalculateDimensions(Paint paint, ViewPortHandler viewPortHandler)
         {
             var maxEntrySize = GetMaximumEntrySize(paint);

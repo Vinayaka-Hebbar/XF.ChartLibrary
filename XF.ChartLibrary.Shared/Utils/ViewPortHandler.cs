@@ -1,4 +1,5 @@
 ﻿using System;
+using XF.ChartLibrary.Charts;
 
 #if NETSTANDARD || SKIASHARP
 using Point = SkiaSharp.SKPoint;
@@ -24,7 +25,7 @@ namespace XF.ChartLibrary.Utils
 
         private float minScaleX = 1f;
 
-        private float maxScaleX = float.MaxValue;
+        internal float maxScaleX = float.MaxValue;
 
         private float scaleX = 1f;
 
@@ -60,6 +61,17 @@ namespace XF.ChartLibrary.Utils
             get
             {
                 return chartHeight > 0 && chartWidth > 0;
+            }
+        }
+
+        /// <summary>
+        /// `true` if both drag offsets (x and y) are zero or smaller.
+        /// </summary>
+        public bool HasNoDragOffset
+        {
+            get
+            {
+                return transOffsetX <= 0.0 && transOffsetY <= 0.0;
             }
         }
 
@@ -169,6 +181,14 @@ namespace XF.ChartLibrary.Utils
         /// </summary>
         public bool IsFullyZoomedOutX => !(scaleX > minScaleX || minScaleX > 1f);
 
+        public bool CanZoomOutMoreX => scaleX > minScaleX;
+
+        public bool CanZoomInMoreX => scaleX < maxScaleX;
+
+        public bool CanZoomOutMoreY => scaleY > minScaleY;
+
+        public bool CanZoomInMoreY => scaleY < maxScaleY;
+
         public Matrix ZoomIn(float x, float y)
         {
             return Zoom(1.4f, 1.4f, x, y);
@@ -191,5 +211,95 @@ namespace XF.ChartLibrary.Utils
             Zoom(1.0f, 1.0f, 0.0f, 0.0f);
         }
 
+        /// <summary>
+        /// Sets the minimum scale factor 
+        /// </summary>
+        public void SetMinimumScaleX(float xScale)
+        {
+            if (xScale < 1f)
+                xScale = 1f;
+
+            minScaleX = xScale;
+
+            LimitTransAndScale(touchMatrix, contentRect);
+        }
+
+        /// <summary>
+        /// Sets the maximum scale factor for the x-axis
+        /// </summary>
+        public void SetMaximumScaleX(float xScale)
+        {
+
+            if (xScale == 0.0f)
+                xScale = float.MaxValue;
+
+            maxScaleX = xScale;
+
+            LimitTransAndScale(touchMatrix, contentRect);
+        }
+
+        /// <summary>
+        /// Sets the minimum and maximum scale factors for the x-axis
+        /// </summary>
+        public void SetMinMaxScaleX(float minScaleX, float maxScaleX)
+        {
+
+            if (minScaleX < 1f)
+                minScaleX = 1f;
+
+            if (maxScaleX == 0.0f)
+                maxScaleX = float.MaxValue;
+
+            this.minScaleX = minScaleX;
+            this.maxScaleX = maxScaleX;
+
+            LimitTransAndScale(touchMatrix, contentRect);
+        }
+
+        /// <summary>
+        /// Sets the minimum scale factor for the y-axis
+        /// </summary>
+        public void SetMinimumScaleY(float yScale)
+        {
+
+            if (yScale < 1f)
+                yScale = 1f;
+
+            minScaleY = yScale;
+
+            LimitTransAndScale(touchMatrix, contentRect);
+        }
+
+        /// <summary>
+        /// Sets the maximum scale factor for the y-axis
+        /// </summary>
+        public void SetMaximumScaleY(float yScale)
+        {
+
+            if (yScale == 0.0f)
+                yScale = float.MaxValue;
+
+            maxScaleY = yScale;
+
+            LimitTransAndScale(touchMatrix, contentRect);
+        }
+
+        /// <summary>
+        /// Sets the minimum and maximum scale factors for the y-axis
+        /// </summary>
+        public void SetMinMaxScaleY(float minScaleY, float maxScaleY)
+        {
+
+            if (minScaleY < 1f)
+                minScaleY = 1f;
+
+            if (maxScaleY == 0.0f)
+                maxScaleY = float.MaxValue;
+
+            this.minScaleY = minScaleY;
+            this.maxScaleY = maxScaleY;
+
+            LimitTransAndScale(touchMatrix, contentRect);
+        }
     }
 }

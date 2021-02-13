@@ -6,14 +6,12 @@ namespace XF.ChartLibrary.Jobs
 {
     public abstract partial class ViewPortJob : IPoolable
     {
-        protected float[] Points = new float[2];
-
         private int ownerId;
-        public readonly ViewPortHandler ViewPortHandler;
+        protected ViewPortHandler ViewPortHandler;
         public float XValue { get; protected set; }
         public float YValue { get; protected set; }
-        public Transformer Transformer { get; }
-        public IChartBase View { get; }
+        public Transformer Transformer { get; protected set; }
+        public IChartBase View { get; protected set; }
 
         public int CurrentOwnerId
         {

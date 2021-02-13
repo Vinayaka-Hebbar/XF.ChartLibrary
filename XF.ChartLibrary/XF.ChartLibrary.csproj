@@ -12,6 +12,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Platform\Droid\ChartGestureHandler.cs" />
+    <None Remove="Platform\Droid\PinchGestureHandler.cs" />
     <None Remove="Platform\NetStandard\ChartUtil.cs" />
   </ItemGroup>
 

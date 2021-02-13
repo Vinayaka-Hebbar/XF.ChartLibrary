@@ -1,7 +1,9 @@
 ﻿using System;
 using XF.ChartLibrary.Components;
 using XF.ChartLibrary.Interfaces;
+using XF.ChartLibrary.Interfaces.DataProvider;
 using XF.ChartLibrary.Interfaces.DataSets;
+using XF.ChartLibrary.Jobs;
 using XF.ChartLibrary.Renderer;
 using XF.ChartLibrary.Utils;
 
@@ -16,12 +18,12 @@ using Rect = Android.Graphics.RectF;
 
 namespace XF.ChartLibrary.Charts
 {
-    public abstract partial class BarLineChartBase<TData, TDataSet> : ChartBase<TData, TDataSet> where TData : IChartData<TDataSet>, IChartData where TDataSet : IDataSet, IBarLineScatterCandleBubbleDataSet
+    public abstract partial class BarLineChartBase<TData, TDataSet> : ChartBase<TData, TDataSet>, IBarLineScatterCandleBubbleDataProvider where TData : IChartData<TDataSet>, IChartData where TDataSet : IDataSet, IBarLineScatterCandleBubbleDataSet
     {
         /// <summary>
         /// flag that indicates if a custom viewport offset has been set
         /// </summary>
-        private bool mCustomViewPortEnabled = false;
+        private bool customViewPortEnabled = false;
 
         /// <summary>
         /// flag indicating if the grid background should be drawn or not
@@ -79,9 +81,57 @@ namespace XF.ChartLibrary.Charts
             }
         }
 
+        /// <summary>
+        /// Returns the range visible on the x-axis.
+        /// </summary>
+        public float VisibleXRange
+        {
+            get
+            {
+                return Math.Abs(HighestVisibleX - LowestVisibleX);
+            }
+        }
+
+
+        /// <summary>
+        ///  Sets the size of the area(range on the x-axis) that should be minimum
+        /// visible at once(no further zooming in allowed). If this is e.g.set to
+        /// 10, no less than a range of 10 on the x-axis can be viewed at once without
+        /// scrolling.
+        /// </summary>
+        public float VisibleXRangeMinimum
+        {
+            set
+            {
+                ViewPortHandler.SetMaximumScaleX(XAxis.axisRange / value);
+            }
+        }
+
+        /// <summary>
+        /// Sets the size of the area(range on the x-axis) that should be maximum
+        /// visible at once(no further zooming out allowed). If this is e.g.set to
+        /// 10, no more than a range of 10 on the x-axis can be viewed at once without
+        /// scrolling.
+        /// </summary>
+        public float VisibleXRangeMaximum
+        {
+            set
+            {
+                ViewPortHandler.SetMinimumScaleX(XAxis.axisRange / value);
+            }
+        }
+
         public override float YChartMax => Math.Max(AxisLeft.axisMaximum, AxisRight.axisMaximum);
 
         public override float YChartMin => Math.Min(AxisLeft.axisMinimum, AxisRight.axisMinimum);
+
+        IChartData<IBarLineScatterCandleBubbleDataSet> IBarLineScatterCandleBubbleProvider.Data
+        {
+            get
+            {
+                return (IChartData<IBarLineScatterCandleBubbleDataSet>)Data;
+            }
+        }
 
         public override void Initialize()
         {
@@ -94,6 +144,7 @@ namespace XF.ChartLibrary.Charts
 
             mAxisRendererLeft = new YAxisRenderer(ViewPortHandler, AxisLeft, mLeftAxisTransformer);
             mAxisRendererRight = new YAxisRenderer(ViewPortHandler, AxisRight, mRightAxisTransformer);
+            Highlighter = new Highlight.ChartHighlighter<BarLineChartBase<TData, TDataSet>>(this);
 
             mXAxisRenderer = new XAxisRenderer(ViewPortHandler, XAxis, mLeftAxisTransformer);
         }
@@ -107,13 +158,55 @@ namespace XF.ChartLibrary.Charts
         protected void PrepareValuePxMatrix()
         {
             mRightAxisTransformer.PrepareMatrixValuePx(XAxis.axisMinimum,
-                    XAxis.AxisRange,
-                    AxisRight.AxisRange,
+                    XAxis.axisRange,
+                    AxisRight.axisRange,
                     AxisRight.axisMinimum);
             mLeftAxisTransformer.PrepareMatrixValuePx(XAxis.axisMinimum,
-                    XAxis.AxisRange,
-                    AxisLeft.AxisRange,
+                    XAxis.axisRange,
+                    AxisLeft.axisRange,
                     AxisLeft.axisMinimum);
+        }
+
+        /// <summary>
+        ///  Limits the maximum and minimum x range that can be visible by pinching and zooming.e.g.minRange=10, maxRange=100 the
+        /// smallest range to be displayed at once is 10, and no more than a range of 100 values can be viewed at once without
+        /// scrolling
+        /// </summary>
+        public void SetVisibleXRange(float minXRange, float maxXRange)
+        {
+            float minScale = XAxis.AxisRange / minXRange;
+            float maxScale = XAxis.AxisRange / maxXRange;
+            ViewPortHandler.SetMinMaxScaleX(minScale, maxScale);
+        }
+
+        /// <summary>
+        ///  Sets the size of the area(range on the y-axis) that should be maximum
+        /// visible at once.
+        /// </summary>
+        /// <param name="maxYRange">the maximum visible range on the y-axis</param>
+        /// <param name="axis">the axis for which this limit should apply</param>
+        public void SetVisibleYRangeMaximum(float maxYRange, YAxisDependency axis)
+        {
+            ViewPortHandler.SetMinimumScaleY(GetAxisRange(axis) / maxYRange);
+        }
+
+        /// <summary>
+        /// Sets the size of the area(range on the y-axis) that should be minimum visible at once, no further zooming in possible.
+        /// </summary>
+        /// <param name="minYRange">Min Y Range</param>
+        /// <param name="axis">the axis for which this limit should apply</param>
+        public void SetVisibleYRangeMinimum(float minYRange, YAxisDependency axis)
+        {
+            ViewPortHandler.SetMaximumScaleY(GetAxisRange(axis) / minYRange);
+        }
+
+        /// <summary>
+        /// Limits the maximum and minimum y range that can be visible by pinching and zooming.
+        /// </summary>
+        public void SetVisibleYRange(float minYRange, float maxYRange, YAxisDependency axis)
+        {
+            float range = GetAxisRange(axis);
+            ViewPortHandler.SetMinMaxScaleY(range / minYRange, range / maxYRange);
         }
 
 #if __ANDROID__ && !SKIASHARP
@@ -129,7 +222,7 @@ namespace XF.ChartLibrary.Charts
             var right = 0.0f;
             var top = 0.0f;
             var bottom = 0.0f;
-            Legend legend = Legend;
+            Legend legend = this.legend;
             if (legend != null && legend.IsEnabled && legend.IsDrawInsideEnabled == false)
             {
                 switch (legend.Orientation)
@@ -146,12 +239,12 @@ namespace XF.ChartLibrary.Charts
 
                             case Components.HorizontalAlignment.Right:
                                 right = Math.Min(legend.NeededWidth,
-                                        ViewPortHandler.ChartWidth * Legend.MaxSizePercent)
-                                        + Legend.XOffset;
+                                        ViewPortHandler.ChartWidth * legend.MaxSizePercent)
+                                        + legend.XOffset;
                                 break;
 
                             case Components.HorizontalAlignment.Center:
-                                switch (Legend.VerticalAlignment)
+                                switch (legend.VerticalAlignment)
                                 {
                                     case Components.VerticalAlignment.Top:
                                         top = Math.Min(legend.NeededHeight,
@@ -175,7 +268,7 @@ namespace XF.ChartLibrary.Charts
 
                     case Orientation.Horizontal:
 
-                        switch (Legend.VerticalAlignment)
+                        switch (legend.VerticalAlignment)
                         {
                             case Components.VerticalAlignment.Top:
                                 top = Math.Min(legend.NeededHeight,
@@ -223,7 +316,7 @@ namespace XF.ChartLibrary.Charts
             mAxisRendererRight.ComputeAxis(AxisRight.axisMinimum, AxisRight.axisMaximum, AxisRight.Inverted);
             mXAxisRenderer.ComputeAxis(XAxis.axisMinimum, XAxis.axisMaximum, false);
 
-            if (Legend != null)
+            if (legend != null)
                 LegendRenderer.ComputeLegend(data);
 
             CalculateOffsets();
@@ -256,7 +349,7 @@ namespace XF.ChartLibrary.Charts
 
         protected override void CalcMinMax()
         {
-            CalcMinMax(Data);
+            CalcMinMax(data);
         }
 
         protected void CalcMinMax(TData data)
@@ -291,9 +384,63 @@ namespace XF.ChartLibrary.Charts
                 return AxisRight;
         }
 
+        /// <summary>
+        /// Returns the range of the specified axis.
+        /// </summary>
+        /// <param name="axis"></param>
+        protected float GetAxisRange(YAxisDependency axis)
+        {
+            return axis == YAxisDependency.Left ? AxisLeft.axisRange : AxisRight.axisRange;
+        }
+
         public bool IsInverted(YAxisDependency axis)
         {
             return axis == YAxisDependency.Left ? AxisLeft.Inverted : AxisRight.Inverted;
+        }
+
+        /// <summary>
+        ///  Moves the left side of the current viewport to the specified x-position.
+        /// This also refreshes the chart by calling invalidate().
+        /// </summary>
+        public void MoveViewToX(float xValue)
+        {
+            AddViewportJob(MoveViewJob.GetInstance(ViewPortHandler, xValue, 0f,
+                    GetTransformer(YAxisDependency.Left), this));
+        }
+
+        /// <summary>
+        /// This will move the left side of the current viewport to the specified
+        /// x-value on the x-axis, and center the viewport to the specified y value on the y-axis.
+        /// This also refreshes the chart by calling invalidate().
+        /// </summary>
+        /// <param name="xValue"></param>
+        /// <param name="yValue"></param>
+        /// <param name="axis">which axis should be used as a reference for the y-axis</param>
+        public void MoveViewTo(float xValue, float yValue, YAxisDependency axis)
+        {
+            float yInView = GetAxisRange(axis) / ViewPortHandler.ScaleY;
+
+            AddViewportJob(MoveViewJob.GetInstance(ViewPortHandler, xValue, yValue + yInView / 2f,
+                    GetTransformer(axis), this));
+        }
+
+        public void Zoom(float scaleX, float scaleY, float x, float y)
+        {
+            ViewPortHandler.Refresh(ViewPortHandler.Zoom(scaleX: scaleX, scaleY: scaleY, x: x, y: -y), this, invalidate: false);
+
+            // Range might have changed, which means that Y-axis labels could have changed in size, affecting Y-axis size. So we need to recalculate offsets.
+            CalculateOffsets();
+            this.InvalidateView();
+        }
+
+        /// <summary>
+        /// Resets all custom offsets set via setViewPortOffsets(...) method. Allows
+        /// the chart to again calculate all offsets automatically.
+        /// </summary>
+        public void ResetViewPortOffsets()
+        {
+            customViewPortEnabled = false;
+            CalculateOffsets();
         }
     }
 }

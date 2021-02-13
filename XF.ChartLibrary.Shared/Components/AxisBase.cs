@@ -32,6 +32,8 @@ namespace XF.ChartLibrary.Components
 
         private bool granularityEnabled = false;
 
+        internal float axisRange = 0f;
+
         internal float[] centeredEntries = Array.Empty<float>();
 
         internal IList<float> entries = Array.Empty<float>();
@@ -110,9 +112,9 @@ namespace XF.ChartLibrary.Components
          */
         protected bool CustomAxisMin = false;
 
-        /**
-         * flag indicating that the axis-max value has been customized
-         */
+        /// <summary>
+        /// flag indicating that the axis-max value has been customized
+        /// </summary>
         protected bool CustomAxisMax = false;
 
         internal float axisMaximum = 0f;
@@ -121,14 +123,18 @@ namespace XF.ChartLibrary.Components
 
         internal int entryCount;
 
-        /**
-         * the total range of values this axis covers
-         */
-        public float AxisRange { get; set; } = 0f;
+        /// <summary>
+        /// the total range of values this axis covers
+        /// </summary>
+        public float AxisRange
+        {
+            get => axisRange;
+            set => axisRange = value;
+        }
 
-        /**
-         * The minumum number of labels on the axis
-         */
+        /// <summary>
+        /// The minumum number of labels on the axis
+        /// </summary>
         public int AxisMinLabels
         {
             get => axisMinLabels;

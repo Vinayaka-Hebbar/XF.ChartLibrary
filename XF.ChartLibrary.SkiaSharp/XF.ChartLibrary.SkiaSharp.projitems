@@ -16,6 +16,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Components\Legend.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Data\Entry.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Data\EntryBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Jobs\MoveViewJob.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Renderer\AxisRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Renderer\DataRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Renderer\LegendRenderer.cs" />

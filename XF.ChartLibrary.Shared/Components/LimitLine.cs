@@ -44,6 +44,28 @@
             LeftTop, LeftBottom, RightTop, RightBottom
         }
 
+        /// <summary>
+        /// Constructor with limit.
+        /// </summary>
+        /// <param name="limit">the position(the value) on the y-axis(y-value) or x-axis
+        /// (xIndex) where this line should appear</param>
+        public LimitLine(float limit)
+        {
+            _limit = limit;
+        }
+
+         /// <summary>
+        /// Constructor with limit.
+        /// </summary>
+        /// <param name="limit">the position(the value) on the y-axis(y-value) or x-axis
+        /// (xIndex) where this line should appear</param>
+        /// <param name="label">provide "" if no label is required</param>
+        public LimitLine(float limit, string label)
+        {
+            _limit = limit;
+            _label = label;
+        }
+
         public float Limit
         {
             get => _limit;

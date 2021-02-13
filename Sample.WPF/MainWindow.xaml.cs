@@ -26,7 +26,6 @@ namespace Sample
                     ValueTextColor = SkiaSharp.SKColors.Black,
                     Mode = LineDataSet.LineMode.CubicBezier,
                     DrawFilled = true,
-                    Colors = new SkiaSharp.SKColor[0]
                 }
             };
             Root.Content = new LineChart()
@@ -35,11 +34,16 @@ namespace Sample
                 Data = new LineData(dataSets),
                 XAxis =
                 {
-                    Position = XF.ChartLibrary.Components.XAxis.XAxisPosition.Bottom
+                    SpaceMax = 1,
+                    DrawGridLinesBehindData = false
                 },
                 AxisRight =
                 {
                     IsEnabled = false
+                },
+                Lengend =
+                {
+                    Form = XF.ChartLibrary.Components.Form.Circle
                 }
             };
         }

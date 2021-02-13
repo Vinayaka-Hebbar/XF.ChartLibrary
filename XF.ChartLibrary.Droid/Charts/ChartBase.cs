@@ -12,10 +12,8 @@ namespace XF.ChartLibrary.Charts
             XAxis = new XAxis();
         }
 
-
         protected XAxis XAxis;
 
-        protected TData data;
         public TData Data
         {
             get => data;

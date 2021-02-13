@@ -20,9 +20,9 @@ namespace XF.ChartLibrary.Renderer
             {
 
                 var p1 = Trasformer.ValueByTouchPoint(ViewPortHandler.ContentLeft, ViewPortHandler.ContentTop);
-                var p2 = Trasformer.ValueByTouchPoint(ViewPortHandler.ContentRight, ViewPortHandler.ContentBottom);
+                var p2 = Trasformer.ValueByTouchPoint(ViewPortHandler.ContentRight, ViewPortHandler.ContentTop);
 
-                if (!inverted)
+                if (inverted)
                 {
                     min = (float)p2.X;
                     max = (float)p1.X;

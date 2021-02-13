@@ -84,7 +84,7 @@ namespace XF.ChartLibrary.Components
 
 
         /// The orientation of the legend
-        public Orientation Orientation { get; set; } = Orientation.Horizontal;
+        public Orientation Orientation { get; set; }
 
         /// Flag indicating whether the legend will draw inside the chart or outside
         public bool DrawInside
@@ -99,7 +99,7 @@ namespace XF.ChartLibrary.Components
         public bool IsLegendCustom => _isLegendCustom;
 
         /// The text direction of the legend
-        public Direction Direction { get; set; } = Direction.LeftToRight;
+        public Direction Direction { get; set; }
 
         /// The form/shape of the legend forms
         public Form Form { get; set; } = Form.Square;
@@ -127,11 +127,16 @@ namespace XF.ChartLibrary.Components
         public Legend(IList<LegendEntry> entries)
         {
             this.entries = entries;
+#if __IOS__ || __TVS__
+yOffset = 3f;
+#else
+            yOffset = 3f.DpToPixel();
+#endif
         }
 
         public Legend()
         {
-            this.entries = new List<LegendEntry>();
+            entries = new List<LegendEntry>();
         }
 
         public IList<LegendEntry> Entries
@@ -213,7 +218,7 @@ namespace XF.ChartLibrary.Components
                 else
                 { continue; }
             }
-#if __ANDROID__ && SKIASHARP
+#if __ANDROID__ || SKIASHARP
             return new ChartSize(
                 width: maxW + maxFormSize + FormToTextSpace.DpToPixel(),
                 height: maxH

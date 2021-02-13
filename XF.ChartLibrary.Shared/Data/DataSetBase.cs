@@ -31,6 +31,9 @@ namespace XF.ChartLibrary.Data
 
     public abstract partial class DataSetBase<TEntry> : IDataSet<TEntry> where TEntry : Entry
     {
+        private Form form = Form.Default;
+        private float formSize = float.NaN;
+        private float formLineWidth = float.NaN;
 
         private IList<Color> colors;
 
@@ -64,13 +67,14 @@ namespace XF.ChartLibrary.Data
 
         public IList<Color> ValueColors
         {
-            get => valueColors;
+            get => valueColors ?? Utils.ColorTemplate.DefaultValueColors;
+
             set => valueColors = value;
         }
 
         public IList<Color> Colors
         {
-            get => colors;
+            get => colors ?? Utils.ColorTemplate.DefaultColors;
             set => colors = value;
         }
 
@@ -169,11 +173,23 @@ namespace XF.ChartLibrary.Data
 #endif
         public float ValueLabelAngle { get; set; }
 
-        public Form Form { get; }
+        public Form Form
+        {
+            get => form;
+            set => form = value;
+        }
 
-        public float FormSize { get; }
+        public float FormSize
+        {
+            get => formSize;
+            set => formSize = value;
+        }
 
-        public float FormLineWidth { get; }
+        public float FormLineWidth
+        {
+            get => formLineWidth;
+            set => formLineWidth = value;
+        }
 
         public DashPathEffect FormLineDashEffect { get; set; }
 

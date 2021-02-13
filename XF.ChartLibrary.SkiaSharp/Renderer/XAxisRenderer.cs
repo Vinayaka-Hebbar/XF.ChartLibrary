@@ -47,7 +47,6 @@ namespace XF.ChartLibrary.Renderer
 
         public void RenderAxisLabels(SKCanvas c)
         {
-
             if (!XAxis.IsEnabled || !XAxis.IsDrawLabelsEnabled)
                 return;
 
@@ -263,7 +262,7 @@ namespace XF.ChartLibrary.Renderer
             }
             var positions = mRenderGridLinesBuffer;
 
-            for (int i = 0; i < Axis.entries.Count; i++)
+            for (int i = 0; i < positions.Length; i++)
             {
                 float entry = (float)Axis.entries[i];
                 positions[i] = new SKPoint(entry, entry);

@@ -14,6 +14,10 @@ namespace XF.ChartLibrary.Utils
     {
         public static readonly Color DefaultColor = ChartUtil.FromRGB(140, 234, 255);
 
+        public static readonly Color[] DefaultColors = new Color[] { DefaultColor };
+
+        public static readonly Color[] DefaultValueColors = new Color[] { Black };
+
         public static readonly Color Black = ChartUtil.FromRGB(0, 0, 0);
 
         public static readonly Color DefaultValueTextColor = ChartUtil.FromRGB(140, 234, 255);

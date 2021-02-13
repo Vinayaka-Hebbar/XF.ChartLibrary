@@ -25,6 +25,12 @@ namespace XF.ChartLibrary.Charts
             set => SetValue(DragYEnabledProperty, value);
         }
 
+        public bool HighlightPerDragEnabled
+        {
+            get => (bool)GetValue(HighlightPerDragEnabledProperty);
+            set => SetValue(HighlightPerDragEnabledProperty, value);
+        }
+
 
         /// <summary>
         /// the object representing the labels on the left y-axis
@@ -70,7 +76,7 @@ namespace XF.ChartLibrary.Charts
 
         protected override void CalculateOffsets()
         {
-            if (!mCustomViewPortEnabled)
+            if (!customViewPortEnabled)
             {
                 var offset = CalculateLegendOffsets();
 
@@ -122,7 +128,7 @@ namespace XF.ChartLibrary.Charts
                 offsetBottom += ExtraBottomOffset;
                 offsetLeft += ExtraLeftOffset;
 
-                float minOffset = MinOffset;
+                float minOffset = MinOffset.DpToPixel();
 
                 ViewPortHandler.RestrainViewPort(
                         Math.Max(minOffset, offsetLeft),
@@ -137,7 +143,7 @@ namespace XF.ChartLibrary.Charts
 
         public override void OnPaintSurface(SKSurface surface, SKImageInfo info)
         {
-            if (Data == null)
+            if (data == null)
             {
                 base.OnPaintSurface(surface, info);
                 return;

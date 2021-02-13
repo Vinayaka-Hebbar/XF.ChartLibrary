@@ -63,6 +63,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces\DataSets\IPieDataSet.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces\IChartData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Jobs\AnimatedViewPortJob.cs" />
+    <Compile Include="..\XF.ChartLibrary.Shared\Jobs\MoveViewJob.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Jobs\ViewPortJob.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Listener\IChartSelectionListener.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Listener\IDrawListener.cs" />

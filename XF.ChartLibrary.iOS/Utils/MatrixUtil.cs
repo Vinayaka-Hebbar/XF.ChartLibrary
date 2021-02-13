@@ -19,7 +19,7 @@ namespace XF.ChartLibrary.Utils
 
         public static CGAffineTransform Reset(this CGAffineTransform _) => CGAffineTransform.MakeIdentity();
 
-        public static CGAffineTransform PostTranslate(this CGAffineTransform self, float tx, float ty)
+        public static CGAffineTransform TranslatedBy(this CGAffineTransform self, float tx, float ty)
         {
             self.Translate(tx, ty);
             return self;

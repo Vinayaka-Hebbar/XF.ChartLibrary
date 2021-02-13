@@ -81,7 +81,7 @@ namespace XF.ChartLibrary.Animation
 
         private void AnimationLoop()
         {
-            var currentTime = System.Diagnostics.Stopwatch.GetTimestamp();
+            var currentTime = System.Diagnostics.Stopwatch.GetTimestamp() / System.Diagnostics.Stopwatch.Frequency;
 
 
             UpdateAnimationPhases(currentTime);
@@ -101,7 +101,7 @@ namespace XF.ChartLibrary.Animation
         {
             Stop();
 
-            startTimeX = System.Diagnostics.Stopwatch.GetTimestamp();
+            startTimeX = System.Diagnostics.Stopwatch.GetTimestamp() / System.Diagnostics.Stopwatch.Frequency;
             startTimeY = startTimeX;
             durationX = xAxisDuration;
             durationY = yAxisDuration;
@@ -127,7 +127,7 @@ namespace XF.ChartLibrary.Animation
 
         public void AnimateX(long xAxisDuration, EasingFunction easing)
         {
-            startTimeX = System.Diagnostics.Stopwatch.GetTimestamp();
+            startTimeX = System.Diagnostics.Stopwatch.GetTimestamp() / System.Diagnostics.Stopwatch.Frequency;
             durationX = xAxisDuration;
             endTimeX = startTimeX + xAxisDuration;
             endTime = endTimeX > endTimeY ? endTimeX : endTimeY;
@@ -148,7 +148,7 @@ namespace XF.ChartLibrary.Animation
 
         public void AnimateY(long yAxisDuration, EasingFunction easing)
         {
-            startTimeY = System.Diagnostics.Stopwatch.GetTimestamp();
+            startTimeY = System.Diagnostics.Stopwatch.GetTimestamp() / System.Diagnostics.Stopwatch.Frequency;
             durationY = yAxisDuration;
             endTimeY = startTimeY + yAxisDuration;
             endTime = endTimeX > endTimeY ? endTimeX : endTimeY;

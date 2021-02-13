@@ -9,15 +9,43 @@ namespace XF.ChartLibrary.Charts
 {
     public abstract partial class ChartBase<TData, TDataSet> : View, IAnimator
     {
+        public static readonly BindableProperty IgnorePixelScalingProperty =
+               BindableProperty.Create(nameof(IgnorePixelScaling), typeof(bool), typeof(ChartBase<TData, TDataSet>), false);
+
         public static readonly BindableProperty DataProperty = BindableProperty.Create(nameof(Data), typeof(TData), typeof(ChartBase<TData, TDataSet>), defaultValue: null, propertyChanged: OnDataChanged);
 
         public static readonly BindableProperty XAxisProperty = BindableProperty.Create(nameof(XAxis), typeof(XAxis), typeof(ChartBase<TData, TDataSet>), defaultValue: new XAxis());
 
-
         protected SKPaint InfoPaint;
         protected SKPaint DescPaint;
 
+        private float _dragDecelerationFrictionCoef = 0.9f;
+        /// <summary>
+        /// Deceleration friction coefficient in [0 ; 1] interval, higher values indicate that speed will decrease slowly, for e
+        /// if it set to 0, it will stop immediately.
+        /// 1 is an invalid value, and will be converted to 0.999 automatically.
+        /// </summary>
+        public float DragDecelerationFrictionCoef
+        {
+            get
+            {
+                return _dragDecelerationFrictionCoef;
+            }
+            set
+            {
+                _dragDecelerationFrictionCoef = Math.Max(0, Math.Min(value, 0.999f));
+            }
+        }
+
+        public abstract Gestures.ChartGestureRecognizer ChartGesture { get; }
+
         internal event Action SurfaceInvalidated;
+
+        public bool IgnorePixelScaling
+        {
+            get { return (bool)GetValue(IgnorePixelScalingProperty); }
+            set { SetValue(IgnorePixelScalingProperty, value); }
+        }
 
         static void OnDataChanged(BindableObject bindable, object oldValue, object newValue)
         {
@@ -27,6 +55,7 @@ namespace XF.ChartLibrary.Charts
         protected virtual void OnDataChanged(TData value)
         {
             offsetsCalculated = false;
+            data = value;
             if (value == null)
                 return;
             SetUpDefaultFormatter(value.YMin, value.YMax);
@@ -53,7 +82,7 @@ namespace XF.ChartLibrary.Charts
 
         public TData Data
         {
-            get => (TData)GetValue(DataProperty);
+            get => data;
             set => SetValue(DataProperty, value);
         }
 
@@ -77,7 +106,7 @@ namespace XF.ChartLibrary.Charts
         public virtual void OnPaintSurface(SKSurface surface, SKImageInfo e)
         {
             var canvas = surface.Canvas;
-            if (Data == null && !string.IsNullOrEmpty(NoDataText))
+            if (data == null && !string.IsNullOrEmpty(NoDataText))
             {
                 var pt = Bounds.Center;
 
@@ -143,11 +172,16 @@ namespace XF.ChartLibrary.Charts
             }
         }
 
-        protected override void OnSizeAllocated(double width, double height)
+
+        public virtual void OnSizeChanged(int w, int h)
         {
-            if (width > 0 && height > 0 && width < 10000 && height < 10000)
+            if (w > 0 && h > 0 && w < 10000 && h < 10000)
             {
-                ViewPortHandler.SetChartDimens((float)width, (float)height);
+                ViewPortHandler.SetChartDimens(w, h);
+            }
+            else
+            {
+                System.Diagnostics.Trace.TraceError("*Avoiding* setting chart dimens! width: " + w + ", height: " + h);
             }
 
             // This may cause the chart view to mutate properties affecting the view port --
@@ -165,7 +199,6 @@ namespace XF.ChartLibrary.Charts
                 }
             }
 
-            base.OnSizeAllocated(width, height);
         }
     }
 

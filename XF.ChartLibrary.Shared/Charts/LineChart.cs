@@ -14,6 +14,6 @@ namespace XF.ChartLibrary.Charts
             Renderer = new Renderer.LineChartRenderer(this, Animator, ViewPortHandler);
         }
 
-        IChartData<IBarLineScatterCandleBubbleDataSet> IBarLineScatterCandleBubbleProvider.Data => Data;
+        IChartData<IBarLineScatterCandleBubbleDataSet> IBarLineScatterCandleBubbleProvider.Data => data;
     }
 }

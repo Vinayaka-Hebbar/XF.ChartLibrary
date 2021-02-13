@@ -80,7 +80,7 @@
             get => zeroLineWidth;
             set
             {
-#if __ANDROID__ && !SKIASHARP
+#if __ANDROID__ || SKIASHARP
                 zeroLineWidth = value.DpToPixel();
 #else
                 zeroLineWidth = value;
@@ -163,11 +163,10 @@
             float minWidth = MinWidth;
             float maxWidth = MaxWidth;
 
-#if __ANDROID__ && !SKIASHARP
+#if __ANDROID__ || SKIASHARP
             if (minWidth > 0.0f)
                 minWidth = minWidth.DpToPixel();
-            if (maxWidth > 0.0f && maxWidth != float.MaxValue)
-
+            if (maxWidth > 0.0f && !float.IsPositiveInfinity(maxWidth))
                 maxWidth = maxWidth.DpToPixel();
 #endif
 
@@ -190,11 +189,10 @@
             float minWidth = MinWidth;
             float maxWidth = MaxWidth;
 
-#if __ANDROID__ && !SKIASHARP
+#if __ANDROID__ || SKIASHARP
             if (minWidth > 0.0f)
                 minWidth = minWidth.DpToPixel();
-            if (maxWidth > 0.0f && maxWidth != float.MaxValue)
-
+            if (maxWidth > 0.0f && !float.IsPositiveInfinity(maxWidth))
                 maxWidth = maxWidth.DpToPixel();
 #endif
 

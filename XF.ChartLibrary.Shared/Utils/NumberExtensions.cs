@@ -18,21 +18,14 @@ namespace XF.ChartLibrary.Utils
             return shifted / magnitude;
         }
 
-        public static double NextDouble(this double value)
+        public static double NextDouble(this double d)
         {
-
+            if (d == double.PositiveInfinity)
+                return d;
             // Get the long representation of value:
-            var longRep = BitConverter.DoubleToInt64Bits(value);
-
-            long nextLong;
-            if (longRep >= 0) // number is positive, so increment to go "up"
-                nextLong = longRep + 1L;
-            else if (longRep == long.MinValue) // number is -0
-                nextLong = 1L;
-            else  // number is negative, so decrement to go "up"
-                nextLong = longRep - 1L;
-
-            return BitConverter.Int64BitsToDouble(nextLong);
+            d += 0.0d;
+            return BitConverter.Int64BitsToDouble(BitConverter.DoubleToInt64Bits(d) +
+                    ((d >= 0.0d) ? +1L : -1L));
         }
 
         public static int Digits(this float self)

@@ -5,7 +5,7 @@ namespace XF.ChartLibrary.Utils
     public partial class Transformer
     {
         public SKMatrix ValueToPixelMatrix => MatrixValueToPx
-                .PostConcat(ViewPortHandler.MatrixTouch)
+                .PostConcat(ViewPortHandler.TouchMatrix)
                 .PostConcat(MatrixOffset);
 
         protected SKMatrix PixelToValueMatrixBuffer = new SKMatrix();
@@ -17,33 +17,30 @@ namespace XF.ChartLibrary.Utils
         public void PathValueToPixel(SKPath path)
         {
             path.Transform(MatrixValueToPx);
-            path.Transform(ViewPortHandler.MatrixTouch);
+            path.Transform(ViewPortHandler.TouchMatrix);
             path.Transform(MatrixOffset);
         }
 
         public SKPoint[] PointValuesToPixel(SKPoint[] pts)
         {
             pts = MatrixValueToPx.MapPoints(pts);
-            pts = ViewPortHandler.MatrixTouch.MapPoints(pts);
+            pts = ViewPortHandler.TouchMatrix.MapPoints(pts);
             return MatrixOffset.MapPoints(pts);
         }
 
         public SKPoint PointValueToPixel(float x, float y)
         {
             return MatrixOffset
-                .MapPoint(ViewPortHandler.MatrixTouch.MapPoint(MatrixValueToPx.MapPoint(x, y)));
+                .MapPoint(ViewPortHandler.TouchMatrix.MapPoint(MatrixValueToPx.MapPoint(x, y)));
         }
 
         public SKPoint[] PixelsToValue(params SKPoint[] points)
         {
-            var tmp = PixelToValueMatrixBuffer;
-            tmp.Reset();
-
             // invert all matrixes to convert back to the original value
-            MatrixOffset.TryInvert(out tmp);
+            MatrixOffset.TryInvert(out SKMatrix tmp);
             points = tmp.MapPoints(points);
 
-            ViewPortHandler.MatrixTouch.TryInvert(out tmp);
+            ViewPortHandler.TouchMatrix.TryInvert(out tmp);
             points = tmp.MapPoints(points);
 
             MatrixValueToPx.TryInvert(out tmp);
@@ -56,7 +53,7 @@ namespace XF.ChartLibrary.Utils
             MatrixOffset.TryInvert(out SKMatrix tmp);
             var point = tmp.MapPoint(x, y);
 
-            ViewPortHandler.MatrixTouch.TryInvert(out tmp);
+            ViewPortHandler.TouchMatrix.TryInvert(out tmp);
             point = tmp.MapPoint(point);
 
             MatrixValueToPx.TryInvert(out tmp);
@@ -99,6 +96,47 @@ namespace XF.ChartLibrary.Utils
             }
 
             return ValueToPixelMatrix.MapPoints(valuePoints);
+        }
+
+        /// <summary>
+        ///  Prepares the matrix that transforms values to pixels. Calculates the
+        ///scale factors from the charts size and offsets.
+        /// </summary>
+        public void PrepareMatrixValuePx(float xChartMin, float deltaX, float deltaY, float yChartMin)
+        {
+            float scaleX = (float)(ViewPortHandler.ContentWidth / deltaX);
+            float scaleY = (float)(ViewPortHandler.ContentHeight / deltaY);
+
+            if (float.IsInfinity(scaleX))
+            {
+                scaleX = 0;
+            }
+            if (float.IsInfinity(scaleY))
+            {
+                scaleY = 0;
+            }
+
+            // setup all matrices
+            MatrixValueToPx = SKMatrix.CreateIdentity()
+                .PostConcat(SKMatrix.CreateTranslation(-xChartMin, -yChartMin))
+                .PostConcat(SKMatrix.CreateScale(scaleX, -scaleY));
+        }
+
+        /// <summary>
+        /// Prepares the matrix that contains all offsets.
+        /// </summary>
+        public void PrepareMatrixOffset(bool inverted)
+        {
+            if (!inverted)
+                MatrixOffset = SKMatrix
+                    .CreateTranslation(ViewPortHandler.OffsetLeft,
+                        ViewPortHandler.ChartHeight - ViewPortHandler.OffsetBottom);
+            else
+            {
+                MatrixOffset = SKMatrix
+                    .CreateTranslation(ViewPortHandler.OffsetLeft, -ViewPortHandler.OffsetTop)
+                    .PostConcat(SKMatrix.CreateScale(1f, -1f));
+            }
         }
     }
 }

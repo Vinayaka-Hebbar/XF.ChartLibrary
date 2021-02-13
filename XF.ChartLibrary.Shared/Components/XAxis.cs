@@ -57,7 +57,11 @@
 
         public XAxis()
         {
-            YOffset = 4.0f; // -3
+#if __IOS__ || __TVOS__
+            yOffset = 4.0f; // -3  
+#else
+            yOffset = 4.0f.DpToPixel();
+#endif
         }
     }
 }

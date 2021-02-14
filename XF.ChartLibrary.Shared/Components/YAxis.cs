@@ -273,10 +273,10 @@
             range = Math.Abs(max - min);
 
             // calc extra spacing
-            AxisMinimum = CustomAxisMin ? AxisMinimum : min - (range / 100f) * SpacePercentBottom;
-            AxisMaximum = CustomAxisMax ? AxisMaximum : max + (range / 100f) * SpacePercentTop;
+            axisMinimum = CustomAxisMin ? axisMinimum : min - (range / 100f) * SpacePercentBottom;
+            axisMaximum = CustomAxisMax ? axisMaximum : max + (range / 100f) * SpacePercentTop;
 
-            AxisRange = Math.Abs(AxisMinimum - AxisMaximum);
+            axisRange = Math.Abs(axisMinimum - axisMaximum);
         }
     }
 }

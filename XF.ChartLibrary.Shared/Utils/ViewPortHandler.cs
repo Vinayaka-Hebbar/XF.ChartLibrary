@@ -221,7 +221,7 @@ namespace XF.ChartLibrary.Utils
 
             minScaleX = xScale;
 
-            LimitTransAndScale(touchMatrix, contentRect);
+            touchMatrix = LimitTransAndScale(touchMatrix, contentRect);
         }
 
         /// <summary>
@@ -235,7 +235,7 @@ namespace XF.ChartLibrary.Utils
 
             maxScaleX = xScale;
 
-            LimitTransAndScale(touchMatrix, contentRect);
+            touchMatrix = LimitTransAndScale(touchMatrix, contentRect);
         }
 
         /// <summary>
@@ -253,7 +253,7 @@ namespace XF.ChartLibrary.Utils
             this.minScaleX = minScaleX;
             this.maxScaleX = maxScaleX;
 
-            LimitTransAndScale(touchMatrix, contentRect);
+            touchMatrix = LimitTransAndScale(touchMatrix, contentRect);
         }
 
         /// <summary>
@@ -267,7 +267,7 @@ namespace XF.ChartLibrary.Utils
 
             minScaleY = yScale;
 
-            LimitTransAndScale(touchMatrix, contentRect);
+            touchMatrix = LimitTransAndScale(touchMatrix, contentRect);
         }
 
         /// <summary>
@@ -281,7 +281,7 @@ namespace XF.ChartLibrary.Utils
 
             maxScaleY = yScale;
 
-            LimitTransAndScale(touchMatrix, contentRect);
+            touchMatrix = LimitTransAndScale(touchMatrix, contentRect);
         }
 
         /// <summary>
@@ -299,7 +299,7 @@ namespace XF.ChartLibrary.Utils
             this.minScaleY = minScaleY;
             this.maxScaleY = maxScaleY;
 
-            LimitTransAndScale(touchMatrix, contentRect);
+            touchMatrix = LimitTransAndScale(touchMatrix, contentRect);
         }
     }
 }

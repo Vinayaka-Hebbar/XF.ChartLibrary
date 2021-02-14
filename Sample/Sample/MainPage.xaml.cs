@@ -27,13 +27,15 @@ namespace Sample
                     DrawFilled = true,
                 }
             };
+            LineData data = new LineData(dataSets);
+            data.NotifyDataChanged();
             var content = new LineChart()
             {
-                Margin = new Thickness(15),
                 MaxVisibleCount = 3,
-                VisibleXRangeMaximum = 10,
                 HorizontalOptions = LayoutOptions.FillAndExpand,
-                Data = new LineData(dataSets),
+                Data = data,
+                VisibleXRangeMaximum = 15,
+                VisibleXRangeMinimum = 5,
                 XAxis =
                 {
                     SpaceMax = 1,
@@ -42,9 +44,9 @@ namespace Sample
                 },
                 AxisLeft =
                 {
+                    AxisMaximum = 30,
                     LimitLines =
                     {
-
                         new XF.ChartLibrary.Components.LimitLine(10, "Max")
                         {
 
@@ -64,6 +66,8 @@ namespace Sample
                     Form = XF.ChartLibrary.Components.Form.Line
                 }
             };
+            content.SetVisibleYRange(15, 5, XF.ChartLibrary.Components.YAxisDependency.Left);
+            content.NotifyDataSetChanged();
             Grid.SetRow(content, 1);
             LayoutRoot.Children.Add(content);
         }

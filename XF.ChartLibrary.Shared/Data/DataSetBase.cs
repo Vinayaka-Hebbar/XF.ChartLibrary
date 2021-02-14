@@ -149,11 +149,15 @@ namespace XF.ChartLibrary.Data
 
         public Font ValueTypeface { get; set; }
 
-        private float valueTextSize = 17f;
+        private float valueTextSize;
 
         protected DataSetBase(string label)
         {
             Label = label;
+
+#if !__IOS__ || !__TVOS__
+            valueTextSize = 12f.DpToPixel();
+#endif
         }
 
         public float ValueTextSize

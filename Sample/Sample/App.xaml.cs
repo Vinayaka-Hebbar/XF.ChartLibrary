@@ -11,6 +11,12 @@ namespace Sample
             InitializeComponent();
 
             MainPage = new MainPage();
+
+            AppDomain.CurrentDomain.UnhandledException += OnUnhandlexException;
+        }
+
+        private void OnUnhandlexException(object sender, UnhandledExceptionEventArgs e)
+        {
         }
 
         protected override void OnStart()

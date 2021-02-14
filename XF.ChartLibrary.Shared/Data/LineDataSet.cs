@@ -31,9 +31,9 @@ namespace XF.ChartLibrary.Data
 
         private DashPathEffect dashPathEffect;
 
-        private float circleRadius = 8f;
+        private float circleRadius;
 
-        private float circleHoleRadius = 4f;
+        private float circleHoleRadius;
 
         /// <summary>
         /// Drawing mode for this line dataset
@@ -143,8 +143,15 @@ namespace XF.ChartLibrary.Data
         {
             circleColors = new List<Color>()
                     {
-                        ChartUtil.FromRGB(140, 234, 255)
+                        Utils.ColorTemplate.DefaultColor
                     };
+#if __IOS__ || __TVOS__
+            circleRadius = 6f;
+            circleHoleRadius = 4f;
+#else
+            circleRadius = 4f.DpToPixel();
+            circleHoleRadius = 2.5f.DpToPixel();
+#endif
         }
 
         public enum LineMode

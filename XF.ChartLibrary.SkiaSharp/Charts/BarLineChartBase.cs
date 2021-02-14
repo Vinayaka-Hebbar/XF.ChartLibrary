@@ -9,9 +9,9 @@ namespace XF.ChartLibrary.Charts
         /// <summary>
         /// paint object for the (by default) lightgrey background of the grid
         /// </summary>
-        protected SKPaint mGridBackgroundPaint;
+        protected SKPaint gridBackgroundPaint;
 
-        protected SKPaint mBorderPaint;
+        protected SKPaint borderPaint;
 
         public bool DragXEnabled
         {
@@ -64,12 +64,12 @@ namespace XF.ChartLibrary.Charts
             if (IsDrawGridBackground)
             {
                 // draw the grid background
-                c.DrawRect(ViewPortHandler.ContentRect, mGridBackgroundPaint);
+                c.DrawRect(ViewPortHandler.ContentRect, gridBackgroundPaint);
             }
 
             if (mDrawBorders)
             {
-                c.DrawRect(ViewPortHandler.ContentRect, mBorderPaint);
+                c.DrawRect(ViewPortHandler.ContentRect, borderPaint);
             }
         }
 
@@ -88,13 +88,13 @@ namespace XF.ChartLibrary.Charts
                 // offsets for y-labels
                 if (AxisLeft.NeedsOffset)
                 {
-                    offsetLeft += AxisLeft.GetRequiredWidthSpace(mAxisRendererLeft
+                    offsetLeft += AxisLeft.GetRequiredWidthSpace(axisRendererLeft
                             .AxisLabelPaint);
                 }
 
                 if (AxisRight.NeedsOffset)
                 {
-                    offsetRight += AxisRight.GetRequiredWidthSpace(mAxisRendererRight.AxisLabelPaint);
+                    offsetRight += AxisRight.GetRequiredWidthSpace(axisRendererRight.AxisLabelPaint);
                 }
 
                 if (XAxis.IsEnabled && XAxis.IsDrawLabelsEnabled)
@@ -160,35 +160,35 @@ namespace XF.ChartLibrary.Charts
             }
 
             if (AxisLeft.IsEnabled)
-                mAxisRendererLeft.ComputeAxis(AxisLeft.axisMinimum, AxisLeft.axisMaximum, AxisLeft.Inverted);
+                axisRendererLeft.ComputeAxis(AxisLeft.axisMinimum, AxisLeft.axisMaximum, AxisLeft.Inverted);
 
             if (AxisRight.IsEnabled)
-                mAxisRendererRight.ComputeAxis(AxisRight.axisMinimum, AxisRight.axisMaximum, AxisRight.Inverted);
+                axisRendererRight.ComputeAxis(AxisRight.axisMinimum, AxisRight.axisMaximum, AxisRight.Inverted);
 
             if (XAxis.IsEnabled)
-                mXAxisRenderer.ComputeAxis(XAxis.axisMinimum, XAxis.axisMaximum, false);
+                xAxisRenderer.ComputeAxis(XAxis.axisMinimum, XAxis.axisMaximum, false);
 
-            mXAxisRenderer.RenderAxisLine(canvas);
-            mAxisRendererLeft.RenderAxisLine(canvas);
-            mAxisRendererRight.RenderAxisLine(canvas);
+            xAxisRenderer.RenderAxisLine(canvas);
+            axisRendererLeft.RenderAxisLine(canvas);
+            axisRendererRight.RenderAxisLine(canvas);
 
             if (XAxis.IsDrawGridLinesBehindDataEnabled)
-                mXAxisRenderer.RenderGridLines(canvas);
+                xAxisRenderer.RenderGridLines(canvas);
 
             if (AxisLeft.IsDrawGridLinesBehindDataEnabled)
-                mAxisRendererLeft.RenderGridLines(canvas);
+                axisRendererLeft.RenderGridLines(canvas);
 
             if (AxisRight.IsDrawGridLinesBehindDataEnabled)
-                mAxisRendererRight.RenderGridLines(canvas);
+                axisRendererRight.RenderGridLines(canvas);
 
             if (XAxis.IsEnabled && XAxis.DrawLimitLinesBehindData)
-                mXAxisRenderer.RenderLimitLines(canvas);
+                xAxisRenderer.RenderLimitLines(canvas);
 
             if (AxisLeft.IsEnabled && AxisLeft.DrawLimitLinesBehindData)
-                mAxisRendererLeft.RenderLimitLines(canvas);
+                axisRendererLeft.RenderLimitLines(canvas);
 
             if (AxisRight.IsEnabled && AxisRight.DrawLimitLinesBehindData)
-                mAxisRendererRight.RenderLimitLines(canvas);
+                axisRendererRight.RenderLimitLines(canvas);
 
             int clipRestoreCount = canvas.Save();
 
@@ -201,13 +201,13 @@ namespace XF.ChartLibrary.Charts
             Renderer.DrawData(canvas);
 
             if (!XAxis.IsDrawGridLinesBehindDataEnabled)
-                mXAxisRenderer.RenderGridLines(canvas);
+                xAxisRenderer.RenderGridLines(canvas);
 
             if (!AxisLeft.IsDrawGridLinesBehindDataEnabled)
-                mAxisRendererLeft.RenderGridLines(canvas);
+                axisRendererLeft.RenderGridLines(canvas);
 
             if (!AxisRight.IsDrawGridLinesBehindDataEnabled)
-                mAxisRendererRight.RenderGridLines(canvas);
+                axisRendererRight.RenderGridLines(canvas);
 
             // if highlighting is enabled
             if (ValuesToHighlight)
@@ -219,17 +219,17 @@ namespace XF.ChartLibrary.Charts
             Renderer.DrawExtras(canvas);
 
             if (XAxis.IsEnabled && !XAxis.DrawLimitLinesBehindData)
-                mXAxisRenderer.RenderLimitLines(canvas);
+                xAxisRenderer.RenderLimitLines(canvas);
 
             if (AxisLeft.IsEnabled && !AxisLeft.DrawLimitLinesBehindData)
-                mAxisRendererLeft.RenderLimitLines(canvas);
+                axisRendererLeft.RenderLimitLines(canvas);
 
             if (AxisRight.IsEnabled && !AxisRight.DrawLimitLinesBehindData)
-                mAxisRendererRight.RenderLimitLines(canvas);
+                axisRendererRight.RenderLimitLines(canvas);
 
-            mXAxisRenderer.RenderAxisLabels(canvas);
-            mAxisRendererLeft.RenderAxisLabels(canvas);
-            mAxisRendererRight.RenderAxisLabels(canvas);
+            xAxisRenderer.RenderAxisLabels(canvas);
+            axisRendererLeft.RenderAxisLabels(canvas);
+            axisRendererRight.RenderAxisLabels(canvas);
 
             if (mClipValuesToContent)
             {

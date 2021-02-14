@@ -1,7 +1,6 @@
 ﻿using Android.Content;
 using Android.Views;
-using AndroidX.Core.View;
-using SkiaSharp;
+using System.ComponentModel;
 using Xamarin.Forms.Platform.Android;
 using XF.ChartLibrary.Charts;
 using XF.ChartLibrary.Interfaces;
@@ -18,7 +17,6 @@ namespace XF.ChartLibrary.Platform.Droid
 
         protected ChartViewBaseRenderer(Context context) : base(context)
         {
-
         }
 
         protected override void OnElementChanged(ElementChangedEventArgs<ChartBase<TData, TDataSet>> e)
@@ -27,6 +25,7 @@ namespace XF.ChartLibrary.Platform.Droid
             {
                 var oldElement = e.OldElement;
                 oldElement.SurfaceInvalidated -= Control.Invalidate;
+                oldElement.ChartGesture.Detach();
             }
             if (e.NewElement != null)
             {
@@ -83,6 +82,26 @@ namespace XF.ChartLibrary.Platform.Droid
             NativeView view = new NativeView(Context);
             view.PaintSurface += OnPaintSurface;
             return view;
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (gestureRecognizer != null)
+                {
+                    gestureRecognizer.Detach();
+                    gestureDetector.Dispose();
+                    gestureRecognizer = null;
+                }
+                if (Control != null)
+                {
+                    Control.PaintSurface -= OnPaintSurface;
+                    if (Element != null)
+                        Element.SurfaceInvalidated -= Control.Invalidate;
+                }
+            }
+            base.Dispose(disposing);
         }
     }
 }

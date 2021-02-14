@@ -10,11 +10,9 @@ namespace XF.ChartLibrary.Utils
                 double.IsNaN(number) ||
                 number == 0.0)
                 return 0;
-
-            float d = (float)MathF.Ceiling((float)Math.Log10(number < 0 ? -number : number));
-            int pw = 1 - (int)d;
-            float magnitude = (float)MathF.Pow(10, pw);
-            long shifted = (long)Math.Round(number * magnitude);
+            float magnitude = (float)Math.Pow(10, 1 - (int)Math.Ceiling((float)Math.Log10(Math.Abs(number))));
+            // Problem in Math.Round(2.5) somtimes giving 2 or 3 as result using Math.Celing
+            long shifted = (long)Math.Round((number * magnitude) * 1.001);
             return shifted / magnitude;
         }
 

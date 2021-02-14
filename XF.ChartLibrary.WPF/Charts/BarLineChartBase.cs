@@ -41,7 +41,7 @@ namespace XF.ChartLibrary.Charts
 
         public BarLineChartBase()
         {
-            mGridBackgroundPaint = new SKPaint
+            gridBackgroundPaint = new SKPaint
             {
                 Style = SKPaintStyle.Fill,
                 // Color = SKColors.White;
@@ -49,7 +49,7 @@ namespace XF.ChartLibrary.Charts
                                                    // grey
             };
 
-            mBorderPaint = new SKPaint
+            borderPaint = new SKPaint
             {
                 Style = SKPaintStyle.Stroke,
                 Color = SKColors.Black,

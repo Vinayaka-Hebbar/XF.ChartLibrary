@@ -16,8 +16,10 @@ namespace XF.ChartLibrary.Utils
 
         public void RestrainViewPort(float offsetLeft, float offsetTop, float offsetRight, float offsetBottom)
         {
-            contentRect.Location = new SKPoint(offsetLeft, offsetTop);
-            contentRect.Size = new SKSize(chartWidth - offsetRight, chartHeight - offsetBottom);
+            contentRect.Left = offsetLeft;
+            contentRect.Top = offsetTop;
+            contentRect.Right = chartWidth - offsetRight;
+            contentRect.Bottom = chartHeight - offsetBottom;
         }
 
         public SKMatrix Zoom(float scaleX, float scaleY, float x, float y)

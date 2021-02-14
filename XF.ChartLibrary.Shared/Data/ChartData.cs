@@ -649,10 +649,5 @@ namespace XF.ChartLibrary.Data
 
             return max;
         }
-
-        public void NotifyDataSetChanged()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

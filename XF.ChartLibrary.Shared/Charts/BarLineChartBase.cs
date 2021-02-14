@@ -45,13 +45,13 @@ namespace XF.ChartLibrary.Charts
         /// </summary>
         protected float MinOffset = 15.0f;
 
-        protected YAxisRenderer mAxisRendererLeft;
-        protected YAxisRenderer mAxisRendererRight;
+        protected YAxisRenderer axisRendererLeft;
+        protected YAxisRenderer axisRendererRight;
 
-        protected Transformer mLeftAxisTransformer;
-        protected Transformer mRightAxisTransformer;
+        protected Transformer leftAxisTransformer;
+        protected Transformer rightAxisTransformer;
 
-        protected XAxisRenderer mXAxisRenderer;
+        protected XAxisRenderer xAxisRenderer;
 
         /// <summary>
         /// Returns the lowest x-index (value on the x-axis) that is still visible on
@@ -139,29 +139,29 @@ namespace XF.ChartLibrary.Charts
             AxisLeft = new YAxis(YAxisDependency.Left);
             AxisRight = new YAxis(YAxisDependency.Right);
 
-            mLeftAxisTransformer = new Transformer(ViewPortHandler);
-            mRightAxisTransformer = new Transformer(ViewPortHandler);
+            leftAxisTransformer = new Transformer(ViewPortHandler);
+            rightAxisTransformer = new Transformer(ViewPortHandler);
 
-            mAxisRendererLeft = new YAxisRenderer(ViewPortHandler, AxisLeft, mLeftAxisTransformer);
-            mAxisRendererRight = new YAxisRenderer(ViewPortHandler, AxisRight, mRightAxisTransformer);
+            axisRendererLeft = new YAxisRenderer(ViewPortHandler, AxisLeft, leftAxisTransformer);
+            axisRendererRight = new YAxisRenderer(ViewPortHandler, AxisRight, rightAxisTransformer);
             Highlighter = new Highlight.ChartHighlighter<BarLineChartBase<TData, TDataSet>>(this);
 
-            mXAxisRenderer = new XAxisRenderer(ViewPortHandler, XAxis, mLeftAxisTransformer);
+            xAxisRenderer = new XAxisRenderer(ViewPortHandler, XAxis, leftAxisTransformer);
         }
 
         protected void PrepareOffsetMatrix()
         {
-            mRightAxisTransformer.PrepareMatrixOffset(AxisRight.Inverted);
-            mLeftAxisTransformer.PrepareMatrixOffset(AxisLeft.Inverted);
+            rightAxisTransformer.PrepareMatrixOffset(AxisRight.Inverted);
+            leftAxisTransformer.PrepareMatrixOffset(AxisLeft.Inverted);
         }
 
         protected void PrepareValuePxMatrix()
         {
-            mRightAxisTransformer.PrepareMatrixValuePx(XAxis.axisMinimum,
+            rightAxisTransformer.PrepareMatrixValuePx(XAxis.axisMinimum,
                     XAxis.axisRange,
                     AxisRight.axisRange,
                     AxisRight.axisMinimum);
-            mLeftAxisTransformer.PrepareMatrixValuePx(XAxis.axisMinimum,
+            leftAxisTransformer.PrepareMatrixValuePx(XAxis.axisMinimum,
                     XAxis.axisRange,
                     AxisLeft.axisRange,
                     AxisLeft.axisMinimum);
@@ -312,9 +312,9 @@ namespace XF.ChartLibrary.Charts
 
             CalcMinMax();
 
-            mAxisRendererLeft.ComputeAxis(AxisLeft.axisMinimum, AxisLeft.axisMaximum, AxisLeft.Inverted);
-            mAxisRendererRight.ComputeAxis(AxisRight.axisMinimum, AxisRight.axisMaximum, AxisRight.Inverted);
-            mXAxisRenderer.ComputeAxis(XAxis.axisMinimum, XAxis.axisMaximum, false);
+            axisRendererLeft.ComputeAxis(AxisLeft.axisMinimum, AxisLeft.axisMaximum, AxisLeft.Inverted);
+            axisRendererRight.ComputeAxis(AxisRight.axisMinimum, AxisRight.axisMaximum, AxisRight.Inverted);
+            xAxisRenderer.ComputeAxis(XAxis.axisMinimum, XAxis.axisMaximum, false);
 
             if (legend != null)
                 LegendRenderer.ComputeLegend(data);
@@ -370,9 +370,9 @@ namespace XF.ChartLibrary.Charts
         public Transformer GetTransformer(YAxisDependency which)
         {
             if (which == YAxisDependency.Left)
-                return mLeftAxisTransformer;
+                return leftAxisTransformer;
             else
-                return mRightAxisTransformer;
+                return rightAxisTransformer;
         }
 
 

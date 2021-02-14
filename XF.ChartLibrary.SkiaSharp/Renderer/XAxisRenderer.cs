@@ -245,8 +245,8 @@ namespace XF.ChartLibrary.Renderer
             paint.TextAlign = originalTextAlign;
         }
 
-        protected SKPath mRenderGridLinesPath = new SKPath();
-        protected SKPoint[] mRenderGridLinesBuffer = new SKPoint[1];
+        protected SKPath RenderGridLinesPath = new SKPath();
+        protected SKPoint[] RenderGridLinesBuffer = new SKPoint[1];
 
         public void RenderGridLines(SKCanvas c)
         {
@@ -256,12 +256,11 @@ namespace XF.ChartLibrary.Renderer
             int clipRestoreCount = c.Save();
             c.ClipRect(GetGridClippingRect());
 
-            if (mRenderGridLinesBuffer.Length != Axis.entryCount)
+            if (RenderGridLinesBuffer.Length != Axis.entryCount)
             {
-                mRenderGridLinesBuffer = new SKPoint[XAxis.entryCount];
+                RenderGridLinesBuffer = new SKPoint[XAxis.entryCount];
             }
-            var positions = mRenderGridLinesBuffer;
-
+            var positions = RenderGridLinesBuffer;
             for (int i = 0; i < positions.Length; i++)
             {
                 float entry = (float)Axis.entries[i];
@@ -272,7 +271,7 @@ namespace XF.ChartLibrary.Renderer
 
             SetupGridPaint();
 
-            var gridLinePath = mRenderGridLinesPath;
+            var gridLinePath = RenderGridLinesPath;
             gridLinePath.Reset();
 
             foreach (SKPoint pos in positions)

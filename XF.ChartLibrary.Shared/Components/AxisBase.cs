@@ -11,10 +11,10 @@ namespace XF.ChartLibrary.Components
 #endif
     public partial class AxisBase : ComponentBase
     {
-        /**
-     * custom formatter that is used instead of the auto-formatter if set
-     */
-        protected IAxisValueFormatter mAxisValueFormatter;
+        /// <summary>
+        /// custom formatter that is used instead of the auto-formatter if set
+        /// </summary>
+        protected IAxisValueFormatter axisValueFormatter;
 
         private float gridLineWidth = 1f;
 
@@ -47,69 +47,72 @@ namespace XF.ChartLibrary.Components
         /// axis label entries only used for centered labels
         /// </summary>
         public float[] CenteredEntries => centeredEntries;
-        /**
-         * the number of entries the legend contains
-         */
+
+        /// <summary>
+        ///  the number of entries the legend contains
+        /// </summary>
         public int EntryCount => entryCount;
-        /**
-         * the number of decimal digits to use
-         */
+
+        /// <summary>
+        /// the number of decimal digits to use
+        /// </summary>
         public int Decimals { get; set; }
 
-        /**
-         * the number of label entries the axis should have, default 6
-         */
+        /// <summary>
+        ///  the number of label entries the axis should have, default 6
+        /// </summary>
         private int labelCount = 6;
 
-        /**
-         * the minimum interval between axis values
-         */
+        /// <summary>
+        /// the minimum interval between axis values
+        /// </summary>
         protected float granularity = 1.0f;
 
 
-        /**
-         * flag that indicates if the line alongside the axis is drawn or not
-         */
+        /// <summary>
+        /// flag that indicates if the line alongside the axis is drawn or not
+        /// </summary>
         public bool DrawAxisLine
         {
             get => drawAxisLine;
             set => drawAxisLine = value;
         }
-        /**
-         * flag that indicates of the labels of this axis should be drawn or not
-         */
+
+        /// <summary>
+        /// flag that indicates of the labels of this axis should be drawn or not
+        /// </summary>
         protected bool drawLabels = true;
 
         public bool CenterAxisLabels { get; set; } = false;
 
-        /**
-         * array of limit lines that can be set for the axis
-         */
+        /// <summary>
+        /// array of limit lines that can be set for the axis
+        /// </summary>
         public IList<LimitLine> LimitLines { get; }
 
-        /**
-         * flag indicating the limit lines layer depth
-         */
+        /// <summary>
+        /// flag indicating the limit lines layer depth
+        /// </summary>
         protected bool drawLimitLineBehindData = false;
 
-        /**
-         * flag indicating the grid lines layer depth
-         */
+        /// <summary>
+        /// flag indicating the grid lines layer depth
+        /// </summary>
         protected bool drawGridLinesBehindData = true;
 
-        /**
-         * Extra spacing for `axisMinimum` to be added to automatically calculated `axisMinimum`
-         */
+        /// <summary>
+        /// Extra spacing for `axisMinimum` to be added to automatically calculated `axisMinimum`
+        /// </summary>
         protected float spaceMin = 0.0f;
 
-        /**
-         * Extra spacing for `axisMaximum` to be added to automatically calculated `axisMaximum`
-         */
+        /// <summary>
+        /// Extra spacing for `axisMaximum` to be added to automatically calculated `axisMaximum`
+        /// </summary>
         protected float spaceMax = 0.0f;
 
-        /**
-         * flag indicating that the axis-min value has been customized
-         */
+        /// <summary>
+        /// flag indicating that the axis-min value has been customized
+        /// </summary>
         protected bool CustomAxisMin = false;
 
         /// <summary>
@@ -208,9 +211,9 @@ namespace XF.ChartLibrary.Components
 
 #endif
 
-        /**
-         * The maximum number of labels on the axis
-         */
+        /// <summary>
+        /// The maximum number of labels on the axis
+        /// </summary>
         public int AxisMaxLabels
         {
             get => axisMaxLabels;
@@ -232,46 +235,44 @@ namespace XF.ChartLibrary.Components
             }
         }
 
-        /**
-         * When true, axis labels are controlled by the `granularity` property.
-         * When false, axis values could possibly be repeated.
-         * This could happen if two adjacent axis values are rounded to same value.
-         * If using granularity this could be avoided by having fewer axis values visible.
-         */
+        /// <summary>
+        ///  When true, axis labels are controlled by the `granularity` property.
+        /// When false, axis values could possibly be repeated.
+        /// This could happen if two adjacent axis values are rounded to same value.
+        /// If using granularity this could be avoided by having fewer axis values visible.
+        /// </summary>
         public bool GranularityEnabled
         {
             get => granularityEnabled;
             set => granularityEnabled = value;
         }
-        /**
-         * if true, the set number of y-labels will be forced
-         */
+
+        /// <summary>
+        /// if true, the set number of y-labels will be forced
+        /// </summary>
         public bool ForceLabels
         {
             get => forceLabels;
             set => forceLabels = value;
         }
-        /**
-         * flag indicating if the grid lines for this axis should be drawn
-         */
+
+        /// <summary>
+        /// flag indicating if the grid lines for this axis should be drawn
+        /// </summary>
         public bool DrawGridLines
         {
             get => drawGridLines;
             set => drawGridLines = value;
         }
 
-        /**
-         * Returns true if drawing grid lines is enabled for this axis.
-         *
-         * @return
-         */
+        /// <summary>
+        /// Returns true if drawing grid lines is enabled for this axis.
+        /// </summary>
         public bool IsDrawGridLinesEnabled => drawGridLines;
 
-        /**
-         * Returns true if the line alongside the axis should be drawn.
-         *
-         * @return
-         */
+        /// <summary>
+        ///  Returns true if the line alongside the axis should be drawn.
+        /// </summary>
         public bool IsDrawAxisLineEnabled => drawAxisLine;
 
 
@@ -285,7 +286,7 @@ namespace XF.ChartLibrary.Components
             get => axisLineWidth;
             set
             {
-#if __ANDROID__ || NATIVE
+#if __ANDROID__ || SKIASHARP
                 axisLineWidth = value.DpToPixel();
 #else
                 axisLineWidth = value;
@@ -294,18 +295,16 @@ namespace XF.ChartLibrary.Components
         }
 
 
-        /**
-         * Sets the width of the grid lines that are drawn away from each axis
-         * label.
-         *
-         * @param width
-         */
+        /// <summary>
+        /// Sets the width of the grid lines that are drawn away from each axis
+        /// label.
+        /// </summary>
         public float GridLineWidth
         {
             get => axisLineWidth;
             set
             {
-#if __ANDROID__ && !SKIASHARP
+#if __ANDROID__ || SKIASHARP
                 gridLineWidth = value.DpToPixel();
 #else
                 gridLineWidth = value;
@@ -472,20 +471,20 @@ namespace XF.ChartLibrary.Components
         {
             get
             {
-                if (mAxisValueFormatter == null ||
-                    (mAxisValueFormatter is DefaultAxisValueFormatter format &&
+                if (axisValueFormatter == null ||
+                    (axisValueFormatter is DefaultAxisValueFormatter format &&
                             (format.Decimals != Decimals)))
-                    mAxisValueFormatter = new DefaultAxisValueFormatter(Decimals);
+                    axisValueFormatter = new DefaultAxisValueFormatter(Decimals);
 
-                return mAxisValueFormatter;
+                return axisValueFormatter;
             }
             set
             {
 
                 if (value == null)
-                    mAxisValueFormatter = new DefaultAxisValueFormatter(Decimals);
+                    axisValueFormatter = new DefaultAxisValueFormatter(Decimals);
                 else
-                    mAxisValueFormatter = value;
+                    axisValueFormatter = value;
             }
         }
 
@@ -500,7 +499,7 @@ namespace XF.ChartLibrary.Components
             {
                 CustomAxisMax = true;
                 axisMaximum = value;
-                AxisRange = Math.Abs(value - axisMinimum);
+                axisRange = Math.Abs(value - axisMinimum);
             }
         }
 
@@ -511,7 +510,7 @@ namespace XF.ChartLibrary.Components
             {
                 CustomAxisMin = true;
                 axisMinimum = value;
-                AxisRange = Math.Abs(axisMaximum - value);
+                axisRange = Math.Abs(axisMaximum - value);
             }
         }
 
@@ -577,7 +576,7 @@ namespace XF.ChartLibrary.Components
             axisMaximum = max;
 
             // actual range
-            AxisRange = Math.Abs(max - min);
+            axisRange = Math.Abs(max - min);
         }
 
         /**

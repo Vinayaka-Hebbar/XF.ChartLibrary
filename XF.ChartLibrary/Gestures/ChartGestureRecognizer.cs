@@ -130,5 +130,13 @@ namespace XF.ChartLibrary.Gestures
         {
             Pinch?.Invoke(e, x, y);
         }
+
+        internal void Detach()
+        {
+            Pinch = null;
+            DoubleTap = null;
+            Pan = null;
+            Tap = null;
+        }
     }
 }

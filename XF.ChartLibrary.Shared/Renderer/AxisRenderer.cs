@@ -77,7 +77,7 @@ namespace XF.ChartLibrary.Renderer
                 interval = interval < Axis.Granularity ? Axis.Granularity : interval;
 
             // Normalize interval
-            var intervalMagnitude = Math.Pow(10, (int)Math.Log10(interval)).RoundToNextSignificant();
+            var intervalMagnitude = Math.Pow(10, (int)MathF.Log10(interval)).RoundToNextSignificant();
             int intervalSigDigit = (int)(interval / intervalMagnitude);
             if (intervalSigDigit > 5)
             {

@@ -211,5 +211,15 @@ namespace XF.ChartLibrary.Gestures
             OnDoubleTap(e.GetX(), e.GetY());
             return true;
         }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (velocityTracker != null)
+            {
+                velocityTracker.Recycle();
+                velocityTracker = null;
+            }
+            base.Dispose(disposing);
+        }
     }
 }

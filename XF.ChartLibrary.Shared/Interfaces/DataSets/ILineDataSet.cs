@@ -22,17 +22,15 @@ namespace XF.ChartLibrary.Interfaces.DataSets
         /// </summary>
         LineDataSet.LineMode Mode { get; }
 
-        /**
-         * Returns the intensity of the cubic lines (the effect intensity).
-         * Max = 1f = very cubic, Min = 0.05f = low cubic effect, Default: 0.2f
-         *
-         * @return
-         */
+        /// <summary>
+        /// Returns the intensity of the cubic lines (the effect intensity).
+        /// Max = 1f = very cubic, Min = 0.05f = low cubic effect, Default: 0.2f
+        /// </summary>
         float CubicIntensity { get; }
 
-        /**
-         * Returns the size of the drawn circles.
-         */
+        /// <summary>
+        /// Returns the size of the drawn circles.
+        /// </summary>
         float CircleRadius { get; }
 
         /**
@@ -40,41 +38,32 @@ namespace XF.ChartLibrary.Interfaces.DataSets
          */
         float CircleHoleRadius { get; }
 
-        /**
-         * Returns the color at the given index of the DataSet's circle-color array.
-         * Performs a IndexOutOfBounds check by modulus.
-         *
-         * @param index
-         * @return
-         */
+        /// <summary>
+        /// Returns the color at the given index of the DataSet's circle-color array.
+        /// Performs a IndexOutOfBounds check by modulus.
+        /// </summary>
+        /// <param name="index">color index</param>
+        /// <returns>the color at the given index of the DataSet's circle-color array.</returns>
         Color GetCircleColor(int index);
 
-        /**
-         * Returns the number of colors in this DataSet's circle-color array.
-         *
-         * @return
-         */
+        /// <summary>
+        /// Returns the number of colors in this DataSet's circle-color array.
+        /// </summary>
         int CircleColorCount { get; }
 
-        /**
-         * Returns true if drawing circles for this DataSet is enabled, false if not
-         *
-         * @return
-         */
+        /// <summary>
+        /// Returns true if drawing circles for this DataSet is enabled, false if not
+        /// </summary>
         bool IsDrawCirclesEnabled { get; }
 
-        /**
-         * Returns the color of the inner circle (the circle-hole).
-         *
-         * @return
-         */
+        /// <summary>
+        /// Returns the color of the inner circle (the circle-hole).
+        /// </summary>
         Color CircleHoleColor { get; }
 
-        /**
-         * Returns true if drawing the circle-holes is enabled, false if not.
-         *
-         * @return
-         */
+        /// <summary>
+        /// Returns true if drawing the circle-holes is enabled, false if not.
+        /// </summary>
         bool IsDrawCircleHoleEnabled { get; }
 
         /**
@@ -84,19 +73,15 @@ namespace XF.ChartLibrary.Interfaces.DataSets
          */
         DashPathEffect DashPathEffect { get; }
 
-        /**
-         * Returns true if the dashed-line effect is enabled, false if not.
-         * If the DashPathEffect object is null, also return false here.
-         *
-         * @return
-         */
+        /// <summary>
+        /// Returns true if the dashed-line effect is enabled, false if not.
+        /// If the <see cref="DashPathEffect"/> object is null, also return false here.
+        /// </summary>
         bool IsDashedLineEnabled { get; }
 
-        /**
-         * Returns the IFillFormatter that is set for this DataSet.
-         *
-         * @return
-         */
+        /// <summary>
+        /// Returns the IFillFormatter that is set for this DataSet.
+        /// </summary>
         Formatter.IFillFormatter FillFormatter { get; }
     }
 }

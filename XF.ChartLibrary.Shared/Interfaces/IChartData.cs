@@ -21,7 +21,6 @@ namespace XF.ChartLibrary.Interfaces
 
     public interface IChartDataBase
     {
-        void NotifyDataSetChanged();
         /// <summary>
         /// maximum y-value in the value array across all axes
         /// </summary>

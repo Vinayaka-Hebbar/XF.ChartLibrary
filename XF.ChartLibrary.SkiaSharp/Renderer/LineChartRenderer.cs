@@ -78,7 +78,7 @@ namespace XF.ChartLibrary.Renderer
             c.DrawBitmap(drawBitmap, 0, 0, RenderPaint);
         }
 
-        protected void DrawDataSet(SKCanvas c, Data.LineDataSet dataSet)
+        protected void DrawDataSet(SKCanvas c, LineDataSet dataSet)
         {
             if (dataSet.EntryCount < 1)
                 return;
@@ -89,16 +89,16 @@ namespace XF.ChartLibrary.Renderer
             switch (dataSet.Mode)
             {
                 default:
-                case Data.LineDataSet.LineMode.Linear:
-                case Data.LineDataSet.LineMode.Stepped:
+                case LineDataSet.LineMode.Linear:
+                case LineDataSet.LineMode.Stepped:
                     DrawLinear(c, dataSet);
                     break;
 
-                case Data.LineDataSet.LineMode.CubicBezier:
+                case LineDataSet.LineMode.CubicBezier:
                     DrawCubicBezier(dataSet);
                     break;
 
-                case Data.LineDataSet.LineMode.HorizontalBezier:
+                case LineDataSet.LineMode.HorizontalBezier:
                     DrawHorizontalBezier(dataSet);
                     break;
             }
@@ -420,7 +420,7 @@ namespace XF.ChartLibrary.Renderer
             RenderPaint.PathEffect = null;
         }
 
-        protected void DrawHorizontalBezier(Data.LineDataSet dataSet)
+        protected void DrawHorizontalBezier(LineDataSet dataSet)
         {
             float phaseY = Animator.PhaseY;
 
@@ -504,7 +504,6 @@ namespace XF.ChartLibrary.Renderer
         {
             if (IsDrawingValuesAllowed(Chart))
             {
-
                 var dataSets = ((Interfaces.DataProvider.ILineChartProvider)Chart).Data.DataSets;
 
                 for (int i = 0; i < dataSets.Count; i++)
@@ -524,7 +523,7 @@ namespace XF.ChartLibrary.Renderer
                     int valOffset = (int)(dataSet.CircleRadius * 1.75f);
 
                     if (!dataSet.IsDrawCirclesEnabled)
-                        valOffset = valOffset / 2;
+                        valOffset /= 2;
 
                     XBounds.Set(Chart, dataSet, Animator);
 
@@ -569,7 +568,7 @@ namespace XF.ChartLibrary.Renderer
             DrawCircles(c);
         }
 
-        private readonly Dictionary<IDataSet, DataSetImageCache> mImageCaches = new Dictionary<IDataSet, DataSetImageCache>();
+        private readonly IDictionary<IDataSet, DataSetImageCache> imageCaches = new Dictionary<IDataSet, DataSetImageCache>();
 
         protected void DrawCircles(SKCanvas c)
         {
@@ -602,16 +601,13 @@ namespace XF.ChartLibrary.Renderer
                 var drawTransparentCircleHole = drawCircleHole &&
                         dataSet.CircleHoleColor == SKColors.Empty;
 
-                if (mImageCaches.TryGetValue(dataSet, out DataSetImageCache imageCache) == false)
+                if (imageCaches.TryGetValue(dataSet, out DataSetImageCache imageCache) == false)
                 {
                     imageCache = new DataSetImageCache();
-                    mImageCaches.Add(dataSet, imageCache);
+                    imageCaches.Add(dataSet, imageCache);
                 }
-
-                var changeRequired = imageCache.Init(dataSet);
-
                 // only fill the cache with new bitmaps if a change is required
-                if (changeRequired)
+                if (imageCache.Init(dataSet))
                 {
                     Fill(imageCache, dataSet, drawCircleHole, drawTransparentCircleHole);
                 }
@@ -620,7 +616,6 @@ namespace XF.ChartLibrary.Renderer
 
                 for (int j = XBounds.Min; j <= boundsRangeCount; j++)
                 {
-
                     Entry e = ((IDataSet)dataSet)[j];
 
                     if (e == null) break;
@@ -676,7 +671,6 @@ namespace XF.ChartLibrary.Renderer
         /// </summary>
         protected void Fill(DataSetImageCache cache, ILineDataSet set, bool drawCircleHole, bool drawTransparentCircleHole)
         {
-
             int colorCount = set.CircleColorCount;
             float circleRadius = set.CircleRadius;
             float circleHoleRadius = set.CircleHoleRadius;

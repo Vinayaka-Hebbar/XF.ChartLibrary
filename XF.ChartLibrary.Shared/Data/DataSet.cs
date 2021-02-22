@@ -225,25 +225,25 @@ namespace XF.ChartLibrary.Data
             List<TEntry> entries = new List<TEntry>();
 
             int low = 0;
-            int high = entries.Count - 1;
+            int high = this.entries.Count - 1;
 
             while (low <= high)
             {
                 int m = (high + low) / 2;
-                TEntry entry = entries[m];
+                TEntry entry = this.entries[m];
 
                 // if we have a match
                 if (xValue == entry.X)
                 {
-                    while (m > 0 && entries[m - 1].X == xValue)
+                    while (m > 0 && this.entries[m - 1].X == xValue)
                         m--;
 
-                    high = entries.Count;
+                    high = this.entries.Count;
 
                     // loop over all "equal" entries
                     for (; m < high; m++)
                     {
-                        entry = entries[m];
+                        entry = this.entries[m];
                         if (entry.X == xValue)
                         {
                             entries.Add(entry);
@@ -273,25 +273,25 @@ namespace XF.ChartLibrary.Data
             List<Entry> entries = new List<Entry>();
 
             int low = 0;
-            int high = entries.Count - 1;
+            int high = this.entries.Count - 1;
 
             while (low <= high)
             {
                 int m = (high + low) / 2;
-                Entry entry = entries[m];
+                Entry entry = this.entries[m];
 
                 // if we have a match
                 if (xValue == entry.X)
                 {
-                    while (m > 0 && entries[m - 1].X == xValue)
+                    while (m > 0 && this.entries[m - 1].X == xValue)
                         m--;
 
-                    high = entries.Count;
+                    high = this.entries.Count;
 
                     // loop over all "equal" entries
                     for (; m < high; m++)
                     {
-                        entry = entries[m];
+                        entry = this.entries[m];
                         if (entry.X == xValue)
                         {
                             entries.Add(entry);

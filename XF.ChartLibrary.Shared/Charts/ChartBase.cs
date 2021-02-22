@@ -75,9 +75,25 @@ namespace XF.ChartLibrary.Charts
             get => legend;
         }
 
+        public IMarker Marker
+        {
+            get => marker;
+            set
+            {
+                marker = value;
+            }
+        }
+
+        float IChartBase.ChartWidth => ViewPortHandler.ChartWidth;
+        float IChartBase.ChartHeight => ViewPortHandler.ChartHeight;
+
+        IChartData IChartBase.Data => (IChartData)data;
+
+        ViewPortHandler IChartBase.ViewPortHandler => ViewPortHandler;
+
         public Animator Animator => animator;
 
-        public bool IsDrawMarkersEnabled { get; set; }
+        public bool IsDrawMarkersEnabled { get; set; } = true;
 
         public float ExtraTopOffset { get; set; }
 
@@ -196,9 +212,10 @@ namespace XF.ChartLibrary.Charts
         /// </summary>
         public abstract void NotifyDataSetChanged();
 
-        /**
-             * draws all MarkerViews on the highlighted positions
-             */
+        /// <summary>
+        /// draws all MarkerViews on the highlighted positions
+        /// </summary>
+        /// <param name="canvas">Canvas to draw</param>
         protected void DrawMarkers(Canvas canvas)
         {
 
@@ -230,7 +247,7 @@ namespace XF.ChartLibrary.Charts
                 marker.RefreshContent(e, highlight);
 
                 // draw the marker
-                marker.Draw(canvas, pos[0], pos[1]);
+                marker.Draw(canvas, pos[0], pos[1], this);
             }
         }
 
@@ -272,7 +289,6 @@ namespace XF.ChartLibrary.Charts
         /// <param name="callListener">call the listener</param>
         public void HighlightValue(Highlight.Highlight high, bool callListener)
         {
-
             Entry e = null;
 
             if (high == null)
@@ -287,11 +303,10 @@ namespace XF.ChartLibrary.Charts
                 }
                 else
                 {
-
                     // set the indices to highlight
                     indicesToHighlight = new Highlight.Highlight[]{
                         high
-                };
+                    };
                 }
             }
 

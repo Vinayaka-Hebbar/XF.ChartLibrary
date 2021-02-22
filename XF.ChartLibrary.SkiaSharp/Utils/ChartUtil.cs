@@ -56,6 +56,15 @@ namespace XF.ChartLibrary
             return self;
         }
 
+        public static SKRect Inset(this SKRect self, SKRect value)
+        {
+            self.Left -= value.Left;
+            self.Right += value.Right;
+            self.Top -= value.Top;
+            self.Bottom += value.Bottom;
+            return self;
+        }
+
         public static SKRect InsetHorizontally(this SKRect self, float value)
         {
             self.Left -= value;

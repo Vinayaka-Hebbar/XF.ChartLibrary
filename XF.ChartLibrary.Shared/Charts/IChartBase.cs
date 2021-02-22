@@ -8,6 +8,11 @@ namespace XF.ChartLibrary.Charts
         bool IsDrawMarkersEnabled { get; set; }
         string NoDataText { get; set; }
         bool ValuesToHighlight { get; }
+        Utils.ViewPortHandler ViewPortHandler { get; }
+        float ChartWidth { get; }
+        float ChartHeight { get; }
+
+        Interfaces.IChartData Data { get; }
 
         void Clear();
         void NotifyDataSetChanged();

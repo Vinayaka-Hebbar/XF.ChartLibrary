@@ -117,7 +117,7 @@ namespace XF.ChartLibrary.Utils
             }
 
             // setup all matrices
-            MatrixValueToPx = SKMatrix.CreateIdentity()
+            MatrixValueToPx = SKMatrix.Identity
                 .PostConcat(SKMatrix.CreateTranslation(-xChartMin, -yChartMin))
                 .PostConcat(SKMatrix.CreateScale(scaleX, -scaleY));
         }
@@ -128,9 +128,8 @@ namespace XF.ChartLibrary.Utils
         public void PrepareMatrixOffset(bool inverted)
         {
             if (!inverted)
-                MatrixOffset = SKMatrix
-                    .CreateTranslation(ViewPortHandler.OffsetLeft,
-                        ViewPortHandler.ChartHeight - ViewPortHandler.OffsetBottom);
+                MatrixOffset = SKMatrix.Identity.PostConcat(SKMatrix.CreateTranslation(ViewPortHandler.OffsetLeft,
+                        ViewPortHandler.ChartHeight - ViewPortHandler.OffsetBottom));
             else
             {
                 MatrixOffset = SKMatrix

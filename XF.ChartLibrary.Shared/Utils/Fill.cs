@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
+﻿
 #if NETSTANDARD || SKIASHARP
-using Point = SkiaSharp.SKPoint;
 using Canvas = SkiaSharp.SKCanvas;
+using Point = SkiaSharp.SKPoint;
 using Rect = SkiaSharp.SKRect;
 #elif __IOS__ || __TVOS__
 using Point = CoreGraphics.CGPoint;
@@ -17,8 +14,17 @@ using Rect = Android.Graphics.Rect;
 #endif
 namespace XF.ChartLibrary.Utils
 {
+    public enum FillDirection
+    {
+        Down, Up, Right, Left
+    }
+
     public interface IFill
     {
-        void Draw(Canvas c, Rect rect, byte alpha);
+#if (__IOS__ || __TVOS__) && !SKIASHARP
+        void Draw(Canvas c, Rect rect, byte alpha); 
+#else
+        void Draw(Canvas c, SkiaSharp.SKPath path, SkiaSharp.SKPaint paint, Rect rect);
+#endif
     }
 }

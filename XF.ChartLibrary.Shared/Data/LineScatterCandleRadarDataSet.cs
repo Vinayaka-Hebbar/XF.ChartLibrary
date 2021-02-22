@@ -8,7 +8,7 @@ using DashPathEffect = Android.Graphics.DashPathEffect;
 
 namespace XF.ChartLibrary.Data
 {
-    public abstract class LineScatterCandleRadarDataSet<TEntry> : BarLineScatterCandleBubbleDataSet<TEntry>, Interfaces.DataSets.ILineScatterCandleRadarDataSet<TEntry> where TEntry : Entry
+    public abstract partial class LineScatterCandleRadarDataSet<TEntry> : BarLineScatterCandleBubbleDataSet<TEntry>, Interfaces.DataSets.ILineScatterCandleRadarDataSet<TEntry> where TEntry : Entry
     {
         private bool drawVerticalHighlightIndicator = true;
         private bool drawHorizontalHighlightIndicator = true;
@@ -45,7 +45,18 @@ namespace XF.ChartLibrary.Data
 
 #if __ANDROID__ || NETSTANDARD || SKIASHARP
         public float HighlightLineWidth { get; }
-        public DashPathEffect DashPathEffectHighlight { get; }
+
+        internal DashPathEffect dashPathEffectHighlight;
+        public DashPathEffect DashPathEffectHighlight
+        {
+            get
+            {
+                return dashPathEffectHighlight;
+            }set
+            {
+                dashPathEffectHighlight = value;
+            }
+        }
 #endif
 
         protected LineScatterCandleRadarDataSet(IList<TEntry> yVals, string label) : base(yVals, label)

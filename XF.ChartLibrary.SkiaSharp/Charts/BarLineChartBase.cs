@@ -192,7 +192,7 @@ namespace XF.ChartLibrary.Charts
 
             int clipRestoreCount = canvas.Save();
 
-            if (mClipDataToContent)
+            if (clipDataToContent)
             {
                 // make sure the data cannot be drawn outside the content-rect
                 canvas.ClipRect(ViewPortHandler.ContentRect);
@@ -231,7 +231,7 @@ namespace XF.ChartLibrary.Charts
             axisRendererLeft.RenderAxisLabels(canvas);
             axisRendererRight.RenderAxisLabels(canvas);
 
-            if (mClipValuesToContent)
+            if (clipValuesToContent)
             {
                 clipRestoreCount = canvas.Save();
                 canvas.ClipRect(ViewPortHandler.ContentRect);

@@ -14,6 +14,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Components\ComponentBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Components\Description.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Components\Legend.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Components\LimitLine.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Components\MarkerText.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Data\Entry.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Data\EntryBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Jobs\MoveViewJob.cs" />
@@ -27,6 +29,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Renderer\YAxisRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utils\ChartFont.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utils\ChartUtil.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utils\GradientFill.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utils\MatrixUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utils\Transformer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utils\ViewPortHandler.cs" />

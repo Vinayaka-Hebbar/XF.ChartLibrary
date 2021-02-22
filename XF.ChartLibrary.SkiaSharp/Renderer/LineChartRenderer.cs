@@ -154,7 +154,8 @@ namespace XF.ChartLibrary.Renderer
                 {
 
                     Entry e = dataSet[j];
-                    if (e == null) continue;
+                    if (e == null)
+                        continue;
 
                     _lineBuffer[0] = new SKPoint(e.X, e.Y * phaseY);
 
@@ -163,7 +164,8 @@ namespace XF.ChartLibrary.Renderer
 
                         e = dataSet[j + 1];
 
-                        if (e == null) break;
+                        if (e == null)
+                            break;
 
                         if (isDrawSteppedEnabled)
                         {
@@ -230,7 +232,8 @@ namespace XF.ChartLibrary.Renderer
                         e1 = dataSet[x == 0 ? 0 : (x - 1)];
                         e2 = dataSet[x];
 
-                        if (e1 == null || e2 == null) continue;
+                        if (e1 == null || e2 == null)
+                            continue;
 
                         _lineBuffer[j++] = new SKPoint(e1.X, e1.Y * phaseY);
 
@@ -291,7 +294,7 @@ namespace XF.ChartLibrary.Renderer
                     if (fill != null)
                     {
 
-                        DrawFilledPath(c, filled, fill, dataSet.FillAlpha);
+                        DrawFilledPath(c, filled, RenderPaint, fill);
                     }
                     else
                     {
@@ -374,7 +377,8 @@ namespace XF.ChartLibrary.Renderer
                 Entry next = cur;
                 int nextIndex = -1;
 
-                if (cur == null) return;
+                if (cur == null)
+                    return;
 
                 // let the spline start
                 CubicPath.MoveTo(cur.X, cur.Y * phaseY);
@@ -491,7 +495,7 @@ namespace XF.ChartLibrary.Renderer
             if (fill != null)
             {
 
-                DrawFilledPath(c, spline, fill, dataSet.FillAlpha);
+                DrawFilledPath(c, spline, RenderPaint, fill);
             }
             else
             {
@@ -528,11 +532,11 @@ namespace XF.ChartLibrary.Renderer
                     XBounds.Set(Chart, dataSet, Animator);
 
                     var positions = trans.GenerateTransformedValuesLine(dataSet, Animator.PhaseX, Animator
-                            .PhaseY,XBounds.Min, XBounds.Max);
+                            .PhaseY, XBounds.Min, XBounds.Max);
 
                     var iconsOffset = dataSet.IconsOffset.DpToPixel();
 
-                    for (int j = 0; j < positions.Length; j ++)
+                    for (int j = 0; j < positions.Length; j++)
                     {
                         var pos = positions[j];
 
@@ -618,9 +622,10 @@ namespace XF.ChartLibrary.Renderer
                 {
                     Entry e = ((IDataSet)dataSet)[j];
 
-                    if (e == null) break;
+                    if (e == null)
+                        break;
 
-                   var pt = trans.PointValueToPixel(e.X, e.Y * phaseY);
+                    var pt = trans.PointValueToPixel(e.X, e.Y * phaseY);
 
                     if (!ViewPortHandler.IsInBoundsRight(pt.X))
                         break;

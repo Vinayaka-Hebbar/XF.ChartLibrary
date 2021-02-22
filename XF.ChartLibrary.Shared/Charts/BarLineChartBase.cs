@@ -37,9 +37,9 @@ namespace XF.ChartLibrary.Charts
         /// </summary>
         protected bool mAutoScaleMinMaxEnabled = false;
 
-        protected bool mClipDataToContent = true;
+        protected bool clipDataToContent = true;
 
-        protected bool mClipValuesToContent = false;
+        protected bool clipValuesToContent = false;
         /// <summary>
         /// Sets the minimum offset (padding) around the chart, defaults to 15
         /// </summary>

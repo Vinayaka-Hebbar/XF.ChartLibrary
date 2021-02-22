@@ -3,7 +3,7 @@ using System.ComponentModel;
 
 namespace XF.ChartLibrary.Gestures
 {
-    public delegate void TapHandler(TapEvent e);
+    public delegate void TapHandler(float x, float y);
 
     public delegate void PanHandler(PanEvent e, float distanceX, float distanceY);
 
@@ -74,20 +74,9 @@ namespace XF.ChartLibrary.Gestures
         }
     }
 
-    public class TapEvent
-    {
-        internal float x;
-
-        internal float y;
-
-        public float X => x;
-
-        public float Y => y;
-    }
-
     public enum TouchState { Started, Running, Completed }
 
-    public partial class ChartGestureRecognizer : Xamarin.Forms.IGestureRecognizer
+    public partial class ChartGestureRecognizer : IChartGesture
     {
         public event TapHandler Tap;
 
@@ -98,6 +87,7 @@ namespace XF.ChartLibrary.Gestures
         public event PinchHandler Pinch;
 
         private event PropertyChangedEventHandler PropertyChanged;
+
         event PropertyChangedEventHandler INotifyPropertyChanged.PropertyChanged
         {
             add
@@ -111,32 +101,39 @@ namespace XF.ChartLibrary.Gestures
             }
         }
 
-        protected void OnTap(TapEvent e)
+        public void OnTap(float x, float y)
         {
-            Tap?.Invoke(e);
+            Tap?.Invoke(x, y);
         }
 
-        protected void OnPan(PanEvent e, float distanceX, float distanceY)
+        public void OnPan(PanEvent e, float distanceX, float distanceY)
         {
             Pan?.Invoke(e, distanceX, distanceY);
         }
 
-        protected void OnDoubleTap(float x, float y)
+        public void OnDoubleTap(float x, float y)
         {
             DoubleTap?.Invoke(x, y);
         }
 
-        protected void OnPinch(PinchEvent e, float x, float y)
+        public void OnPinch(PinchEvent e, float x, float y)
         {
             Pinch?.Invoke(e, x, y);
         }
 
-        internal void Detach()
+        public void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+#if NETSTANDARD
+        public void Dispose()
         {
             Pinch = null;
             DoubleTap = null;
             Pan = null;
             Tap = null;
-        }
+        } 
+#endif
     }
 }

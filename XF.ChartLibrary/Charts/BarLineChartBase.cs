@@ -8,7 +8,7 @@ using XF.ChartLibrary.Utils;
 
 namespace XF.ChartLibrary.Charts
 {
-    partial class BarLineChartBase<TData, TDataSet>
+    partial class BarLineChartBase<TData, TDataSet> : IGestureController
     {
         public static readonly BindableProperty DragXEnabledProperty = BindableProperty.Create(nameof(DragXEnabled), typeof(bool), typeof(BarLineChartBase<TData, TDataSet>), true);
 
@@ -31,8 +31,6 @@ namespace XF.ChartLibrary.Charts
         public static readonly BindableProperty DoubleTapToZoomEnabledProperty = BindableProperty.Create(nameof(DoubleTapToZoomEnabled), typeof(bool), typeof(BarLineChartBase<TData, TDataSet>), true);
 
 
-        private SKPoint decelerationCurrentPoint = SKPoint.Empty;
-
         private SKPoint touchStartPoint;
 
         #region Scale & Pan
@@ -42,7 +40,7 @@ namespace XF.ChartLibrary.Charts
         private long decelerationLastTime;
         #endregion
 
-        public override ChartGestureRecognizer ChartGesture { get; }
+        public override IChartGesture Gesture { get; }
 
         public BarLineChartBase()
         {
@@ -62,12 +60,12 @@ namespace XF.ChartLibrary.Charts
             };
 
             ChartGestureRecognizer gesture = new ChartGestureRecognizer();
-            ChartGesture = gesture;
+            Gesture = gesture;
             gesture.Tap += OnTap;
             gesture.Pan += OnPan;
             gesture.DoubleTap += OnDoubleTap;
             gesture.Pinch += OnPinch;
-            GestureRecognizers.Add(ChartGesture);
+            GestureRecognizers.Add(Gesture);
         }
 
         public bool DoubleTapToZoomEnabled
@@ -334,10 +332,24 @@ namespace XF.ChartLibrary.Charts
             return matrix.TransX != originalMatrix.TransX || matrix.TransY != originalMatrix.TransY;
         }
 
-        private void OnTap(TapEvent e)
+        private void OnTap(float x, float y)
         {
-            StopDeceleration();
-            SaveTouchStart(e.x, e.y);
+            if (!HighlightPerDragEnabled)
+            {
+                return;
+            }
+
+            var h = GetHighlightByTouchPoint(x, y);
+            if (h == null || h.Equals(lastHighlighted))
+            {
+                HighlightValue(null, true);
+                lastHighlighted = null;
+            }
+            else
+            {
+                HighlightValue(h, true);
+                lastHighlighted = h;
+            }
         }
 
 
@@ -352,8 +364,6 @@ namespace XF.ChartLibrary.Charts
             touchStartPoint.Y = y;
             closestDataSetToTouch = GetDataSetByTouchPoint(x, y);
         }
-
-
 
         public bool IsDragEnabled
         {

@@ -36,5 +36,11 @@ namespace XF.ChartLibrary
         {
             return self * density;
         }
+
+        public static double DpToPixel(this double self)
+        {
+            return self * density;
+        }
+
     }
 }

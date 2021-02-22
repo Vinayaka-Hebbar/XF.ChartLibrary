@@ -7,10 +7,10 @@ using XF.ChartLibrary.Jobs;
 
 namespace XF.ChartLibrary.Charts
 {
-    public abstract partial class ChartBase<TData, TDataSet> : View, IAnimator
+    public abstract partial class ChartBase<TData, TDataSet> : View, IAnimator, IChartController
     {
         public static readonly BindableProperty IgnorePixelScalingProperty =
-               BindableProperty.Create(nameof(IgnorePixelScaling), typeof(bool), typeof(ChartBase<TData, TDataSet>), false);
+                  BindableProperty.Create(nameof(IgnorePixelScaling), typeof(bool), typeof(ChartBase<TData, TDataSet>), false);
 
         public static readonly BindableProperty DataProperty = BindableProperty.Create(nameof(Data), typeof(TData), typeof(ChartBase<TData, TDataSet>), defaultValue: null, propertyChanged: OnDataChanged);
 
@@ -36,10 +36,6 @@ namespace XF.ChartLibrary.Charts
                 _dragDecelerationFrictionCoef = Math.Max(0, Math.Min(value, 0.999f));
             }
         }
-
-        public abstract Gestures.ChartGestureRecognizer ChartGesture { get; }
-
-        internal event Action SurfaceInvalidated;
 
         public bool IgnorePixelScaling
         {
@@ -92,6 +88,12 @@ namespace XF.ChartLibrary.Charts
             set => SetValue(XAxisProperty, value);
         }
 
+        public virtual Gestures.IChartGesture Gesture { get; }
+
+        public event Action SurfaceInvalidated;
+
+        public void InvalidateSurface() => SurfaceInvalidated?.Invoke();
+
         public virtual void AnimatorStopped(Animator animator)
         {
         }
@@ -100,8 +102,6 @@ namespace XF.ChartLibrary.Charts
         {
             InvalidateSurface();
         }
-
-        public void InvalidateSurface() => SurfaceInvalidated?.Invoke();
 
         public virtual void OnPaintSurface(SKSurface surface, SKImageInfo e)
         {
@@ -173,7 +173,7 @@ namespace XF.ChartLibrary.Charts
         }
 
 
-        public virtual void OnSizeChanged(int w, int h)
+        public virtual void OnSizeChanged(float w, float h)
         {
             if (w > 0 && h > 0 && w < 10000 && h < 10000)
             {

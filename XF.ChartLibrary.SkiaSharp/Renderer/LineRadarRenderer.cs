@@ -1,4 +1,5 @@
 ﻿using SkiaSharp;
+using XF.ChartLibrary.Utils;
 
 namespace XF.ChartLibrary.Renderer
 {
@@ -7,11 +8,11 @@ namespace XF.ChartLibrary.Renderer
         /// <summary>
         /// Draws the provided path in filled mode with the provided drawable.
         /// </summary>
-        protected void DrawFilledPath(SKCanvas c, SKPath filledPath, Utils.IFill fill, byte alpha)
+        protected void DrawFilledPath(SKCanvas c, SKPath filledPath, SKPaint paint, IFill fill)
         {
             int save = c.Save();
             c.ClipPath(filledPath);
-            fill.Draw(c, ViewPortHandler.ContentRect, alpha);
+            fill.Draw(c, filledPath, paint, ViewPortHandler.ContentRect);
 
             c.RestoreToCount(save);
         }

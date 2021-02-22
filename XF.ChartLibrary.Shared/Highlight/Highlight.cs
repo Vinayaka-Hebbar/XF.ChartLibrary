@@ -79,13 +79,15 @@ namespace XF.ChartLibrary.Highlight
             StackIndex = stackIndex;
         }
 
-        /**
-         * constructor
-         *
-         * @param x            the x-value of the highlighted value
-         * @param y            the y-value of the highlighted value
-         * @param dataSetIndex the index of the DataSet the highlighted value belongs to
-         */
+        /// <summary>
+        /// constructor
+        /// </summary>
+        /// <param name="x">the x-value of the highlighted value</param>
+        /// <param name="y">the y-value of the highlighted value</param>
+        /// <param name="xPx"></param>
+        /// <param name="yPx"></param>
+        /// <param name="dataSetIndex"> the index of the DataSet the highlighted value belongs to</param>
+        /// <param name="axis"></param>
         public Highlight(float x, float y, float xPx, float yPx, int dataSetIndex, YAxisDependency axis)
         {
             X = x;
@@ -96,15 +98,16 @@ namespace XF.ChartLibrary.Highlight
             Axis = axis;
         }
 
-        /**
-         * Constructor, only used for stacked-barchart.
-         *
-         * @param x            the index of the highlighted value on the x-axis
-         * @param y            the y-value of the highlighted value
-         * @param dataSetIndex the index of the DataSet the highlighted value belongs to
-         * @param stackIndex   references which value of a stacked-bar entry has been
-         *                     selected
-         */
+        /// <summary>
+        ///  Constructor, only used for stacked-barchart.
+        /// </summary>
+        /// <param name="x">the index of the highlighted value on the x-axis</param>
+        /// <param name="y">the y-value of the highlighted value</param>
+        /// <param name="xPx"></param>
+        /// <param name="yPx"></param>
+        /// <param name="dataSetIndex">the index of the DataSet the highlighted value belongs to</param>
+        /// <param name="stackIndex">references which value of a stacked-bar entry has been selected</param>
+        /// <param name="axis"></param>
         public Highlight(float x, float y, float xPx, float yPx, int dataSetIndex, int stackIndex, YAxisDependency axis) : this(x, y, xPx, yPx, dataSetIndex, axis)
         {
             StackIndex = stackIndex;
@@ -112,12 +115,11 @@ namespace XF.ChartLibrary.Highlight
 
         public bool IsStacked => StackIndex >= 0;
 
-        /**
-         * Sets the x- and y-position (pixels) where this highlight was last drawn.
-         *
-         * @param x
-         * @param y
-         */
+        /// <summary>
+        /// Sets the x- and y-position (pixels) where this highlight was last drawn.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
         public void SetDraw(float x, float y)
         {
             DrawX = x;

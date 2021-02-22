@@ -21,5 +21,15 @@ namespace XF.ChartLibrary.Utils
         public static readonly Color Black = ChartUtil.FromRGB(0, 0, 0);
 
         public static readonly Color DefaultValueTextColor = ChartUtil.FromRGB(140, 234, 255);
+
+        public static readonly Color[] LibreryColors = {
+            ChartUtil.FromRGB(207, 248, 246), ChartUtil.FromRGB(148, 212, 212), ChartUtil.FromRGB(136, 180, 187),
+            ChartUtil.FromRGB(118, 174, 175), ChartUtil.FromRGB(42, 109, 130)
+        };
+
+        public static readonly Color[] JoyfulColors = {
+            ChartUtil.FromRGB(217, 80, 138), ChartUtil.FromRGB(254, 149, 7), ChartUtil.FromRGB(254, 247, 120),
+            ChartUtil.FromRGB(106, 167, 134), ChartUtil.FromRGB(53, 194, 209)
+        };
     }
 }

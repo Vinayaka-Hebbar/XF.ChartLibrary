@@ -12,7 +12,7 @@
     using DashPathEffect = XF.ChartLibrary.Utils.DashPathEffect;
     using Color = UIKit.UIColor;
 #endif
-    public class LimitLine : ComponentBase
+    public partial class LimitLine : ComponentBase
     {
         /** limit / maximum (the y-value or xIndex) */
         private float _limit = 0f;

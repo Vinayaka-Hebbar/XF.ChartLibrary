@@ -19,17 +19,17 @@ namespace XF.ChartLibrary.Utils
 
         private float chartHeight = 0.0f;
 
-        private float minScaleY = 1f;
+        internal float minScaleY = 1f;
 
-        private float maxScaleY = float.MaxValue;
+        internal float maxScaleY = float.MaxValue;
 
-        private float minScaleX = 1f;
+        internal float minScaleX = 1f;
 
         internal float maxScaleX = float.MaxValue;
 
-        private float scaleX = 1f;
+        internal float scaleX = 1f;
 
-        private float scaleY = 1f;
+        internal float scaleY = 1f;
 
         private float transX;
 

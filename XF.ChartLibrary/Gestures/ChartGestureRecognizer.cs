@@ -1,9 +1,8 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 
 namespace XF.ChartLibrary.Gestures
 {
-    public delegate void TapHandler(float x, float y);
+    public delegate void TapHandler(TapEvent e);
 
     public delegate void PanHandler(PanEvent e, float distanceX, float distanceY);
 
@@ -74,7 +73,22 @@ namespace XF.ChartLibrary.Gestures
         }
     }
 
-    public enum TouchState { Started, Running, Completed }
+    public struct TapEvent
+    {
+        internal TouchState state;
+
+        public TouchState State => state;
+
+        internal float x;
+
+        internal float y;
+
+        public float X => x;
+
+        public float Y => y;
+    }
+
+    public enum TouchState { Begin, Changed, Ended }
 
     public partial class ChartGestureRecognizer : IChartGesture
     {
@@ -101,9 +115,9 @@ namespace XF.ChartLibrary.Gestures
             }
         }
 
-        public void OnTap(float x, float y)
+        public void OnTap(TapEvent e)
         {
-            Tap?.Invoke(x, y);
+            Tap?.Invoke(e);
         }
 
         public void OnPan(PanEvent e, float distanceX, float distanceY)

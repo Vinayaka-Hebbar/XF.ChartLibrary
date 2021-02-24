@@ -34,6 +34,7 @@ namespace XF.ChartLibrary.Charts
         private SKPoint touchStartPoint;
 
         #region Scale & Pan
+        private SKMatrix savedMatrix;
         private IBarLineScatterCandleBubbleDataSet closestDataSetToTouch;
         private SKPoint lastPanPoint;
         private SKPoint decelerationVelocity = SKPoint.Empty;
@@ -65,7 +66,9 @@ namespace XF.ChartLibrary.Charts
             gesture.Pan += OnPan;
             gesture.DoubleTap += OnDoubleTap;
             gesture.Pinch += OnPinch;
+            // does not required to add gesture
             GestureRecognizers.Add(Gesture);
+            savedMatrix = SKMatrix.Identity;
         }
 
         public bool DoubleTapToZoomEnabled
@@ -106,7 +109,6 @@ namespace XF.ChartLibrary.Charts
             {
                 x -= ViewPortHandler.OffsetLeft;
 
-
                 if (IsTouchInverted())
                 {
                     y = -y + ViewPortHandler.OffsetTop;
@@ -123,7 +125,7 @@ namespace XF.ChartLibrary.Charts
         {
             bool scaleXEnabled;
             bool scaleYEnabled;
-            if (e.state == TouchState.Started)
+            if (e.state == TouchState.Begin)
             {
                 StopDeceleration();
                 SaveTouchStart(x, y);
@@ -143,46 +145,54 @@ namespace XF.ChartLibrary.Charts
                     }
                 }
             }
-            else if (e.state == TouchState.Completed)
+            else if (e.state == TouchState.Ended)
             {
                 CalculateOffsets();
                 InvalidateSurface();
             }
-            else if (e.state == TouchState.Running)
+            else if (e.state == TouchState.Changed)
             {
                 scaleXEnabled = ScaleXEnabled;
                 scaleYEnabled = ScaleYEnabled;
-                var isZoomingOut = e.Scale < 1;
-                var canZoomMoreX = isZoomingOut ? ViewPortHandler.CanZoomOutMoreX : ViewPortHandler.CanZoomInMoreX;
-                var canZoomMoreY = isZoomingOut ? ViewPortHandler.CanZoomOutMoreY : ViewPortHandler.CanZoomInMoreY;
-                canZoomMoreX = canZoomMoreX && scaleXEnabled && (e.Mode == PinchState.PinchZoom || e.Mode == PinchState.XZoom);
-                canZoomMoreY = canZoomMoreY && scaleYEnabled && (e.Mode == PinchState.PinchZoom || e.Mode == PinchState.YZoom);
-                if (canZoomMoreX || canZoomMoreY)
+                x -= ViewPortHandler.OffsetLeft;
+
+                if (IsTouchInverted())
                 {
-                    x -= ViewPortHandler.OffsetLeft;
-
-
-                    if (IsTouchInverted())
-                    {
-                        y = -(y - ViewPortHandler.OffsetTop);
-                    }
-                    else
-                    {
-                        y = -(ViewPortHandler.ChartHeight - y - ViewPortHandler.OffsetBottom);
-                    }
-
-                    var scaleX = canZoomMoreX ? e.Scale : 1.0f;
-                    var scaleY = canZoomMoreY ? e.Scale : 1.0f;
-
-                    ViewPortHandler.Refresh(ViewPortHandler.touchMatrix.PostConcat(SKMatrix.CreateScale(scaleX, scaleY, x, y)), chart: this, invalidate: true);
-                    // Deletegate
+                    y = -(y - ViewPortHandler.OffsetTop);
                 }
+                else
+                {
+                    y = -(ViewPortHandler.ChartHeight - y - ViewPortHandler.OffsetBottom);
+                }
+                var isZoomingOut = e.Scale < 1;
+                if (e.Mode == PinchState.PinchZoom)
+                {
+                    var canZoomMoreX = isZoomingOut ? ViewPortHandler.CanZoomOutMoreX : ViewPortHandler.CanZoomInMoreX;
+                    var canZoomMoreY = isZoomingOut ? ViewPortHandler.CanZoomOutMoreY : ViewPortHandler.CanZoomInMoreY;
+                    if (canZoomMoreX || canZoomMoreY)
+                    {
+                        var scaleX = scaleXEnabled ? e.Scale : 1f;
+                        var scaleY = scaleYEnabled ? e.Scale : 1f;
+
+                        ViewPortHandler.Refresh(savedMatrix.PostConcat(SKMatrix.CreateScale(scaleX, scaleY, x, y)), chart: this, invalidate: true);
+                    }
+                }
+                else if (e.Mode == PinchState.XZoom && scaleYEnabled && isZoomingOut ? ViewPortHandler.CanZoomOutMoreX : ViewPortHandler.CanZoomInMoreX)
+                {
+                    ViewPortHandler.Refresh(savedMatrix.PostConcat(SKMatrix.CreateScale(e.Scale, 1f, x, y)), chart: this, invalidate: true);
+                }
+                else if (e.Mode == PinchState.YZoom && scaleYEnabled && isZoomingOut ? ViewPortHandler.CanZoomOutMoreY : ViewPortHandler.CanZoomInMoreY)
+                {
+                    ViewPortHandler.Refresh(savedMatrix.PostConcat(SKMatrix.CreateScale(1f, e.Scale, x, y)), chart: this, invalidate: true);
+                }
+
+                // Deletegate after change
             }
         }
 
         private void OnPan(PanEvent e, float distanceX, float distanceY)
         {
-            if (e.state == TouchState.Started)
+            if (e.state == TouchState.Begin)
             {
                 if (data is null)
                     return;
@@ -216,7 +226,7 @@ namespace XF.ChartLibrary.Charts
                     e.Mode = PanState.None;
                 }
             }
-            else if (e.state == TouchState.Running)
+            else if (e.state == TouchState.Changed)
             {
                 if (e.Mode == PanState.Drag)
                 {
@@ -249,7 +259,7 @@ namespace XF.ChartLibrary.Charts
                     }
                 }
             }
-            else if (e.state == TouchState.Completed)
+            else if (e.state == TouchState.Ended)
             {
                 if (e.Mode == PanState.Drag)
                 {
@@ -332,23 +342,26 @@ namespace XF.ChartLibrary.Charts
             return matrix.TransX != originalMatrix.TransX || matrix.TransY != originalMatrix.TransY;
         }
 
-        private void OnTap(float x, float y)
+        private void OnTap(TapEvent e)
         {
-            if (!HighlightPerDragEnabled)
+            if (e.state == TouchState.Ended)
             {
-                return;
-            }
+                if (!HighlightPerDragEnabled)
+                {
+                    return;
+                }
 
-            var h = GetHighlightByTouchPoint(x, y);
-            if (h == null || h.Equals(lastHighlighted))
-            {
-                HighlightValue(null, true);
-                lastHighlighted = null;
-            }
-            else
-            {
-                HighlightValue(h, true);
-                lastHighlighted = h;
+                var h = GetHighlightByTouchPoint(e.x, e.y);
+                if (h == null || h.Equals(lastHighlighted))
+                {
+                    HighlightValue(null, true);
+                    lastHighlighted = null;
+                }
+                else
+                {
+                    HighlightValue(h, true);
+                    lastHighlighted = h;
+                }
             }
         }
 
@@ -360,6 +373,7 @@ namespace XF.ChartLibrary.Charts
 
         private void SaveTouchStart(float x, float y)
         {
+            savedMatrix = ViewPortHandler.touchMatrix;
             touchStartPoint.X = x;
             touchStartPoint.Y = y;
             closestDataSetToTouch = GetDataSetByTouchPoint(x, y);

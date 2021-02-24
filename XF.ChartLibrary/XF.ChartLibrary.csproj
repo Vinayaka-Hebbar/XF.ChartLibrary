@@ -4,10 +4,21 @@
     <TargetFrameworks>netstandard2.1;monoandroid10.0;xamarin.ios10;</TargetFrameworks>
     <LangVersion>8</LangVersion>
     <DefineConstants>SKIASHARP</DefineConstants>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
     <Compile Remove="Platform/**/*.cs" />
+    <None Include="..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
     <None Include="Platform/**/*.cs" />
   </ItemGroup>
 

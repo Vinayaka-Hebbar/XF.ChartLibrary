@@ -10,6 +10,12 @@ namespace XF.ChartLibrary.Utils
             ColorPos = null;
         }
 
+        public GradientFill(SKColor[] gradientColors, float[] colorPos)
+        {
+            GradientColors = gradientColors;
+            ColorPos = colorPos;
+        }
+
         public readonly SKColor[] GradientColors { get; }
 
         public readonly float[] ColorPos { get; }

@@ -1,17 +1,14 @@
 ﻿using Android.Views;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace XF.ChartLibrary
 {
     partial class ChartUtil
     {
         static readonly float density;
+
         internal static readonly int MaxFlingVelocity;
 
         internal static readonly int MinimumFlingVelocity;
-
 
         static ChartUtil()
         {
@@ -21,6 +18,7 @@ namespace XF.ChartLibrary
                 MinimumFlingVelocity = 50;
                 MaxFlingVelocity = 8000;
                 System.Diagnostics.Trace.TraceError("Android Context null; ChartUtil()");
+                density = 1f;
             }
             else
             {

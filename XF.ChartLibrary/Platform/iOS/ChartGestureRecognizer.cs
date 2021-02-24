@@ -8,6 +8,7 @@ namespace XF.ChartLibrary.Gestures
     {
         private readonly PinchEvent pinch;
         private readonly PanEvent pan;
+        private TapEvent tap;
 
         private UIScrollView outerScrollView;
 
@@ -107,12 +108,13 @@ namespace XF.ChartLibrary.Gestures
             var recognizer = panGestureRecognizer;
             if (recognizer.State == UIGestureRecognizerState.Began && recognizer.NumberOfTouches > 0)
             {
-                pan.state = TouchState.Started;
+                pan.state = TouchState.Begin;
                 var location = recognizer.LocationOfTouch(0, view);
                 pan.x = (float)location.X;
                 pan.y = (float)location.Y;
                 var translation = recognizer.TranslationInView(view);
                 OnPan(pan, (float)translation.X, (float)translation.Y);
+                // user drag
                 if (pan.Mode == PanState.Drag && outerScrollView != null)
                 {
                     outerScrollView = null;
@@ -125,7 +127,7 @@ namespace XF.ChartLibrary.Gestures
             }
             else if (recognizer.State == UIGestureRecognizerState.Changed && pan.Mode == PanState.Drag)
             {
-                pan.state = TouchState.Running;
+                pan.state = TouchState.Changed;
                 var location = recognizer.LocationOfTouch(0, view);
                 pan.x = (float)location.X;
                 pan.y = (float)location.Y;
@@ -138,7 +140,7 @@ namespace XF.ChartLibrary.Gestures
                 {
                     if (recognizer.State == UIGestureRecognizerState.Ended)
                     {
-                        pan.state = TouchState.Completed;
+                        pan.state = TouchState.Ended;
                         var velocity = recognizer.VelocityInView(view);
                         pan.velocityX = (float)velocity.X;
                         pan.velocityY = (float)velocity.Y;
@@ -169,7 +171,7 @@ namespace XF.ChartLibrary.Gestures
             switch (recognizer.State)
             {
                 case UIGestureRecognizerState.Began:
-                    pinch.state = TouchState.Started;
+                    pinch.state = TouchState.Begin;
                     var location = recognizer.LocationInView(view);
                     var locationInTouch = recognizer.LocationOfTouch(1, view);
                     pinch.xDist = Math.Abs((float)(location.X - locationInTouch.X));
@@ -178,13 +180,13 @@ namespace XF.ChartLibrary.Gestures
                     break;
 
                 case UIGestureRecognizerState.Changed:
-                    pinch.state = TouchState.Running;
+                    pinch.state = TouchState.Changed;
                     location = recognizer.LocationInView(view);
                     OnPinch(pinch, (float)location.X, (float)location.Y);
                     break;
                 case UIGestureRecognizerState.Cancelled:
                 case UIGestureRecognizerState.Ended:
-                    pinch.state = TouchState.Completed;
+                    pinch.state = TouchState.Ended;
                     OnPinch(pinch, 0, 0);
                     pinch.Mode = PinchState.None;
                     break;
@@ -197,7 +199,18 @@ namespace XF.ChartLibrary.Gestures
             if (recognizer.State == UIGestureRecognizerState.Ended)
             {
                 var location = recognizer.LocationInView(view);
-                OnTap((float)location.X, (float)location.Y);
+                tap.state = TouchState.Ended;
+                tap.x = (float)location.X;
+                tap.y = (float)location.Y;
+                OnTap(tap);
+            }
+            else if (recognizer.State == UIGestureRecognizerState.Began)
+            {
+                var location = recognizer.LocationInView(view);
+                tap.state = TouchState.Begin;
+                tap.x = (float)location.X;
+                tap.y = (float)location.Y;
+                OnTap(tap);
             }
         }
 

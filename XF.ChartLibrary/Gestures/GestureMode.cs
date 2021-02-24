@@ -1,8 +1,10 @@
 ﻿namespace XF.ChartLibrary.Gestures
 {
-    public enum GestureMode
+    public enum GestureState
     {
-        None, Drag, XZoom, YZoom, PinchZoom, Rotate, SingleTap, DoubleTap, LongPress, Fling
+        Drag,
+        Zoom,
+        None
     }
 
     public enum PinchState

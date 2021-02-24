@@ -5,7 +5,7 @@ using System;
 
 namespace XF.ChartLibrary.Gestures
 {
-    partial class ChartGestureRecognizer : GestureDetector.SimpleOnGestureListener, View.IOnTouchListener
+    partial class ChartGestureRecognizer : Java.Lang.Object, View.IOnTouchListener
     {
         internal const int ShowPress = 1;
         internal const int LongPress = 2;
@@ -28,16 +28,37 @@ namespace XF.ChartLibrary.Gestures
 
         private readonly PinchEvent pinchEvent;
         private readonly PanEvent panEvent;
-        private SKPoint touchStart;
+        private TapEvent tapEvent;
+        private GestureState lastState;
 
         private MotionEvent currentDownEvent;
         private MotionEvent previousUpEvent;
 
         private SKPoint mid;
 
-        private float MinScalePointerDistance;
-        private float DragTriggerDist;
-        private int DoubleTapSlopSquare;
+        private float minScalePointerDistance;
+        private float dragTriggerDist;
+        private int doubleTapSlopSquare;
+
+        public float MinScalePointerDistance
+        {
+            get => minScalePointerDistance;
+            set
+            {
+                minScalePointerDistance = value.DpToPixel();
+                OnPropertyChanged(nameof(MinScalePointerDistance));
+            }
+        }
+
+        public float DragTriggerDist
+        {
+            get => dragTriggerDist;
+            set
+            {
+                dragTriggerDist = value.DpToPixel();
+                OnPropertyChanged(nameof(DragTriggerDist));
+            }
+        }
 
         private VelocityTracker velocityTracker;
 
@@ -55,22 +76,23 @@ namespace XF.ChartLibrary.Gestures
         {
             pinchEvent = new PinchEvent();
             panEvent = new PanEvent();
+            tapEvent = new TapEvent();
             handler = new GestureHandler(this);
             isLongpressEnabled = true;
+            dragTriggerDist = 3f.DpToPixel();
+            minScalePointerDistance = 3.5f.DpToPixel();
         }
 
         public void OnInitialize(View view)
         {
-            // Fallback to support pre-donuts releases
             ViewConfiguration configuration = ViewConfiguration.Get(view.Context);
             var doubleTapSlop = configuration.ScaledDoubleTapSlop;
-            DoubleTapSlopSquare = doubleTapSlop * doubleTapSlop;
-            DragTriggerDist = 3f.DpToPixel();
-            MinScalePointerDistance = configuration.ScaledTouchSlop;
+            doubleTapSlopSquare = doubleTapSlop * doubleTapSlop;
         }
 
         public bool OnTouch(View v, MotionEvent e)
         {
+            // double tap, pan, pinch, single tap features from android source code and MPChartAndroid
             if (velocityTracker == null)
             {
                 velocityTracker = VelocityTracker.Obtain();
@@ -80,55 +102,60 @@ namespace XF.ChartLibrary.Gestures
             switch (e.ActionMasked)
             {
                 case MotionEventActions.Down:
-                    touchStart.X = e.GetX();
-                    touchStart.Y = e.GetY();
-                    bool hadTapMessage = handler.HasMessages(Click);
-                    if (hadTapMessage)
-                        handler.RemoveMessages(Click);
-                    if ((currentDownEvent != null) && (previousUpEvent != null)
-                            && hadTapMessage
-                            && IsConsideredDoubleTap(currentDownEvent, previousUpEvent, e))
+                    tapEvent.state = TouchState.Begin;
+                    tapEvent.x = e.GetX();
+                    tapEvent.y = e.GetY();
+                    if (lastState == GestureState.None)
                     {
-                        // This is a second tap
-                        isDoubleTapping = true;
-                        // Give a callback with the first tap of the double-tap
-                        handled = OnDoubleTap(currentDownEvent);
-                    }
-                    else
-                    {
-                        // This is a first tap
-                        handler.SendEmptyMessageDelayed(Click, DOUBLE_TAP_TIMEOUT);
-                    }
-                    if (currentDownEvent != null)
-                    {
-                        currentDownEvent.Recycle();
-                    }
-                    currentDownEvent = MotionEvent.Obtain(e);
-                    alwaysInTapRegion = true;
-                    alwaysInBiggerTapRegion = true;
-                    stillDown = true;
-                    inLongPress = false;
+                        bool hadTapMessage = handler.HasMessages(Click);
+                        if (hadTapMessage)
+                            handler.RemoveMessages(Click);
+                        if ((currentDownEvent != null) && (previousUpEvent != null)
+                                && hadTapMessage
+                                && IsConsideredDoubleTap(currentDownEvent, previousUpEvent, e))
+                        {
+                            // This is a second tap
+                            isDoubleTapping = true;
+                            // Give a callback with the first tap of the double-tap
+                            handled = OnDoubleTap(currentDownEvent);
+                        }
+                        else
+                        {
+                            // This is a first tap
+                            handler.SendEmptyMessageDelayed(Click, DOUBLE_TAP_TIMEOUT);
+                        }
+                        if (currentDownEvent != null)
+                        {
+                            currentDownEvent.Recycle();
+                        }
+                        currentDownEvent = MotionEvent.Obtain(e);
+                        alwaysInTapRegion = true;
+                        alwaysInBiggerTapRegion = true;
+                        stillDown = true;
+                        inLongPress = false;
 
-                    if (isLongpressEnabled)
-                    {
-                        handler.RemoveMessages(LongPress);
-                        handler.SendMessageAtTime(
-                                handler.ObtainMessage(
-                                        LongPress,
-                                        3,
-                                        0 /* arg2 */),
-                                currentDownEvent.DownTime
-                                        + ViewConfiguration.LongPressTimeout);
+                        if (isLongpressEnabled)
+                        {
+                            handler.RemoveMessages(LongPress);
+                            handler.SendMessageAtTime(
+                                    handler.ObtainMessage(
+                                            LongPress,
+                                            3,
+                                            0 /* arg2 */),
+                                    currentDownEvent.DownTime
+                                            + ViewConfiguration.LongPressTimeout);
+                        }
+                        handler.SendEmptyMessageAtTime(ShowPress,
+                               currentDownEvent.DownTime + TAP_TIMEOUT);
                     }
-                    handler.SendEmptyMessageAtTime(ShowPress,
-                           currentDownEvent.DownTime + TAP_TIMEOUT);
+                    OnTap(tapEvent);
                     break;
                 case MotionEventActions.PointerDown when e.PointerCount > 1:
                     DisableScroll(v);
                     float x, y;
-                    touchStart.X = x = e.GetX();
-                    touchStart.Y = y = e.GetY();
-                    pinchEvent.state = TouchState.Started;
+                    tapEvent.x = x = e.GetX();
+                    tapEvent.y = y = e.GetY();
+                    pinchEvent.state = TouchState.Begin;
                     float x1 = e.GetX(1);
                     float y1 = e.GetY(1);
                     float distX = x - x1;
@@ -139,12 +166,13 @@ namespace XF.ChartLibrary.Gestures
                     if (pinchEvent.Spacing > 10)
                     {
                         OnPinch(pinchEvent, x, y);
-                        ClearTaps();
+                        lastState = pinchEvent.IsZooming ? GestureState.Zoom : lastState;
                     }
-                    mid.X = (x + x1) / 2;
-                    mid.Y = (y + y1) / 2;
+                    mid.X = (x + x1) / 2f;
+                    mid.Y = (y + y1) / 2f;
+                    ClearTaps();
                     break;
-                case MotionEventActions.PointerDown:
+                case MotionEventActions.PointerDown when lastState == GestureState.None:
                     handler.RemoveMessages(ShowPress);
                     handler.RemoveMessages(LongPress);
                     handler.RemoveMessages(Click);
@@ -158,21 +186,21 @@ namespace XF.ChartLibrary.Gestures
                     if (panEvent.Mode == PanState.Drag)
                     {
                         DisableScroll(v);
-                        panEvent.state = TouchState.Running;
+                        panEvent.state = TouchState.Changed;
                         panEvent.x = e.GetX();
                         panEvent.y = e.GetY();
-                        OnPan(panEvent, panEvent.x - touchStart.X, panEvent.y - touchStart.Y);
+                        OnPan(panEvent, panEvent.x - tapEvent.X, panEvent.y - tapEvent.Y);
                     }
                     else if (pinchEvent.IsZooming)
                     {
                         DisableScroll(v);
                         if (e.PointerCount > 1)
                         {
-                            pinchEvent.state = TouchState.Running;
+                            pinchEvent.state = TouchState.Changed;
                             distX = e.GetX(0) - e.GetX(1);
                             distY = e.GetY(0) - e.GetY(1);
                             var totalDist = MathF.Sqrt(distX * distX + distY * distY);
-                            if (totalDist > MinScalePointerDistance)
+                            if (totalDist > minScalePointerDistance)
                             {
                                 if (pinchEvent.Mode == PinchState.PinchZoom)
                                 {
@@ -193,14 +221,15 @@ namespace XF.ChartLibrary.Gestures
                     }
                     else if (panEvent.Mode == PanState.None)
                     {
-                        panEvent.state = TouchState.Started;
+                        panEvent.state = TouchState.Begin;
                         panEvent.x = e.GetX();
                         panEvent.y = e.GetY();
-                        var distanceX = panEvent.x - touchStart.X;
-                        var distanceY = panEvent.y - touchStart.Y;
-                        if (Math.Abs(Spacing(distanceX, distanceY)) > DragTriggerDist)
+                        var distanceX = panEvent.x - tapEvent.X;
+                        var distanceY = panEvent.y - tapEvent.Y;
+                        if (Math.Abs(Spacing(distanceX, distanceY)) > dragTriggerDist)
                         {
                             OnPan(panEvent, distanceY, distanceY);
+                            lastState = panEvent.Mode == PanState.Drag ? GestureState.Drag : lastState;
                             ClearTaps();
                         }
                     }
@@ -233,7 +262,7 @@ namespace XF.ChartLibrary.Gestures
                         {
                             if (panEvent.Mode == PanState.Drag)
                             {
-                                panEvent.state = TouchState.Completed;
+                                panEvent.state = TouchState.Ended;
                                 panEvent.x = e.GetX();
                                 panEvent.y = e.GetY();
                                 panEvent.velocityX = velocityX;
@@ -243,13 +272,14 @@ namespace XF.ChartLibrary.Gestures
                         }
                         else if (pinchEvent.IsZooming)
                         {
-                            pinchEvent.state = TouchState.Completed;
+                            pinchEvent.state = TouchState.Ended;
                             OnPinch(pinchEvent, e.GetX(), e.GetY());
                         }
                     }
 
                     pinchEvent.Mode = PinchState.None;
                     panEvent.Mode = PanState.None;
+                    lastState = GestureState.None;
                     EnableScroll(v);
                     if (previousUpEvent != null)
                     {
@@ -340,7 +370,7 @@ namespace XF.ChartLibrary.Gestures
             int deltaY = (int)firstDown.GetY() - (int)secondDown.GetY();
             var isGeneratedGesture =
                     (firstDown.Flags & GeneratedGesture) != 0;
-            int slopSquare = isGeneratedGesture ? 0 : DoubleTapSlopSquare;
+            int slopSquare = isGeneratedGesture ? 0 : doubleTapSlopSquare;
             return (deltaX * deltaX + deltaY * deltaY < slopSquare);
         }
 
@@ -364,16 +394,23 @@ namespace XF.ChartLibrary.Gestures
             return MathF.Sqrt(x * x + y * y);
         }
 
-        public override bool OnDoubleTap(MotionEvent e)
+        public bool OnDoubleTap(MotionEvent e)
         {
             OnDoubleTap(e.GetX(), e.GetY());
             return true;
         }
 
-        public override bool OnSingleTapUp(MotionEvent e)
+        public bool OnSingleTapUp(MotionEvent e)
         {
-            OnTap(e.GetX(), e.GetY());
+            tapEvent.state = TouchState.Ended;
+            tapEvent.x = e.GetX();
+            tapEvent.y = e.GetY();
+            OnTap(tapEvent);
             return true;
+        }
+
+        public void OnLongPress(MotionEvent _)
+        {
         }
 
         protected override void Dispose(bool disposing)

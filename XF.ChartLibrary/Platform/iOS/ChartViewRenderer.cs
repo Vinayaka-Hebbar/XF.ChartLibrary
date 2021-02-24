@@ -7,7 +7,7 @@ using Xamarin.Forms.Platform.iOS;
 
 namespace XF.ChartLibrary.Platform.iOS
 {
-    public class ChartViewRenderer<TElement> : VisualElementRenderer<TElement> where TElement : Xamarin.Forms.VisualElement, IChartController, IComponent
+    public class ChartViewRenderer<TElement> : VisualElementRenderer<TElement>, IComponent where TElement : Xamarin.Forms.VisualElement, IChartController
     {
         private static readonly NSString boundsPath = new NSString("bounds");
 
@@ -26,6 +26,17 @@ namespace XF.ChartLibrary.Platform.iOS
 #pragma warning restore IDE0052 
 
         private bool designMode;
+        #region IComponent
+        // for IComponent
+        private event EventHandler DisposedInternal;
+
+        ISite IComponent.Site { get; set; }
+        event EventHandler IComponent.Disposed
+        {
+            add { DisposedInternal += value; }
+            remove { DisposedInternal -= value; }
+        } 
+        #endregion
 
         public ChartViewRenderer()
         {

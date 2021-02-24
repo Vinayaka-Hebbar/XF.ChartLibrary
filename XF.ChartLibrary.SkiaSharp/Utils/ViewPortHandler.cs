@@ -80,7 +80,7 @@ namespace XF.ChartLibrary.Utils
 
         public SKMatrix LimitTransAndScale(SKMatrix matrix, SKRect content)
         {
-            scaleX = Math.Min(Math.Max(minScaleX, matrix.ScaleX), maxScaleX);
+            scaleX =  Math.Min(Math.Max(minScaleX, matrix.ScaleX), maxScaleX);
 
             scaleY = Math.Min(Math.Max(minScaleY, matrix.ScaleY), maxScaleY);
 

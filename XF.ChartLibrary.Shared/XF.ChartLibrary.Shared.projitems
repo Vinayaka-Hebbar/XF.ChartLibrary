@@ -12,6 +12,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Animation\Animator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Animation\EasingOption.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Animation\IAnimator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Charts\BarChart.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Charts\BarLineChartBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Charts\ChartBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Charts\IChartBase.cs" />
@@ -25,6 +26,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Components\LimitLine.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Components\XAxis.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Components\YAxis.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Data\BarData.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Data\BarDataSet.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Data\BarEntry.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Data\BarLineScatterCandleBubbleData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Data\BarLineScatterCandleBubbleDataSet.cs" />
@@ -46,10 +49,12 @@
     <Compile Include="$(MSBuildThisFileDirectory)Formatter\IAxisValueFormatter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Formatter\IFillFormatter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Formatter\IValueFormatter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Highlight\BarHighlighter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Highlight\ChartHighlighter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Highlight\Highlight.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Highlight\IHighlighter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Highlight\Range.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Interfaces\DataProvider\IBarDataProvider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces\DataProvider\IBarLineScatterCandleBubbleDataProvider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces\DataProvider\IChartProvider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces\DataProvider\ILineChartDataProvider.cs" />
@@ -63,6 +68,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces\DataSets\IPieDataSet.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces\IChartData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Jobs\AnimatedViewPortJob.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Renderer\BarChartRenderer.cs" />
     <Compile Include="..\XF.ChartLibrary.Shared\Jobs\MoveViewJob.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Jobs\ViewPortJob.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Listener\IChartSelectionListener.cs" />

@@ -10,6 +10,16 @@ namespace XF.ChartLibrary.Utils
         readonly float[] touchPointBuffer = new float[2];
         readonly float[] ptsBuffer = new float[2];
 
+        /// <summary>
+        /// Transform a rectangle with all matrices.
+        /// </summary>
+        /// <param name="r"></param>
+        public void RectValueToPixel(RectF r)
+        {
+            MatrixValueToPx.MapRect(r);
+            ViewPortHandler.touchMatrix.MapRect(r);
+            MatrixOffset.MapRect(r);
+        }
 
         /// <summary>
         /// Returns a recyclable MPPointD instance.

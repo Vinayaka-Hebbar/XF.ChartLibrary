@@ -14,6 +14,9 @@ namespace XF.ChartLibrary.Renderer
             Initialize();
         }
 
+        /// <summary>
+        ///  Initialize renderer
+        /// </summary>
         protected virtual void Initialize()
         {
         }

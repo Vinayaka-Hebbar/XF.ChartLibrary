@@ -61,7 +61,7 @@ namespace Sample
                 {
                     IsEnabled = false
                 },
-                Lengend =
+                Legend =
                 {
                     Form = XF.ChartLibrary.Components.Form.Line
                 }

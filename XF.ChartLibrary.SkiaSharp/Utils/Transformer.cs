@@ -1,4 +1,5 @@
 ﻿using SkiaSharp;
+using System.Collections.Generic;
 
 namespace XF.ChartLibrary.Utils
 {
@@ -9,6 +10,44 @@ namespace XF.ChartLibrary.Utils
                 .PostConcat(MatrixOffset);
 
         protected SKMatrix PixelToValueMatrixBuffer = new SKMatrix();
+
+        /// <summary>
+        /// Transform a rectangle with all matrices with potential animation phases.
+        /// </summary>
+        /// <param name="r"></param>
+        /// <param name="phaseY"></param>
+        public SKRect RectToPixelPhase(SKRect r, float phaseY)
+        {
+            // multiply the height of the rect with the phase
+            r.Top *= phaseY;
+            r.Bottom *= phaseY;
+
+            r = MatrixValueToPx.MapRect(r);
+            r = ViewPortHandler.touchMatrix.MapRect(r);
+            return MatrixOffset.MapRect(r);
+        }
+
+        /// <summary>
+        /// Transform a rectangle with all matrices.
+        /// </summary>
+        /// <param name="r"></param>
+        public SKRect RectValueToPixel(SKRect r)
+        {
+            r = MatrixValueToPx.MapRect(r);
+            r = ViewPortHandler.touchMatrix.MapRect(r);
+            return MatrixOffset.MapRect(r);
+        }
+
+        /// <summary>
+        /// transforms multiple rects with all matrices
+        /// </summary>
+        /// <param name="rects"></param>
+        public void RectValuesToPixel(IList<SKRect> rects)
+        {
+            var m = ValueToPixelMatrix;
+            for (int i = 0; i < rects.Count; i++)
+                rects[i] = m.MapRect(rects[i]);
+        }
 
         /// <summary>
         /// transform a path with all the given matrices VERY IMPORTANT: keep order
@@ -53,7 +92,7 @@ namespace XF.ChartLibrary.Utils
             MatrixOffset.TryInvert(out SKMatrix tmp);
             var point = tmp.MapPoint(x, y);
 
-            ViewPortHandler.TouchMatrix.TryInvert(out tmp);
+            ViewPortHandler.touchMatrix.TryInvert(out tmp);
             point = tmp.MapPoint(point);
 
             MatrixValueToPx.TryInvert(out tmp);

@@ -2,22 +2,26 @@
 using XF.ChartLibrary.Data;
 using XF.ChartLibrary.Utils;
 
-
 #if NETSTANDARD || SKIASHARP
 using Color = SkiaSharp.SKColor;
+using Alpha = System.Byte;
 #elif __IOS__ || __TVOS
-using Color = UIKit.UIColor;
+    using Color = UIKit.UIColor;
+    using Alpha = System.Single;
 #elif __ANDROID__
     using Color = Android.Graphics.Color;
+    using Alpha = System.Byte;
 #endif
 
 namespace XF.ChartLibrary.Interfaces.DataSets
 {
     public interface IBarDataSet : IBarLineScatterCandleBubbleDataSet<BarEntry>
     {
-        IList<IFill> Fills { get; }
+#if __ANDROID__ || SKIASHARP
+        IList<IRectFill> Fills { get; }
 
-        IFill GetFill(int index);
+        IRectFill GetFill(int index); 
+#endif
 
         /// <summary>
         ///  Returns true if this DataSet is stacked (stacksize > 1) or not.
@@ -46,13 +50,13 @@ namespace XF.ChartLibrary.Interfaces.DataSets
         /// <summary>
         /// Returns the color drawing borders around the bars.
         /// </summary>
-        int BarBorderColor { get; }
+        Color BarBorderColor { get; }
 
         /// <summary>
         ///  Returns the alpha value (transparency) that is used for drawing the
         /// highlight indicator.
         /// </summary>
-        byte HighLightAlpha { get; }
+        Alpha HighLightAlpha { get; }
 
         /// <summary>
         /// Returns the labels used for the different value-stacks in the legend.

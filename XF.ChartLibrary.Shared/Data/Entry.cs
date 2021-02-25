@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace XF.ChartLibrary.Data
 {
-    public partial class Entry : EntryBase, System.ICloneable
+    public partial class Entry : EntryBase, ICloneable
     {
         public Entry()
         {
@@ -23,7 +21,12 @@ namespace XF.ChartLibrary.Data
 
         public float X { get; set; }
 
-        public object Clone()
+        object ICloneable.Clone()
+        {
+            return Clone();
+        }
+
+        public virtual Entry Clone()
         {
             return new Entry(X, Y, Data);
         }

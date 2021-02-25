@@ -20,9 +20,11 @@ namespace XF.ChartLibrary.Charts
 
         public static readonly BindableProperty HighlightPerDragEnabledProperty = BindableProperty.Create(nameof(HighlightPerDragEnabled), typeof(bool), typeof(BarLineChartBase<TData, TDataSet>), true);
 
-        public static readonly BindableProperty AxisLeftProperty = BindableProperty.Create(nameof(AxisLeft), typeof(YAxis), typeof(BarLineChartBase<TData, TDataSet>), defaultValue: new YAxis(YAxisDependency.Left));
+        public static readonly BindableProperty HighlightPerTapEnabledProperty = BindableProperty.Create(nameof(HighlightPerTapEnabled), typeof(bool), typeof(BarLineChartBase<TData, TDataSet>), true);
 
-        public static readonly BindableProperty AxisRightProperty = BindableProperty.Create(nameof(AxisRight), typeof(YAxis), typeof(BarLineChartBase<TData, TDataSet>), defaultValue: new YAxis(YAxisDependency.Right));
+        public static readonly BindableProperty AxisLeftProperty = BindableProperty.Create(nameof(AxisLeft), typeof(YAxis), typeof(BarLineChartBase<TData, TDataSet>), defaultValue: new YAxis(YAxisDependency.Left), defaultBindingMode: BindingMode.OneWayToSource);
+
+        public static readonly BindableProperty AxisRightProperty = BindableProperty.Create(nameof(AxisRight), typeof(YAxis), typeof(BarLineChartBase<TData, TDataSet>), defaultValue: new YAxis(YAxisDependency.Right), defaultBindingMode: BindingMode.OneWayToSource);
 
         public static readonly BindableProperty MaxVisibleCountProperty = BindableProperty.Create(nameof(MaxVisibleCount), typeof(int), typeof(BarLineChartBase<TData, TDataSet>), defaultValue: 100);
 
@@ -30,6 +32,28 @@ namespace XF.ChartLibrary.Charts
 
         public static readonly BindableProperty DoubleTapToZoomEnabledProperty = BindableProperty.Create(nameof(DoubleTapToZoomEnabled), typeof(bool), typeof(BarLineChartBase<TData, TDataSet>), true);
 
+        public static readonly BindableProperty GridBackgroundColorProperty = BindableProperty.Create(nameof(GridBackgroundColor), typeof(Color), typeof(BarLineChartBase<TData, TDataSet>), propertyChanged: OnGridBackgroundColorChanged);
+
+        public static readonly BindableProperty IsDrawGridBackgroundProperty = BindableProperty.Create(nameof(IsDrawGridBackground), typeof(bool), typeof(BarLineChartBase<TData, TDataSet>));
+
+        public static readonly BindableProperty DrawBordersProperty = BindableProperty.Create(nameof(DrawBorders), typeof(bool), typeof(BarLineChartBase<TData, TDataSet>));
+
+        public static readonly BindableProperty AutoScaleMinMaxEnabledProperty = BindableProperty.Create(nameof(AutoScaleMinMaxEnabled), typeof(bool), typeof(BarLineChartBase<TData, TDataSet>));
+
+        public static readonly BindableProperty ClipDataToContentProperty = BindableProperty.Create(nameof(ClipDataToContent), typeof(bool), typeof(BarLineChartBase<TData, TDataSet>), true);
+
+        public static readonly BindableProperty ClipValuesToContentProperty = BindableProperty.Create(nameof(ClipValuesToContent), typeof(bool), typeof(BarLineChartBase<TData, TDataSet>));
+
+        public static readonly BindableProperty MinOffsetProperty = BindableProperty.Create(nameof(MinOffset), typeof(float), typeof(BarLineChartBase<TData, TDataSet>), defaultValue: 15.0f);
+
+        public static readonly BindableProperty KeepPositionOnRotationProperty = BindableProperty.Create(nameof(KeepPositionOnRotation), typeof(bool), typeof(BarLineChartBase<TData, TDataSet>));
+
+
+        static void OnGridBackgroundColorChanged(BindableObject bindable, object oldValue, object newValue)
+        {
+            var chart = (BarLineChartBase<TData, TDataSet>)bindable;
+            chart.GridBackgroundPaint.Color = ((Color)newValue).ToSKColor();
+        }
 
         private SKPoint touchStartPoint;
 
@@ -45,7 +69,7 @@ namespace XF.ChartLibrary.Charts
 
         public BarLineChartBase()
         {
-            gridBackgroundPaint = new SKPaint
+            GridBackgroundPaint = new SKPaint
             {
                 Style = SKPaintStyle.Fill,
                 // Color = SKColors.White;
@@ -53,7 +77,7 @@ namespace XF.ChartLibrary.Charts
                                                    // grey
             };
 
-            borderPaint = new SKPaint
+            BorderPaint = new SKPaint
             {
                 Style = SKPaintStyle.Stroke,
                 Color = SKColors.Black,
@@ -70,6 +94,66 @@ namespace XF.ChartLibrary.Charts
             GestureRecognizers.Add(Gesture);
             savedMatrix = SKMatrix.Identity;
         }
+
+        public Color GridBackgroundColor
+        {
+            get => GridBackgroundPaint.Color.ToFormsColor();
+            set => SetValue(GridBackgroundColorProperty, value);
+        }
+
+        /// <summary>
+        /// true if keeping the position on rotation is enabled and false if not.
+        /// </summary>
+        public bool KeepPositionOnRotation
+        {
+            get => (bool)GetValue(KeepPositionOnRotationProperty);
+            set => SetValue(KeepPositionOnRotationProperty, value);
+        }
+
+        /// <summary>
+        /// flag indicating if the grid background should be drawn or not
+        /// </summary>
+        public bool IsDrawGridBackground
+        {
+            get => (bool)GetValue(IsDrawGridBackgroundProperty);
+            set => SetValue(IsDrawGridBackgroundProperty, value);
+        }
+
+        public bool DrawBorders
+        {
+            get => (bool)GetValue(DrawBordersProperty);
+            set => SetValue(DrawBordersProperty, value);
+        }
+
+        /// <summary>
+        ///  flag that indicates if auto scaling on the y axis is enabled
+        /// </summary>
+        public bool AutoScaleMinMaxEnabled
+        {
+            get => (bool)GetValue(AutoScaleMinMaxEnabledProperty);
+            set => SetValue(AutoScaleMinMaxEnabledProperty, value);
+        }
+
+        public bool ClipDataToContent
+        {
+            get => (bool)GetValue(ClipDataToContentProperty);
+            set => SetValue(ClipDataToContentProperty, value);
+        }
+
+        public bool ClipValuesToContent
+        {
+            get => (bool)GetValue(ClipValuesToContentProperty);
+            set => SetValue(ClipValuesToContentProperty, value);
+        }
+        /// <summary>
+        /// Sets the minimum offset (padding) around the chart, defaults to 15
+        /// </summary>
+        public float MinOffset
+        {
+            get => (float)GetValue(MinOffsetProperty);
+            set => SetValue(MinOffsetProperty, value);
+        }
+
 
         public bool DoubleTapToZoomEnabled
         {
@@ -250,11 +334,11 @@ namespace XF.ChartLibrary.Charts
                 {
                     var h = GetHighlightByTouchPoint(distanceX, distanceY);
 
-                    var lastHighlighted = this.lastHighlighted;
+                    var lastHighlighted = this.LastHighlighted;
 
                     if (h != lastHighlighted)
                     {
-                        this.lastHighlighted = h;
+                        this.LastHighlighted = h;
                         HighlightValue(h, true);
                     }
                 }
@@ -346,21 +430,21 @@ namespace XF.ChartLibrary.Charts
         {
             if (e.state == TouchState.Ended)
             {
-                if (!HighlightPerDragEnabled)
+                if (!HighlightPerTapEnabled)
                 {
                     return;
                 }
 
                 var h = GetHighlightByTouchPoint(e.x, e.y);
-                if (h == null || h.Equals(lastHighlighted))
+                if (h == null || h.Equals(LastHighlighted))
                 {
                     HighlightValue(null, true);
-                    lastHighlighted = null;
+                    LastHighlighted = null;
                 }
                 else
                 {
                     HighlightValue(h, true);
-                    lastHighlighted = h;
+                    LastHighlighted = h;
                 }
             }
         }
@@ -394,6 +478,29 @@ namespace XF.ChartLibrary.Charts
         {
             get => (bool)GetValue(ScaleYEnabledProperty);
             set => SetValue(ScaleYEnabledProperty, value);
+        }
+
+        public override void OnSizeChanged(float w, float h)
+        {
+            SKPoint pt = SKPoint.Empty;
+            if (KeepPositionOnRotation)
+            {
+                pt = GetTransformer(YAxisDependency.Left).PixelsToValue(ViewPortHandler.ContentLeft, ViewPortHandler.ContentTop);
+            }
+
+            //Superclass transforms chart.
+            base.OnSizeChanged(w, h);
+
+            if (KeepPositionOnRotation)
+            {
+                //Restoring old position of chart.
+                pt = GetTransformer(YAxisDependency.Left).PointValueToPixel(pt.X, pt.Y);
+                ViewPortHandler.CenterViewPort(pt, this);
+            }
+            else
+            {
+                ViewPortHandler.Refresh(ViewPortHandler.touchMatrix, this, true);
+            }
         }
     }
 }

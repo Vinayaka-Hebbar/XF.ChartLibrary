@@ -194,9 +194,9 @@ yOffset = 3f;
             foreach (var entry in Entries)
             {
 #if __ANDROID__ || SKIASHARP
-                var formSize = (entry.FormSize.IsNaN() ? FormSize : entry.FormSize).DpToPixel();
+                var formSize = (float.IsNaN(entry.FormSize) ? FormSize : entry.FormSize).DpToPixel();
 #else
-                var formSize = entry.FormSize.IsNaN() ? FormSize : entry.FormSize;
+                var formSize = float.IsNaN(entry.FormSize) ? FormSize : entry.FormSize;
 #endif
                 if (formSize > maxFormSize)
                 {

@@ -12,7 +12,7 @@ namespace XF.ChartLibrary.Utils
                 return 0;
             float magnitude = (float)Math.Pow(10, 1 - (int)Math.Ceiling((float)Math.Log10(Math.Abs(number))));
             // Problem in Math.Round(2.5) somtimes giving 2 or 3 as result using Math.Celing
-            long shifted = (long)Math.Round((number * magnitude) * 1.001);
+            long shifted = (long)Math.Round((number * magnitude) * 1.0001f);
             return shifted / magnitude;
         }
 

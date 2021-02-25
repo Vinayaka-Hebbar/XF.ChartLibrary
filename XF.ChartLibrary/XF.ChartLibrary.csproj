@@ -5,12 +5,16 @@
     <LangVersion>8</LangVersion>
     <DefineConstants>SKIASHARP</DefineConstants>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <Version>1.0.0-beta2</Version>
+    <PackageTags>chart;xamarin</PackageTags>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
     <DebugType>none</DebugType>
     <DebugSymbols>false</DebugSymbols>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>ProjectAssemblyKey.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <ItemGroup>

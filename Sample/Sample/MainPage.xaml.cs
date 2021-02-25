@@ -1,13 +1,14 @@
 ﻿using SkiaSharp;
 using Xamarin.Forms;
 using XF.ChartLibrary.Charts;
+using XF.ChartLibrary.Components;
 using XF.ChartLibrary.Data;
 using XF.ChartLibrary.Utils;
 using Entry = XF.ChartLibrary.Data.Entry;
 
 namespace Sample
 {
-    public partial class MainPage : ContentPage
+    public partial class MainPage : ContentPage, XF.ChartLibrary.Formatter.IAxisValueFormatter
     {
         public MainPage()
         {
@@ -26,6 +27,7 @@ namespace Sample
             {
                 new LineDataSet(entries, "Sample")
                 {
+                    ValueFormatter = null,
                     Mode = LineDataSet.LineMode.CubicBezier,
                     ValueTextColor = SKColors.Black,
                     DrawFilled = true,
@@ -45,6 +47,7 @@ namespace Sample
                 XAxis =
                 {
                     SpaceMax = 1,
+                    ValueFormatter = this
                 },
                 AxisLeft =
                 {
@@ -61,7 +64,7 @@ namespace Sample
                 {
                     IsEnabled = false
                 },
-                Lengend =
+                Legend =
                 {
                     Form = XF.ChartLibrary.Components.Form.Line
                 }
@@ -70,6 +73,11 @@ namespace Sample
             content.NotifyDataSetChanged();
             Grid.SetRow(content, 1);
             LayoutRoot.Children.Add(content);
+        }
+
+        public string GetFormattedValue(float value, AxisBase axis)
+        {
+            return value.ToString();
         }
     }
 }

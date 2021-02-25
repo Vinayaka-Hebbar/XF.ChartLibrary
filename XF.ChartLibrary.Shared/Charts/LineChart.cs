@@ -6,14 +6,14 @@ using XF.ChartLibrary.Interfaces.DataSets;
 
 namespace XF.ChartLibrary.Charts
 {
-    public partial class LineChart : BarLineChartBase<LineData, LineDataSet>, ILineChartDataProvider
+    public partial class LineChart : BarLineChartBase<LineData, ILineDataSet>, ILineChartDataProvider
     {
         public override void Initialize()
         {
             base.Initialize();
-            Renderer = new Renderer.LineChartRenderer(this, Animator, ViewPortHandler);
+            renderer = new Renderer.LineChartRenderer(this, Animator, ViewPortHandler);
         }
 
-        IChartData<IBarLineScatterCandleBubbleDataSet> IBarLineScatterCandleBubbleProvider.Data => data;
+        IChartData IBarLineScatterCandleBubbleProvider.Data => data;
     }
 }

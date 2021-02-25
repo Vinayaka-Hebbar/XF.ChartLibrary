@@ -34,7 +34,7 @@ namespace XF.ChartLibrary.Data
 
         internal float xMin = float.MaxValue;
 
-        private IList<TDataSet> dataSets;
+        internal IList<TDataSet> dataSets;
 
         public IList<TDataSet> DataSets => dataSets;
 
@@ -123,7 +123,6 @@ namespace XF.ChartLibrary.Data
         /// <param name="toX">the x-value to which the calculation should be performed</param>
         public void CalcMinMaxY(float fromX, float toX)
         {
-
             foreach (TDataSet set in DataSets)
             {
                 set.CalcMinMaxY(fromX, toX);
@@ -138,7 +137,6 @@ namespace XF.ChartLibrary.Data
         /// </summary>
         protected void CalcMinMax()
         {
-
             if (dataSets == null)
                 return;
 
@@ -236,7 +234,6 @@ namespace XF.ChartLibrary.Data
         /// <param name="d"></param>
         protected void CalcMinMax(TDataSet d)
         {
-
             if (yMax < d.YMax)
                 yMax = d.YMax;
             if (yMin > d.YMin)
@@ -249,7 +246,6 @@ namespace XF.ChartLibrary.Data
 
             if (d.AxisDependency == Components.YAxisDependency.Left)
             {
-
                 if (LeftAxisMax < d.YMax)
                     LeftAxisMax = d.YMax;
                 if (LeftAxisMin > d.YMin)
@@ -383,6 +379,30 @@ namespace XF.ChartLibrary.Data
                 return default;
 
             return dataSets[index];
+        }
+
+        /// <summary>
+        /// the DataSet that contains the provided Entry, or null, if no
+        /// DataSet contains this Entry.
+        /// </summary>
+        /// <param name="e"></param>
+        /// <returns></returns>
+        public TDataSet GetDataSetForEntry(Entry e)
+        {
+            if (e == null)
+                return default;
+
+            foreach (IDataSet set in dataSets)
+            {
+                int size = set.EntryCount;
+                for (int j = 0; j < size; j++)
+                {
+                    if (e.Equals(set.EntryForXValue(e.X, e.Y)))
+                        return (TDataSet)set;
+                }
+            }
+
+            return default;
         }
 
         /// <summary>

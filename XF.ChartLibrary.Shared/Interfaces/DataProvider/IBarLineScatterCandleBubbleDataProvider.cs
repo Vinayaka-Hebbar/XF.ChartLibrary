@@ -9,7 +9,7 @@ namespace XF.ChartLibrary.Interfaces.DataProvider
 
     public interface IBarLineScatterCandleBubbleProvider
     {
-        IChartData<DataSets.IBarLineScatterCandleBubbleDataSet> Data { get; }
+        IChartData Data { get; }
 
         Transformer GetTransformer(YAxisDependency axis);
         bool IsInverted(YAxisDependency axis);

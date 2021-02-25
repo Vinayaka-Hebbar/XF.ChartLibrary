@@ -14,17 +14,32 @@ using XF.ChartLibrary.Renderer;
 #if NETSTANDARD || SKIASHARP
 using Point = SkiaSharp.SKPoint;
 using Canvas = SkiaSharp.SKCanvas;
+using Paint = SkiaSharp.SKPaint;
 #elif __IOS__ || __TVOS__
 using Point = CoreGraphics.CGPoint;
 using Canvas = CoreGraphics.CGContext;
 #elif __ANDROID__
 using Point = Android.Graphics.PointF;
 using Canvas = Android.Graphics.Canvas;
+using Paint = Android.Graphics.Paint;
 #endif
 
 
 namespace XF.ChartLibrary.Charts
 {
+
+#if __ANDOIRD__ || SKIASHARP
+    public enum PaintKind
+    {
+        GridBackground = 4,
+        Info = 7,
+        Description = 11,
+        Hole = 13,
+        CentreText = 14,
+        LegendLabel = 18,
+    }
+#endif
+
     public abstract partial class ChartBase<TData, TDataSet> : IChartBase, IChartDataProvider, IAnimator
         where TData : IChartData<TDataSet> where TDataSet : IDataSet, IBarLineScatterCandleBubbleDataSet
     {
@@ -33,23 +48,41 @@ namespace XF.ChartLibrary.Charts
         private Animator animator;
         private Description description = new Description();
 
-        protected Legend legend;
+        internal Legend legend;
 
-        protected LegendRenderer LegendRenderer;
+        internal LegendRenderer legendRenderer;
 
-        protected DataRenderer Renderer;
+        internal DataRenderer renderer;
 
-        protected Highlight.Highlight lastHighlighted;
+        protected Highlight.Highlight LastHighlighted;
 
         private IMarker marker;
 
         private Listener.IChartSelectionListener selectionListener;
 
+        public Listener.IChartSelectionListener SelectionListener
+        {
+            get => selectionListener;
+            set => selectionListener = value;
+        }
+
+        public DataRenderer Renderer
+        {
+            get => renderer;
+            set => renderer = value;
+        }
+
+        public LegendRenderer LegendRenderer
+        {
+            get => legendRenderer;
+            set => legendRenderer = value;
+        }
+
         protected readonly IList ViewPortJobs = ArrayList.Synchronized(new List<Jobs.ViewPortJob>());
 
         protected internal ViewPortHandler ViewPortHandler = new ViewPortHandler();
 
-        protected Highlight.IHighlighter highlighter;
+        internal Highlight.IHighlighter highlighter;
 
         public Highlight.IHighlighter Highlighter
         {
@@ -57,9 +90,9 @@ namespace XF.ChartLibrary.Charts
             set => highlighter = value;
         }
 
-        protected TData data;
+        internal TData data;
 
-        protected IList<Highlight.Highlight> indicesToHighlight;
+        internal IList<Highlight.Highlight> indicesToHighlight;
 
         public IList<Highlight.Highlight> IndicesToHighlight
         {
@@ -70,7 +103,7 @@ namespace XF.ChartLibrary.Charts
             }
         }
 
-        public Legend Lengend
+        public Legend Legend
         {
             get => legend;
         }
@@ -149,9 +182,46 @@ namespace XF.ChartLibrary.Charts
             {
                 Delegate = this
             };
-            LegendRenderer = new LegendRenderer(ViewPortHandler, legend);
+            legendRenderer = new LegendRenderer(ViewPortHandler, legend);
 
         }
+
+#if  SKIASHARP
+        /// <summary>
+        /// set a new paint object for the specified parameter 
+        /// </summary>
+        /// <param name="p">the new paint object</param>
+        /// <param name="kind">Paint type</param>
+        public virtual void SetPaint(Paint p, PaintKind kind)
+        {
+            switch (kind)
+            {
+                case PaintKind.Info:
+                    InfoPaint = p;
+                    break;
+                case PaintKind.Description:
+                    DescPaint = p;
+                    break;
+            }
+        }
+        /// <summary>
+        /// Returns the paint object associated with the provided constant.
+        /// </summary>
+        /// <param name="which">Which paint</param>
+        /// <returns></returns>
+        public virtual Paint GetPaint(PaintKind which)
+        {
+            switch (which)
+            {
+                case PaintKind.Info:
+                    return InfoPaint;
+                case PaintKind.Description:
+                    return DescPaint;
+            }
+
+            return null;
+        }
+#endif
 
         /// calculates the required number of digits for the values that might be drawn in the chart (if enabled), and creates the default value formatter
         internal void SetUpDefaultFormatter(float min, float max)
@@ -183,7 +253,7 @@ namespace XF.ChartLibrary.Charts
             Data = default;
             offsetsCalculated = false;
             indicesToHighlight = null;
-            lastHighlighted = null;
+            LastHighlighted = null;
             this.InvalidateView();
         }
 
@@ -272,7 +342,7 @@ namespace XF.ChartLibrary.Charts
         /// selected value at the given touch point inside the Line-, Scatter-, or
         /// CandleStick-Chart.
         /// </summary>
-        public Highlight.Highlight GetHighlightByTouchPoint(float x, float y)
+        public virtual Highlight.Highlight GetHighlightByTouchPoint(float x, float y)
         {
             if (data == null)
                 return default;
@@ -343,12 +413,12 @@ namespace XF.ChartLibrary.Charts
         {
             if (highs == null || highs.Count <= 0 || highs[0] == null)
             {
-                lastHighlighted = null;
+                LastHighlighted = null;
                 //  mChartTouchListener.setLastHighlighted(null);
             }
             else
             {
-                lastHighlighted = highs[0];
+                LastHighlighted = highs[0];
                 // mChartTouchListener.setLastHighlighted(highs[0]);
             }
         }

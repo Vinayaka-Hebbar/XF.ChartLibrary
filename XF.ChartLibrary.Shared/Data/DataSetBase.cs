@@ -61,7 +61,7 @@ namespace XF.ChartLibrary.Data
 
         public abstract int EntryCount { get; }
 
-        public string Label { get; }
+        public string Label { get; set; }
 
         public YAxisDependency AxisDependency { get; set; }
 

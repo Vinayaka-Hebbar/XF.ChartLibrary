@@ -61,7 +61,7 @@ namespace XF.ChartLibrary.Data
         /// <summary>
         /// Updates the min and max x and y value of this DataSet based on the given Entry.
         /// </summary>
-        protected void CalcMinMax(TEntry e)
+        protected virtual void CalcMinMax(TEntry e)
         {
             if (e == null)
                 return;

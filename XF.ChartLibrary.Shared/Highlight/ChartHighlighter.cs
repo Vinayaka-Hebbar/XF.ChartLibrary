@@ -26,7 +26,7 @@ namespace XF.ChartLibrary.Highlight
             Chart = chart;
         }
 
-        public Highlight GetHighlight(float x, float y)
+        public virtual Highlight GetHighlight(float x, float y)
         {
             var pos = GetValsForTouch(x, y);
             return GetHighlightForX((float)pos.X, x, y);
@@ -116,8 +116,7 @@ namespace XF.ChartLibrary.Highlight
 
             if (data == null)
                 return HighlightBuffer;
-            var dataSets = data.DataSets;
-            for (int i = 0, dataSetCount = dataSets.Count; i < dataSetCount; i++)
+            for (int i = 0, dataSetCount = data.DataSetCount; i < dataSetCount; i++)
             {
 
                 IDataSet dataSet = data[i];
@@ -211,14 +210,14 @@ namespace XF.ChartLibrary.Highlight
         /// <summary>
         /// Calculates the distance between the two given points.
         /// </summary>
-        protected float GetDistance(float x1, float y1, float x2, float y2)
+        protected virtual float GetDistance(float x1, float y1, float x2, float y2)
         {
             //return Math.abs(y1 - y2);
             //return Math.abs(x1 - x2);
             return ChartUtil.Hypot(x1 - x2, y1 - y2);
         }
 
-        protected Interfaces.IChartData<IBarLineScatterCandleBubbleDataSet> Data
+        protected virtual Interfaces.IChartData Data
         {
             get
             {

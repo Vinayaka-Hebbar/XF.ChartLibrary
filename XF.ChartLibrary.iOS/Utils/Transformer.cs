@@ -34,6 +34,15 @@ namespace XF.ChartLibrary.Utils
         }
 
         /// <summary>
+        /// Transform a rectangle with all matrices.
+        /// </summary>
+        /// <param name="r"></param>
+        public CGRect RectValueToPixel(CGRect r)
+        {
+            return ValueToPixelMatrix.TransformRect(r);
+        }
+
+        /// <summary>
         ///  Prepares the matrix that transforms values to pixels. Calculates the
         ///scale factors from the charts size and offsets.
         /// </summary>

@@ -9,10 +9,12 @@ using XF.ChartLibrary.Utils;
 
 #if NETSTANDARD || SKIASHARP
 using Rect = SkiaSharp.SKRect;
+using Paint = SkiaSharp.SKPaint;
 #elif __IOS__ || __TVOS__
 using Rect = CoreGraphics.CGRect;
 #elif __ANDROID__
 using Rect = Android.Graphics.RectF;
+using Paint = Android.Graphics.Paint;
 #endif
 
 
@@ -25,33 +27,32 @@ namespace XF.ChartLibrary.Charts
         /// </summary>
         private bool customViewPortEnabled = false;
 
-        /// <summary>
-        /// flag indicating if the grid background should be drawn or not
-        /// </summary>
-        protected bool IsDrawGridBackground = false;
 
-        protected bool mDrawBorders = false;
+        internal YAxisRenderer axisRendererLeft;
+        internal YAxisRenderer axisRendererRight;
 
-        /// <summary>
-        ///  flag that indicates if auto scaling on the y axis is enabled
-        /// </summary>
-        protected bool mAutoScaleMinMaxEnabled = false;
+        protected Transformer LeftAxisTransformer;
+        protected Transformer RightAxisTransformer;
 
-        protected bool clipDataToContent = true;
+        internal XAxisRenderer xAxisRenderer;
 
-        protected bool clipValuesToContent = false;
-        /// <summary>
-        /// Sets the minimum offset (padding) around the chart, defaults to 15
-        /// </summary>
-        protected float MinOffset = 15.0f;
+        public YAxisRenderer AxisRendererLeft
+        {
+            get => axisRendererLeft;
+            set => axisRendererLeft = value;
+        }
 
-        protected YAxisRenderer axisRendererLeft;
-        protected YAxisRenderer axisRendererRight;
+        public YAxisRenderer AxisRendererRight
+        {
+            get => axisRendererRight;
+            set => axisRendererRight = value;
+        }
 
-        protected Transformer leftAxisTransformer;
-        protected Transformer rightAxisTransformer;
-
-        protected XAxisRenderer xAxisRenderer;
+        public XAxisRenderer XAxisRenderer
+        {
+            get => xAxisRenderer;
+            set => xAxisRenderer = value;
+        }
 
         /// <summary>
         /// Returns the lowest x-index (value on the x-axis) that is still visible on
@@ -125,11 +126,11 @@ namespace XF.ChartLibrary.Charts
 
         public override float YChartMin => Math.Min(AxisLeft.axisMinimum, AxisRight.axisMinimum);
 
-        IChartData<IBarLineScatterCandleBubbleDataSet> IBarLineScatterCandleBubbleProvider.Data
+        IChartData IBarLineScatterCandleBubbleProvider.Data
         {
             get
             {
-                return (IChartData<IBarLineScatterCandleBubbleDataSet>)Data;
+                return data;
             }
         }
 
@@ -139,29 +140,58 @@ namespace XF.ChartLibrary.Charts
             AxisLeft = new YAxis(YAxisDependency.Left);
             AxisRight = new YAxis(YAxisDependency.Right);
 
-            leftAxisTransformer = new Transformer(ViewPortHandler);
-            rightAxisTransformer = new Transformer(ViewPortHandler);
+            LeftAxisTransformer = new Transformer(ViewPortHandler);
+            RightAxisTransformer = new Transformer(ViewPortHandler);
 
-            axisRendererLeft = new YAxisRenderer(ViewPortHandler, AxisLeft, leftAxisTransformer);
-            axisRendererRight = new YAxisRenderer(ViewPortHandler, AxisRight, rightAxisTransformer);
-            Highlighter = new Highlight.ChartHighlighter<BarLineChartBase<TData, TDataSet>>(this);
+            axisRendererLeft = new YAxisRenderer(ViewPortHandler, AxisLeft, LeftAxisTransformer);
+            axisRendererRight = new YAxisRenderer(ViewPortHandler, AxisRight, RightAxisTransformer);
+            highlighter = new Highlight.ChartHighlighter<BarLineChartBase<TData, TDataSet>>(this);
 
-            xAxisRenderer = new XAxisRenderer(ViewPortHandler, XAxis, leftAxisTransformer);
+            xAxisRenderer = new XAxisRenderer(ViewPortHandler, XAxis, LeftAxisTransformer);
         }
+
+#if SKIASHARP
+        public override void SetPaint(Paint p, PaintKind which)
+        {
+            base.SetPaint(p, which);
+
+            switch (which)
+            {
+                case PaintKind.GridBackground:
+                    GridBackgroundPaint = p;
+                    break;
+            }
+        }
+
+        public override Paint GetPaint(PaintKind which)
+        {
+            Paint p = base.GetPaint(which);
+            if (p != null)
+                return p;
+
+            switch (which)
+            {
+                case PaintKind.GridBackground:
+                    return GridBackgroundPaint;
+            }
+
+            return null;
+        }
+#endif
 
         protected void PrepareOffsetMatrix()
         {
-            rightAxisTransformer.PrepareMatrixOffset(AxisRight.Inverted);
-            leftAxisTransformer.PrepareMatrixOffset(AxisLeft.Inverted);
+            RightAxisTransformer.PrepareMatrixOffset(AxisRight.Inverted);
+            LeftAxisTransformer.PrepareMatrixOffset(AxisLeft.Inverted);
         }
 
         protected void PrepareValuePxMatrix()
         {
-            rightAxisTransformer.PrepareMatrixValuePx(XAxis.axisMinimum,
+            RightAxisTransformer.PrepareMatrixValuePx(XAxis.axisMinimum,
                     XAxis.axisRange,
                     AxisRight.axisRange,
                     AxisRight.axisMinimum);
-            leftAxisTransformer.PrepareMatrixValuePx(XAxis.axisMinimum,
+            LeftAxisTransformer.PrepareMatrixValuePx(XAxis.axisMinimum,
                     XAxis.axisRange,
                     AxisLeft.axisRange,
                     AxisLeft.axisMinimum);
@@ -307,8 +337,8 @@ namespace XF.ChartLibrary.Charts
             if (data == null)
                 return;
 
-            if (Renderer != null)
-                Renderer.InitBuffers();
+            if (renderer != null)
+                renderer.InitBuffers();
 
             CalcMinMax();
 
@@ -317,7 +347,7 @@ namespace XF.ChartLibrary.Charts
             xAxisRenderer.ComputeAxis(XAxis.axisMinimum, XAxis.axisMaximum, false);
 
             if (legend != null)
-                LegendRenderer.ComputeLegend(data);
+                legendRenderer.ComputeLegend(data);
 
             CalculateOffsets();
         }
@@ -370,9 +400,9 @@ namespace XF.ChartLibrary.Charts
         public Transformer GetTransformer(YAxisDependency which)
         {
             if (which == YAxisDependency.Left)
-                return leftAxisTransformer;
+                return LeftAxisTransformer;
             else
-                return rightAxisTransformer;
+                return RightAxisTransformer;
         }
 
 

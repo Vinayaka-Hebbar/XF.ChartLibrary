@@ -2,11 +2,9 @@
 
 namespace XF.ChartLibrary.Utils
 {
-    public static class Extensions
+    public static partial class Extensions
     {
-        public static bool IsNaN(this float value) => float.IsNaN(value);
-
-#if SKIASHARP || __ANDROID__
+#if SKIASHARP
 
         /// <summary>
         /// Enables the highlight-line to be drawn in dashed mode, e.g.like this "- - - - - -"

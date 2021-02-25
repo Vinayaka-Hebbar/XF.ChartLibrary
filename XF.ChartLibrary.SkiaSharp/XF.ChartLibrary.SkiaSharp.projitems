@@ -9,6 +9,7 @@
     <Import_RootNamespace>XF.ChartLibrary.SkiaSharp</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Charts\BarChart.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Charts\BarLineChartBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Components\AxisBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Components\ComponentBase.cs" />
@@ -16,10 +17,12 @@
     <Compile Include="$(MSBuildThisFileDirectory)Components\Legend.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Components\LimitLine.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Components\MarkerText.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Data\BarEntry.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Data\Entry.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Data\EntryBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Jobs\MoveViewJob.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Renderer\AxisRenderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Renderer\BarChartRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Renderer\DataRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Renderer\LegendRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Renderer\LineChartRenderer.cs" />

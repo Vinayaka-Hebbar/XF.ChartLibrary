@@ -78,7 +78,7 @@ namespace XF.ChartLibrary.Renderer
             c.DrawBitmap(drawBitmap, 0, 0, RenderPaint);
         }
 
-        protected void DrawDataSet(SKCanvas c, LineDataSet dataSet)
+        protected void DrawDataSet(SKCanvas c, ILineDataSet dataSet)
         {
             if (dataSet.EntryCount < 1)
                 return;
@@ -106,14 +106,14 @@ namespace XF.ChartLibrary.Renderer
             RenderPaint.PathEffect = null;
         }
 
-        protected void DrawLinear(SKCanvas c, LineDataSet dataSet)
+        protected void DrawLinear(SKCanvas c, ILineDataSet lineDataSet)
         {
-            int entryCount = dataSet.EntryCount;
+            int entryCount = lineDataSet.EntryCount;
 
-            bool isDrawSteppedEnabled = dataSet.Mode == LineDataSet.LineMode.Stepped;
+            bool isDrawSteppedEnabled = lineDataSet.Mode == LineDataSet.LineMode.Stepped;
             int pointsPerEntryPair = isDrawSteppedEnabled ? 4 : 2;
 
-            Transformer trans = Chart.GetTransformer(dataSet.AxisDependency);
+            Transformer trans = Chart.GetTransformer(lineDataSet.AxisDependency);
 
             float phaseY = Animator.PhaseY;
 
@@ -122,7 +122,7 @@ namespace XF.ChartLibrary.Renderer
             SKCanvas canvas;
 
             // if the data-set is dashed, draw on bitmap-canvas
-            if (dataSet.IsDashedLineEnabled)
+            if (lineDataSet.IsDashedLineEnabled)
             {
                 canvas = BitmapCanvas;
             }
@@ -131,16 +131,16 @@ namespace XF.ChartLibrary.Renderer
                 canvas = c;
             }
 
-            XBounds.Set(Chart, dataSet, Animator);
+            XBounds.Set(Chart, lineDataSet, Animator);
 
             // if drawing filled is enabled
-            if (dataSet.DrawFilled && entryCount > 0)
+            if (lineDataSet.DrawFilled && entryCount > 0)
             {
-                DrawLinearFill(c, dataSet, trans, XBounds);
+                DrawLinearFill(c, lineDataSet, trans, XBounds);
             }
 
             // more than 1 color
-            if (dataSet.Colors.Count > 1)
+            if (lineDataSet.Colors.Count > 1)
             {
 
                 int numberOfFloats = pointsPerEntryPair;
@@ -149,7 +149,7 @@ namespace XF.ChartLibrary.Renderer
                     _lineBuffer = new SKPoint[numberOfFloats];
 
                 int max = XBounds.Min + XBounds.Range;
-
+                IDataSet<Entry> dataSet = lineDataSet;
                 for (int j = XBounds.Min; j < max; j++)
                 {
 
@@ -203,7 +203,7 @@ namespace XF.ChartLibrary.Renderer
                         continue;
 
                     // get the color that is set for this line-segment
-                    RenderPaint.Color = dataSet.ColorAt(j);
+                    RenderPaint.Color = lineDataSet.ColorAt(j);
 
                     for (int i = 0; i < numberOfFloats; i += 2)
                     {
@@ -213,13 +213,13 @@ namespace XF.ChartLibrary.Renderer
 
             }
             else
-            { // only one color per dataset
-
-                if (_lineBuffer.Length < Math.Max((entryCount) * pointsPerEntryPair, pointsPerEntryPair))
-                    _lineBuffer = new SKPoint[Math.Max((entryCount) * pointsPerEntryPair, pointsPerEntryPair) * 2];
+            { 
+                // only one color per dataset
+                if (_lineBuffer.Length < Math.Max(entryCount * pointsPerEntryPair, pointsPerEntryPair))
+                    _lineBuffer = new SKPoint[Math.Max(entryCount * pointsPerEntryPair, pointsPerEntryPair) * 2];
 
                 Entry e1, e2;
-
+                IDataSet<Entry> dataSet = lineDataSet;
                 e1 = dataSet[XBounds.Min];
 
                 if (e1 != null)
@@ -252,7 +252,7 @@ namespace XF.ChartLibrary.Renderer
 
                         int size = Math.Max((XBounds.Range + 1) * pointsPerEntryPair, pointsPerEntryPair);
 
-                        RenderPaint.Color = dataSet.Color;
+                        RenderPaint.Color = lineDataSet.Color;
 
                         for (int i = 0; i < size; i += 2)
                         {
@@ -265,7 +265,7 @@ namespace XF.ChartLibrary.Renderer
             RenderPaint.PathEffect = null;
         }
 
-        protected void DrawLinearFill(SKCanvas c, LineDataSet dataSet, Transformer trans, Bounds bounds)
+        protected void DrawLinearFill(SKCanvas c, ILineDataSet dataSet, Transformer trans, Bounds bounds)
         {
             SKPath filled = GenerateFilledPathBuffer;
 
@@ -308,15 +308,15 @@ namespace XF.ChartLibrary.Renderer
             } while (currentStartIndex <= currentEndIndex);
         }
 
-        void GenerateFilledPath(LineDataSet dataSet, int startIndex, int endIndex, SKPath outputPath)
+        void GenerateFilledPath(ILineDataSet lineDataSet, int startIndex, int endIndex, SKPath outputPath)
         {
-            float fillMin = dataSet.FillFormatter.GetFillLinePosition(dataSet, Chart);
+            float fillMin = lineDataSet.FillFormatter.GetFillLinePosition(lineDataSet, Chart);
             float phaseY = Animator.PhaseY;
-            bool isDrawSteppedEnabled = dataSet.Mode == LineDataSet.LineMode.Stepped;
+            bool isDrawSteppedEnabled = lineDataSet.Mode == LineDataSet.LineMode.Stepped;
 
             var filled = outputPath;
             filled.Reset();
-
+            IDataSet<Entry> dataSet = lineDataSet;
             var entry = dataSet[startIndex];
 
             filled.MoveTo(entry.X, fillMin);
@@ -349,18 +349,18 @@ namespace XF.ChartLibrary.Renderer
             filled.Close();
         }
 
-        protected void DrawCubicBezier(LineDataSet dataSet)
+        protected void DrawCubicBezier(ILineDataSet lineDataSet)
         {
             float phaseY = Animator.PhaseY;
 
-            Transformer trans = Chart.GetTransformer(dataSet.AxisDependency);
+            Transformer trans = Chart.GetTransformer(lineDataSet.AxisDependency);
 
-            XBounds.Set(Chart, dataSet, Animator);
+            XBounds.Set(Chart, lineDataSet, Animator);
 
-            float intensity = dataSet.CubicIntensity;
+            float intensity = lineDataSet.CubicIntensity;
 
             CubicPath.Reset();
-
+            IDataSet<Entry> dataSet = lineDataSet;
             if (XBounds.Range >= 1)
             {
 
@@ -389,7 +389,7 @@ namespace XF.ChartLibrary.Renderer
                     prev = cur;
                     cur = nextIndex == j ? next : dataSet[j];
 
-                    nextIndex = j + 1 < dataSet.EntryCount ? j + 1 : j;
+                    nextIndex = j + 1 < lineDataSet.EntryCount ? j + 1 : j;
                     next = dataSet[nextIndex];
 
                     float prevDx = (cur.X - prevPrev.X) * intensity;
@@ -405,15 +405,15 @@ namespace XF.ChartLibrary.Renderer
 
 
             // if filled is enabled, close the path
-            if (dataSet.DrawFilled)
+            if (lineDataSet.DrawFilled)
             {
                 CubicFillPath.Reset();
                 CubicFillPath.AddPath(CubicPath);
 
-                DrawCubicFill(BitmapCanvas, dataSet, CubicFillPath, trans, XBounds);
+                DrawCubicFill(BitmapCanvas, lineDataSet, CubicFillPath, trans, XBounds);
             }
 
-            RenderPaint.Color = dataSet.Color;
+            RenderPaint.Color = lineDataSet.Color;
 
             RenderPaint.Style = SKPaintStyle.Stroke;
 
@@ -424,7 +424,7 @@ namespace XF.ChartLibrary.Renderer
             RenderPaint.PathEffect = null;
         }
 
-        protected void DrawHorizontalBezier(LineDataSet dataSet)
+        protected void DrawHorizontalBezier(ILineDataSet dataSet)
         {
             float phaseY = Animator.PhaseY;
 
@@ -437,7 +437,7 @@ namespace XF.ChartLibrary.Renderer
             if (XBounds.Range >= 1)
             {
 
-                var prev = dataSet[XBounds.Min];
+                var prev = ((IDataSet<Entry>)dataSet)[XBounds.Min];
                 var cur = prev;
 
                 // let the spline start
@@ -447,7 +447,7 @@ namespace XF.ChartLibrary.Renderer
                 {
 
                     prev = cur;
-                    cur = dataSet[j];
+                    cur = ((IDataSet<Entry>)dataSet)[j];
 
                     float cpx = (prev.X)
                             + (cur.X - prev.X) / 2.0f;

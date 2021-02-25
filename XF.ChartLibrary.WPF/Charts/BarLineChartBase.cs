@@ -25,6 +25,20 @@ namespace XF.ChartLibrary.Charts
 
         public static readonly DependencyProperty HighlightPerDragEnabledProperty = DependencyProperty.Register(nameof(HighlightPerDragEnabled), typeof(bool), typeof(BarLineChartBase<TData, TDataSet>), new PropertyMetadata(true));
 
+        public static readonly DependencyProperty HighlightPerTapEnabledProperty = DependencyProperty.Register(nameof(HighlightPerTapEnabled), typeof(bool), typeof(BarLineChartBase<TData, TDataSet>), new PropertyMetadata(true));
+
+        public static readonly DependencyProperty IsDrawGridBackgroundProperty = DependencyProperty.Register(nameof(IsDrawGridBackground), typeof(bool), typeof(BarLineChartBase<TData, TDataSet>));
+
+        public static readonly DependencyProperty DrawBordersProperty = DependencyProperty.Register(nameof(DrawBorders), typeof(bool), typeof(BarLineChartBase<TData, TDataSet>));
+
+        public static readonly DependencyProperty AutoScaleMinMaxEnabledProperty = DependencyProperty.Register(nameof(AutoScaleMinMaxEnabled), typeof(bool), typeof(BarLineChartBase<TData, TDataSet>));
+
+        public static readonly DependencyProperty ClipDataToContentProperty = DependencyProperty.Register(nameof(ClipDataToContent), typeof(bool), typeof(BarLineChartBase<TData, TDataSet>), new PropertyMetadata(true));
+
+        public static readonly DependencyProperty ClipValuesToContentProperty = DependencyProperty.Register(nameof(ClipValuesToContent), typeof(bool), typeof(BarLineChartBase<TData, TDataSet>));
+
+        public static readonly DependencyProperty MinOffsetProperty = DependencyProperty.Register(nameof(MinOffset), typeof(float), typeof(BarLineChartBase<TData, TDataSet>), new PropertyMetadata(15.0f));
+
         private SKPoint decelerationVelocity = SKPoint.Empty;
 
         private SKPoint decelerationCurrentPoint = SKPoint.Empty;
@@ -41,7 +55,7 @@ namespace XF.ChartLibrary.Charts
 
         public BarLineChartBase()
         {
-            gridBackgroundPaint = new SKPaint
+            GridBackgroundPaint = new SKPaint
             {
                 Style = SKPaintStyle.Fill,
                 // Color = SKColors.White;
@@ -49,7 +63,7 @@ namespace XF.ChartLibrary.Charts
                                                    // grey
             };
 
-            borderPaint = new SKPaint
+            BorderPaint = new SKPaint
             {
                 Style = SKPaintStyle.Stroke,
                 Color = SKColors.Black,
@@ -57,7 +71,51 @@ namespace XF.ChartLibrary.Charts
             };
         }
 
-       
+        /// <summary>
+        /// flag indicating if the grid background should be drawn or not
+        /// </summary>
+        public bool IsDrawGridBackground
+        {
+            get => (bool)GetValue(IsDrawGridBackgroundProperty);
+            set => SetValue(IsDrawGridBackgroundProperty, value);
+        }
+
+        public bool DrawBorders
+        {
+            get => (bool)GetValue(DrawBordersProperty);
+            set => SetValue(DrawBordersProperty, value);
+        }
+
+        /// <summary>
+        ///  flag that indicates if auto scaling on the y axis is enabled
+        /// </summary>
+        public bool AutoScaleMinMaxEnabled
+        {
+            get => (bool)GetValue(AutoScaleMinMaxEnabledProperty);
+            set => SetValue(AutoScaleMinMaxEnabledProperty, value);
+        }
+
+        public bool ClipDataToContent
+        {
+            get => (bool)GetValue(ClipDataToContentProperty);
+            set => SetValue(ClipDataToContentProperty, value);
+        }
+
+        public bool ClipValuesToContent
+        {
+            get => (bool)GetValue(ClipValuesToContentProperty);
+            set => SetValue(ClipValuesToContentProperty, value);
+        }
+        /// <summary>
+        /// Sets the minimum offset (padding) around the chart, defaults to 15
+        /// </summary>
+        public float MinOffset
+        {
+            get => (float)GetValue(MinOffsetProperty);
+            set => SetValue(MinOffsetProperty, value);
+        }
+
+
         public void StopDeceleration()
         {
             decelerationVelocity = SKPoint.Empty;

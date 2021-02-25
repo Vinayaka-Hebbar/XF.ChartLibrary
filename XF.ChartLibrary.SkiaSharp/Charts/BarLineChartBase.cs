@@ -9,9 +9,24 @@ namespace XF.ChartLibrary.Charts
         /// <summary>
         /// paint object for the (by default) lightgrey background of the grid
         /// </summary>
-        protected SKPaint gridBackgroundPaint;
+        protected SKPaint GridBackgroundPaint;
 
-        protected SKPaint borderPaint;
+        protected SKPaint BorderPaint;
+
+        public float BorderWidth
+        {
+            get => BorderPaint.StrokeWidth;
+            set
+            {
+                BorderPaint.StrokeWidth = value.DpToPixel();
+            }
+        }
+
+        public SKColor BorderColor
+        {
+            get => BorderPaint.Color;
+            set => BorderPaint.Color = value;
+        }
 
         public bool DragXEnabled
         {
@@ -31,6 +46,11 @@ namespace XF.ChartLibrary.Charts
             set => SetValue(HighlightPerDragEnabledProperty, value);
         }
 
+        public bool HighlightPerTapEnabled
+        {
+            get => (bool)GetValue(HighlightPerTapEnabledProperty);
+            set => SetValue(HighlightPerTapEnabledProperty, value);
+        }
 
         /// <summary>
         /// the object representing the labels on the left y-axis
@@ -38,7 +58,7 @@ namespace XF.ChartLibrary.Charts
         public YAxis AxisLeft
         {
             get => (YAxis)GetValue(AxisLeftProperty);
-            set => SetValue(AxisLeftProperty, value);
+            protected set => SetValue(AxisLeftProperty, value);
         }
 
         /// <summary>
@@ -47,7 +67,7 @@ namespace XF.ChartLibrary.Charts
         public YAxis AxisRight
         {
             get => (YAxis)GetValue(AxisRightProperty);
-            set => SetValue(AxisRightProperty, value);
+            protected set => SetValue(AxisRightProperty, value);
         }
 
         public override int MaxVisibleCount
@@ -64,12 +84,12 @@ namespace XF.ChartLibrary.Charts
             if (IsDrawGridBackground)
             {
                 // draw the grid background
-                c.DrawRect(ViewPortHandler.ContentRect, gridBackgroundPaint);
+                c.DrawRect(ViewPortHandler.ContentRect, GridBackgroundPaint);
             }
 
-            if (mDrawBorders)
+            if (DrawBorders)
             {
-                c.DrawRect(ViewPortHandler.ContentRect, borderPaint);
+                c.DrawRect(ViewPortHandler.ContentRect, BorderPaint);
             }
         }
 
@@ -154,7 +174,7 @@ namespace XF.ChartLibrary.Charts
             // execute all drawing commands
             DrawGridBackground(canvas);
 
-            if (mAutoScaleMinMaxEnabled)
+            if (AutoScaleMinMaxEnabled)
             {
                 AutoScale();
             }
@@ -192,13 +212,13 @@ namespace XF.ChartLibrary.Charts
 
             int clipRestoreCount = canvas.Save();
 
-            if (clipDataToContent)
+            if (ClipDataToContent)
             {
                 // make sure the data cannot be drawn outside the content-rect
                 canvas.ClipRect(ViewPortHandler.ContentRect);
             }
 
-            Renderer.DrawData(canvas);
+            renderer.DrawData(canvas);
 
             if (!XAxis.IsDrawGridLinesBehindDataEnabled)
                 xAxisRenderer.RenderGridLines(canvas);
@@ -211,12 +231,12 @@ namespace XF.ChartLibrary.Charts
 
             // if highlighting is enabled
             if (ValuesToHighlight)
-                Renderer.DrawHighlighted(canvas, indicesToHighlight);
+                renderer.DrawHighlighted(canvas, indicesToHighlight);
 
             // Removes clipping rectangle
             canvas.RestoreToCount(clipRestoreCount);
 
-            Renderer.DrawExtras(canvas);
+            renderer.DrawExtras(canvas);
 
             if (XAxis.IsEnabled && !XAxis.DrawLimitLinesBehindData)
                 xAxisRenderer.RenderLimitLines(canvas);
@@ -231,21 +251,21 @@ namespace XF.ChartLibrary.Charts
             axisRendererLeft.RenderAxisLabels(canvas);
             axisRendererRight.RenderAxisLabels(canvas);
 
-            if (clipValuesToContent)
+            if (ClipValuesToContent)
             {
                 clipRestoreCount = canvas.Save();
                 canvas.ClipRect(ViewPortHandler.ContentRect);
 
-                Renderer.DrawValues(canvas);
+                renderer.DrawValues(canvas);
 
                 canvas.RestoreToCount(clipRestoreCount);
             }
             else
             {
-                Renderer.DrawValues(canvas);
+                renderer.DrawValues(canvas);
             }
 
-            LegendRenderer.RenderLegend(canvas);
+            legendRenderer.RenderLegend(canvas);
 
             DrawDescription(canvas);
 

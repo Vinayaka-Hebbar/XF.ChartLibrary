@@ -14,7 +14,7 @@ namespace XF.ChartLibrary.Charts
 
         public static readonly BindableProperty DataProperty = BindableProperty.Create(nameof(Data), typeof(TData), typeof(ChartBase<TData, TDataSet>), defaultValue: null, propertyChanged: OnDataChanged);
 
-        public static readonly BindableProperty XAxisProperty = BindableProperty.Create(nameof(XAxis), typeof(XAxis), typeof(ChartBase<TData, TDataSet>), defaultValue: new XAxis());
+        public static readonly BindableProperty XAxisProperty = BindableProperty.Create(nameof(XAxis), typeof(XAxis), typeof(ChartBase<TData, TDataSet>), defaultValue: new XAxis(), defaultBindingMode: BindingMode.OneWayToSource);
 
         protected SKPaint InfoPaint;
         protected SKPaint DescPaint;
@@ -45,17 +45,17 @@ namespace XF.ChartLibrary.Charts
 
         static void OnDataChanged(BindableObject bindable, object oldValue, object newValue)
         {
-            ((ChartBase<TData, TDataSet>)bindable).OnDataChanged((TData)newValue);
+            ((ChartBase<TData, TDataSet>)bindable).OnDataChanged((TData)oldValue, (TData)newValue);
         }
 
-        protected virtual void OnDataChanged(TData value)
+        protected virtual void OnDataChanged(TData oldValue, TData newValue)
         {
             offsetsCalculated = false;
-            data = value;
-            if (value == null)
+            data = newValue;
+            if (newValue == null)
                 return;
-            SetUpDefaultFormatter(value.YMin, value.YMax);
-            foreach (TDataSet set in value.DataSets)
+            SetUpDefaultFormatter(newValue.YMin, newValue.YMax);
+            foreach (TDataSet set in newValue.DataSets)
             {
                 if (set.NeedsFormatter || set.ValueFormatter == DefaultValueFormatter)
                     set.ValueFormatter = DefaultValueFormatter;
@@ -85,7 +85,7 @@ namespace XF.ChartLibrary.Charts
         public XAxis XAxis
         {
             get => (XAxis)GetValue(XAxisProperty);
-            set => SetValue(XAxisProperty, value);
+            protected set => SetValue(XAxisProperty, value);
         }
 
         public virtual Gestures.IChartGesture Gesture { get; }

@@ -119,7 +119,7 @@ namespace XF.ChartLibrary.Renderer
             else
             {
 
-                var first = interval == 0.0 ? 0.0 : MathF.Ceiling(yMin / interval) * interval;
+                var first = interval == 0.0 ? 0.0 : Math.Ceiling(yMin / interval) * interval;
                 if (Axis.IsCenterAxisLabelsEnabled)
                 {
                     first -= interval;

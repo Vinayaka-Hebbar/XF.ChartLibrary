@@ -5,16 +5,8 @@ namespace XF.ChartLibrary.Animation
 {
     public partial class Animator : BindableObject
     {
-        private long startTimeX;
-
-        private long startTimeY;
-
-        private long durationX;
-        private long durationY;
-
-        private long endTimeX;
-        private long endTimeY;
-        private long endTime;
+        private float durationX;
+        private float durationY;
 
         private bool enabledX;
         private bool enabledY;
@@ -25,6 +17,46 @@ namespace XF.ChartLibrary.Animation
         public Action UpdateBlock { get; set; }
 
         public Action StopBlock { get; set; }
+
+        private readonly Ticker ticker;
+
+        public Animator()
+        {
+            ticker = new Ticker();
+            ticker.Update += OnUpdate;
+            ticker.Stop += OnStop;
+        }
+
+        private void OnUpdate(float elapsed)
+        {
+            if (enabledX)
+            {
+                float duration = durationX;
+                if (elapsed > duration)
+                {
+                    elapsed = duration;
+                }
+
+                PhaseX = _easingX == null ? elapsed / duration : _easingX.Invoke(elapsed / duration);
+            }
+            if (enabledY)
+            {
+                float duration = durationY;
+                if (elapsed > duration)
+                {
+                    elapsed = duration;
+                }
+                PhaseY = _easingY == null ? elapsed / duration : _easingY.Invoke(elapsed / duration);
+            }
+
+            Delegate.AnimatorUpdated(this);
+            UpdateBlock?.Invoke();
+        }
+
+        public void OnStop()
+        {
+            StopAnimator();
+        }
 
         public void Stop()
         {
@@ -50,64 +82,12 @@ namespace XF.ChartLibrary.Animation
             StopBlock?.Invoke();
         }
 
-        void UpdateAnimationPhases(long currentTime)
-        {
-            if (enabledX)
-            {
-                var elapsedTime = currentTime - startTimeX;
-                var duration = durationX;
-                var elapsed = elapsedTime;
-                if (elapsed > duration)
-                {
-                    elapsed = duration;
-                }
-
-                PhaseX = _easingX == null ? elapsed / duration : _easingX.Invoke(elapsed / duration);
-            }
-
-            if (enabledY)
-            {
-                var elapsedTime = currentTime - startTimeY;
-                var duration = durationY;
-                var elapsed = elapsedTime;
-                if (elapsed > duration)
-                {
-                    elapsed = duration;
-                }
-
-                PhaseY = _easingY == null ? elapsed / duration : _easingY.Invoke(elapsed / duration);
-            }
-        }
-
-        private void AnimationLoop()
-        {
-            var currentTime = System.Diagnostics.Stopwatch.GetTimestamp() / System.Diagnostics.Stopwatch.Frequency;
-
-
-            UpdateAnimationPhases(currentTime);
-
-            Delegate.AnimatorUpdated(this);
-            UpdateBlock?.Invoke();
-
-
-            if (currentTime >= endTime)
-            {
-                Stop();
-            }
-
-        }
-
         public void Animate(long xAxisDuration, long yAxisDuration, EasingFunction easingX, EasingFunction easingY)
         {
             Stop();
 
-            startTimeX = System.Diagnostics.Stopwatch.GetTimestamp() / System.Diagnostics.Stopwatch.Frequency;
-            startTimeY = startTimeX;
             durationX = xAxisDuration;
             durationY = yAxisDuration;
-            endTimeX = startTimeX + xAxisDuration;
-            endTimeY = startTimeY + yAxisDuration;
-            endTime = endTimeX > endTimeY ? endTimeX : endTimeY;
             enabledX = xAxisDuration > 0.0;
             enabledY = yAxisDuration > 0.0;
 
@@ -115,55 +95,36 @@ namespace XF.ChartLibrary.Animation
             _easingX = easingX;
             _easingY = easingY;
 
-            // Take care of the first frame if rendering is already scheduled...
-            UpdateAnimationPhases(startTimeX);
-
-
             if (enabledX || enabledY)
             {
-                Dispatcher.BeginInvokeOnMainThread(AnimationLoop);
+                ticker.Start(xAxisDuration > yAxisDuration ? xAxisDuration : yAxisDuration);
             }
         }
 
         public void AnimateX(long xAxisDuration, EasingFunction easing)
         {
-            startTimeX = System.Diagnostics.Stopwatch.GetTimestamp() / System.Diagnostics.Stopwatch.Frequency;
             durationX = xAxisDuration;
-            endTimeX = startTimeX + xAxisDuration;
-            endTime = endTimeX > endTimeY ? endTimeX : endTimeY;
             enabledX = xAxisDuration > 0.0;
 
 
             _easingX = easing;
 
-            // Take care of the first frame if rendering is already scheduled...
-            UpdateAnimationPhases(startTimeX);
-
-
             if ((enabledX || enabledY))
             {
-                Dispatcher.BeginInvokeOnMainThread(AnimationLoop);
+                ticker.Start(xAxisDuration);
             }
         }
 
         public void AnimateY(long yAxisDuration, EasingFunction easing)
         {
-            startTimeY = System.Diagnostics.Stopwatch.GetTimestamp() / System.Diagnostics.Stopwatch.Frequency;
             durationY = yAxisDuration;
-            endTimeY = startTimeY + yAxisDuration;
-            endTime = endTimeX > endTimeY ? endTimeX : endTimeY;
             enabledY = yAxisDuration > 0.0;
-
 
             _easingY = easing;
 
-            // Take care of the first frame if rendering is already scheduled...
-            UpdateAnimationPhases(startTimeY);
-
-
-            if ((enabledX || enabledY))
+            if (enabledX || enabledY)
             {
-                Dispatcher.BeginInvokeOnMainThread(AnimationLoop);
+                ticker.Start(yAxisDuration);
             }
         }
     }

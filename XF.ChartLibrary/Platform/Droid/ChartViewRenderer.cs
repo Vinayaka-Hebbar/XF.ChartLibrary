@@ -7,6 +7,7 @@ using Xamarin.Forms.Platform.Android;
 using ABitmap = Android.Graphics.Bitmap;
 using AView = Android.Views.View;
 using ALayoutDirection = Android.Views.LayoutDirection;
+using XF.ChartLibrary.Charts;
 
 namespace XF.ChartLibrary.Platform.Droid
 {
@@ -119,7 +120,27 @@ namespace XF.ChartLibrary.Platform.Droid
                 UpdateIsEnabled();
                 return;
             }
+            if (e.PropertyName == nameof(IChartBase.Marker))
+            {
+                UpdateMarker();
+                return;
+            }
             ElementPropertyChanged?.Invoke(this, e);
+        }
+
+        void UpdateMarker()
+        {
+            if (element.Marker is Components.MarkerView marker)
+            {
+                MarkerViewRenderer renderer = Xamarin.Forms.Platform.Android.Platform.GetRenderer(marker) as MarkerViewRenderer;
+                if (renderer == null)
+                {
+                    renderer = new MarkerViewRenderer(Context);
+                    Xamarin.Forms.Platform.Android.Platform.SetRenderer(marker, renderer);
+                }
+                renderer.SetElement(marker);
+                renderer.UpdateMarkerLayout();
+            }
         }
 
         protected virtual void OnFocusChangeRequested(object sender, Xamarin.Forms.VisualElement.FocusRequestArgs e)
@@ -303,6 +324,8 @@ namespace XF.ChartLibrary.Platform.Droid
 
         public void SetElement(Xamarin.Forms.VisualElement element)
         {
+            var contentView = new Xamarin.Forms.ContentView();
+            var renderer = Xamarin.Forms.Platform.Android.Platform.CreateRendererWithContext(contentView, Context);
             var oldElement = this.element;
             if (oldElement != null)
             {
@@ -321,6 +344,8 @@ namespace XF.ChartLibrary.Platform.Droid
             newElement.FocusChangeRequested += OnFocusChangeRequested;
             UpdateFlowDirection();
             UpdateIsEnabled();
+            // Ensure renderer for marker is set
+            UpdateMarker();
             if (newElement.Background != null)
                 UpdateBackground();
             element.PropertyChanged += OnElementPropertyChanged;

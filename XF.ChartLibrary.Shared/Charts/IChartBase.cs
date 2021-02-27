@@ -10,6 +10,7 @@ namespace XF.ChartLibrary.Charts
         bool ValuesToHighlight { get; }
         Utils.ViewPortHandler ViewPortHandler { get; }
         float ChartWidth { get; }
+        Components.IMarker Marker { get; }
         float ChartHeight { get; }
 
         Interfaces.IChartData Data { get; }

@@ -30,6 +30,7 @@
     <None Remove="Platform\Droid\ChartGestureHandler.cs" />
     <None Remove="Platform\Droid\PinchGestureHandler.cs" />
     <None Remove="Platform\NetStandard\ChartUtil.cs" />
+    <None Remove="Platform\NetStandard\MarkerView.cs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -24,7 +24,8 @@ namespace XF.ChartLibrary.Utils
         {
             if (GradientColors == null)
                 return;
-
+            int save = c.Save();
+            c.ClipPath(path);
             using (var gradient = SKShader.CreateLinearGradient(
                     SKPoint.Empty,
                     new SKPoint(rect.Width,
@@ -32,9 +33,16 @@ namespace XF.ChartLibrary.Utils
                    GradientColors,
                     ColorPos,
                     SKShaderTileMode.Mirror))
-                paint.Shader = gradient;
+            {
 
-            c.DrawPath(path, paint);
+                var previousStyle = paint.Style;
+                paint.Style = SKPaintStyle.Fill;
+                paint.Shader = gradient;
+                c.DrawPath(path, paint);
+                paint.Style = previousStyle;
+            }
+
+            c.RestoreToCount(save);
         }
     }
 }

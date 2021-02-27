@@ -22,9 +22,9 @@ namespace XF.ChartLibrary.Charts
 
         public static readonly BindableProperty HighlightPerTapEnabledProperty = BindableProperty.Create(nameof(HighlightPerTapEnabled), typeof(bool), typeof(BarLineChartBase<TData, TDataSet>), true);
 
-        public static readonly BindableProperty AxisLeftProperty = BindableProperty.Create(nameof(AxisLeft), typeof(YAxis), typeof(BarLineChartBase<TData, TDataSet>), defaultValue: new YAxis(YAxisDependency.Left), defaultBindingMode: BindingMode.OneWayToSource);
+        public static readonly BindableProperty AxisLeftProperty = BindableProperty.Create(nameof(AxisLeft), typeof(YAxis), typeof(BarLineChartBase<TData, TDataSet>), defaultBindingMode: BindingMode.OneWayToSource);
 
-        public static readonly BindableProperty AxisRightProperty = BindableProperty.Create(nameof(AxisRight), typeof(YAxis), typeof(BarLineChartBase<TData, TDataSet>), defaultValue: new YAxis(YAxisDependency.Right), defaultBindingMode: BindingMode.OneWayToSource);
+        public static readonly BindableProperty AxisRightProperty = BindableProperty.Create(nameof(AxisRight), typeof(YAxis), typeof(BarLineChartBase<TData, TDataSet>), defaultBindingMode: BindingMode.OneWayToSource);
 
         public static readonly BindableProperty MaxVisibleCountProperty = BindableProperty.Create(nameof(MaxVisibleCount), typeof(int), typeof(BarLineChartBase<TData, TDataSet>), defaultValue: 100);
 
@@ -48,11 +48,9 @@ namespace XF.ChartLibrary.Charts
 
         public static readonly BindableProperty KeepPositionOnRotationProperty = BindableProperty.Create(nameof(KeepPositionOnRotation), typeof(bool), typeof(BarLineChartBase<TData, TDataSet>));
 
-
         static void OnGridBackgroundColorChanged(BindableObject bindable, object oldValue, object newValue)
         {
-            var chart = (BarLineChartBase<TData, TDataSet>)bindable;
-            chart.GridBackgroundPaint.Color = ((Color)newValue).ToSKColor();
+            ((BarLineChartBase<TData, TDataSet>)bindable).GridBackgroundPaint.Color = ((Color)newValue).ToSKColor();
         }
 
         private SKPoint touchStartPoint;
@@ -261,11 +259,11 @@ namespace XF.ChartLibrary.Charts
                         ViewPortHandler.Refresh(savedMatrix.PostConcat(SKMatrix.CreateScale(scaleX, scaleY, x, y)), chart: this, invalidate: true);
                     }
                 }
-                else if (e.Mode == PinchState.XZoom && scaleYEnabled && isZoomingOut ? ViewPortHandler.CanZoomOutMoreX : ViewPortHandler.CanZoomInMoreX)
+                else if (e.Mode == PinchState.XZoom && scaleYEnabled && (isZoomingOut ? ViewPortHandler.CanZoomOutMoreX : ViewPortHandler.CanZoomInMoreX))
                 {
                     ViewPortHandler.Refresh(savedMatrix.PostConcat(SKMatrix.CreateScale(e.Scale, 1f, x, y)), chart: this, invalidate: true);
                 }
-                else if (e.Mode == PinchState.YZoom && scaleYEnabled && isZoomingOut ? ViewPortHandler.CanZoomOutMoreY : ViewPortHandler.CanZoomInMoreY)
+                else if (e.Mode == PinchState.YZoom && scaleYEnabled && (isZoomingOut ? ViewPortHandler.CanZoomOutMoreY : ViewPortHandler.CanZoomInMoreY))
                 {
                     ViewPortHandler.Refresh(savedMatrix.PostConcat(SKMatrix.CreateScale(1f, e.Scale, x, y)), chart: this, invalidate: true);
                 }

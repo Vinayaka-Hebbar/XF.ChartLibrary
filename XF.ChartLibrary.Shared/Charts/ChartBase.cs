@@ -48,15 +48,11 @@ namespace XF.ChartLibrary.Charts
         private Animator animator;
         private Description description = new Description();
 
-        internal Legend legend;
-
         internal LegendRenderer legendRenderer;
 
         internal DataRenderer renderer;
 
         protected Highlight.Highlight LastHighlighted;
-
-        private IMarker marker;
 
         private Listener.IChartSelectionListener selectionListener;
 
@@ -100,20 +96,6 @@ namespace XF.ChartLibrary.Charts
             set
             {
                 indicesToHighlight = value;
-            }
-        }
-
-        public Legend Legend
-        {
-            get => legend;
-        }
-
-        public IMarker Marker
-        {
-            get => marker;
-            set
-            {
-                marker = value;
             }
         }
 
@@ -177,12 +159,12 @@ namespace XF.ChartLibrary.Charts
         public virtual void Initialize()
         {
             maxHighlightDistance = 500f;
-            legend = new Legend();
+            Legend = new Legend();
             animator = new Animator()
             {
                 Delegate = this
             };
-            legendRenderer = new LegendRenderer(ViewPortHandler, legend);
+            legendRenderer = new LegendRenderer(ViewPortHandler, Legend);
 
         }
 
@@ -288,9 +270,8 @@ namespace XF.ChartLibrary.Charts
         /// <param name="canvas">Canvas to draw</param>
         protected void DrawMarkers(Canvas canvas)
         {
-
             // if there is no marker view or drawing marker is disabled
-            if (marker == null || !IsDrawMarkersEnabled || !ValuesToHighlight)
+            if (! (Marker is IMarker marker) || !IsDrawMarkersEnabled || !ValuesToHighlight)
                 return;
             var data = Data;
             for (int i = 0; i < indicesToHighlight.Count; i++)
@@ -307,8 +288,9 @@ namespace XF.ChartLibrary.Charts
                 if (e == null || entryIndex > set.EntryCount * animator.PhaseX)
                     continue;
 
-                float[] pos = GetMarkerPosition(highlight);
+                var pos = GetMarkerPosition(highlight);
 
+#if __ANDROID__ && !SKIASHARP
                 // check bounds
                 if (!ViewPortHandler.IsInBounds(pos[0], pos[1]))
                     continue;
@@ -317,7 +299,18 @@ namespace XF.ChartLibrary.Charts
                 marker.RefreshContent(e, highlight);
 
                 // draw the marker
-                marker.Draw(canvas, pos[0], pos[1], this);
+                marker.Draw(canvas, pos[0], pos[1], this); 
+#else
+                // check bounds
+                if (!ViewPortHandler.IsInBounds((float)pos.X, (float)pos.Y))
+                    continue;
+
+                // callbacks to update the content
+                marker.RefreshContent(e, highlight);
+
+                // draw the marker
+                marker.Draw(canvas, pos, this);
+#endif
             }
         }
 
@@ -398,13 +391,23 @@ namespace XF.ChartLibrary.Charts
             this.InvalidateView();
         }
 
+#if __ANDROID__ && !SKIASHARP
         /// <summary>
         /// Returns the actual position in pixels of the MarkerView for the given
         /// Highlight object.
         protected float[] GetMarkerPosition(Highlight.Highlight value)
         {
             return new float[] { value.DrawX, value.DrawY };
+        } 
+#else
+        /// <summary>
+        /// Returns the actual position in pixels of the MarkerView for the given
+        /// Highlight object.
+        protected Point GetMarkerPosition(Highlight.Highlight value)
+        {
+            return new Point(value.DrawX, value.DrawY);
         }
+#endif
 
         /// <summary>
         /// Sets the last highlighted value for the touchlistener.

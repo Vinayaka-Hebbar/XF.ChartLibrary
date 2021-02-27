@@ -30,20 +30,20 @@ namespace XF.ChartLibrary.Renderer
         public void RenderAxisLabels(SKCanvas c)
         {
 
-            if (!mYAxis.IsEnabled || !mYAxis.IsDrawLabelsEnabled)
+            if (!YAxis.IsEnabled || !YAxis.IsDrawLabelsEnabled)
                 return;
 
             var positions = GetTransformedPositions();
 
-            AxisLabelPaint.Typeface = mYAxis.Typeface;
-            AxisLabelPaint.TextSize = mYAxis.TextSize;
-            AxisLabelPaint.Color = mYAxis.TextColor;
+            AxisLabelPaint.Typeface = YAxis.Typeface;
+            AxisLabelPaint.TextSize = YAxis.TextSize;
+            AxisLabelPaint.Color = YAxis.TextColor;
 
-            float xoffset = mYAxis.XOffset;
-            float yoffset = AxisLabelPaint.MeasureHeight("A") / 2.5f + mYAxis.YOffset;
+            float xoffset = YAxis.XOffset;
+            float yoffset = AxisLabelPaint.MeasureHeight("A") / 2.5f + YAxis.YOffset;
 
-            var dependency = mYAxis.AxisDependency;
-            var labelPosition = mYAxis.Position;
+            var dependency = YAxis.AxisDependency;
+            var labelPosition = YAxis.Position;
 
             float xPos;
             if (dependency == YAxisDependency.Left)
@@ -82,13 +82,13 @@ namespace XF.ChartLibrary.Renderer
         public void RenderAxisLine(SKCanvas c)
         {
 
-            if (!mYAxis.IsEnabled || !mYAxis.IsDrawAxisLineEnabled)
+            if (!YAxis.IsEnabled || !YAxis.IsDrawAxisLineEnabled)
                 return;
 
-            AxisLinePaint.Color = mYAxis.AxisLineColor;
-            AxisLinePaint.StrokeWidth = mYAxis.AxisLineWidth;
+            AxisLinePaint.Color = YAxis.AxisLineColor;
+            AxisLinePaint.StrokeWidth = YAxis.AxisLineWidth;
 
-            if (mYAxis.AxisDependency == YAxisDependency.Left)
+            if (YAxis.AxisDependency == YAxisDependency.Left)
             {
                 c.DrawLine(ViewPortHandler.ContentLeft, ViewPortHandler.ContentTop, ViewPortHandler.ContentLeft,
                         ViewPortHandler.ContentBottom, AxisLinePaint);
@@ -106,17 +106,17 @@ namespace XF.ChartLibrary.Renderer
         protected void DrawYLabels(SKCanvas c, float fixedPosition, SKPoint[] positions, float offset)
         {
 
-            int from = mYAxis.DrawBottomYLabelEntry ? 0 : 1;
-            int to = mYAxis.DrawTopYLabelEntry
-                    ? mYAxis.entryCount
-                    : (mYAxis.entryCount - 1);
+            int from = YAxis.DrawBottomYLabelEntry ? 0 : 1;
+            int to = YAxis.DrawTopYLabelEntry
+                    ? YAxis.entryCount
+                    : (YAxis.entryCount - 1);
 
-            float xOffset = mYAxis.XLabelOffset;
+            float xOffset = YAxis.XLabelOffset;
 
             // draw
             for (int i = from; i < to; i++)
             {
-                String text = mYAxis.GetFormattedLabel(i);
+                String text = YAxis.GetFormattedLabel(i);
 
                 c.DrawText(text,
                         fixedPosition + xOffset,
@@ -130,10 +130,10 @@ namespace XF.ChartLibrary.Renderer
         public void RenderGridLines(SKCanvas c)
         {
 
-            if (!mYAxis.IsEnabled)
+            if (!YAxis.IsEnabled)
                 return;
 
-            if (mYAxis.IsDrawGridLinesEnabled)
+            if (YAxis.IsDrawGridLinesEnabled)
             {
 
                 int clipRestoreCount = c.Save();
@@ -141,9 +141,9 @@ namespace XF.ChartLibrary.Renderer
 
                 var positions = GetTransformedPositions();
 
-                GridPaint.Color = mYAxis.GridColor;
-                GridPaint.StrokeWidth = mYAxis.GridLineWidth;
-                GridPaint.PathEffect = mYAxis.GridDashedLine;
+                GridPaint.Color = YAxis.GridColor;
+                GridPaint.StrokeWidth = YAxis.GridLineWidth;
+                GridPaint.PathEffect = YAxis.GridDashedLine;
 
                 var gridLinePath = mRenderGridLinesPath;
                 gridLinePath.Reset();
@@ -159,7 +159,7 @@ namespace XF.ChartLibrary.Renderer
                 c.RestoreToCount(clipRestoreCount);
             }
 
-            if (mYAxis.DrawZeroLine)
+            if (YAxis.DrawZeroLine)
             {
                 DrawZeroLine(c);
             }
@@ -192,16 +192,16 @@ namespace XF.ChartLibrary.Renderer
         protected SKPoint[] GetTransformedPositions()
         {
 
-            if (TransformedPositionsBuffer.Length != mYAxis.entryCount)
+            if (TransformedPositionsBuffer.Length != YAxis.entryCount)
             {
-                TransformedPositionsBuffer = new SKPoint[mYAxis.entryCount];
+                TransformedPositionsBuffer = new SKPoint[YAxis.entryCount];
             }
             var positions = TransformedPositionsBuffer;
 
             for (int i = 0; i < positions.Length; i++)
             {
                 // only fill y values, x values are not needed for y-labels
-                positions[i].Y = mYAxis.entries[i];
+                positions[i].Y = YAxis.entries[i];
             }
 
             return Trasformer.PointValuesToPixel(positions);
@@ -216,14 +216,14 @@ namespace XF.ChartLibrary.Renderer
         {
 
             int clipRestoreCount = c.Save();
-            var rect = ViewPortHandler.ContentRect.InsetVertically(mYAxis.ZeroLineWidth);
+            var rect = ViewPortHandler.ContentRect.InsetVertically(YAxis.ZeroLineWidth);
             c.ClipRect(rect);
 
             // draw zero line
             var pos = Trasformer.PixelsToValue(0f, 0f);
 
-            ZeroLinePaint.Color = mYAxis.ZeroLineColor;
-            ZeroLinePaint.StrokeWidth = mYAxis.ZeroLineWidth;
+            ZeroLinePaint.Color = YAxis.ZeroLineColor;
+            ZeroLinePaint.StrokeWidth = YAxis.ZeroLineWidth;
 
             var zeroLinePath = mDrawZeroLinePath;
             zeroLinePath.Reset();
@@ -241,7 +241,7 @@ namespace XF.ChartLibrary.Renderer
 
         public void RenderLimitLines(SKCanvas c)
         {
-            IList<LimitLine> limitLines = mYAxis.LimitLines;
+            IList<LimitLine> limitLines = YAxis.LimitLines;
 
             if (limitLines == null || limitLines.Count <= 0)
                 return;

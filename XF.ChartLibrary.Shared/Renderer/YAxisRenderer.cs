@@ -5,11 +5,11 @@ namespace XF.ChartLibrary.Renderer
 {
     public partial class YAxisRenderer : AxisRenderer
     {
-        protected YAxis mYAxis;
+        protected YAxis YAxis;
 
         public YAxisRenderer(ViewPortHandler viewPortHandler, YAxis axis, Transformer trans) : base(viewPortHandler, axis, trans)
         {
-            mYAxis = axis;
+            YAxis = axis;
         }
     }
 }

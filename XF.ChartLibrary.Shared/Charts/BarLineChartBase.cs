@@ -252,7 +252,7 @@ namespace XF.ChartLibrary.Charts
             var right = 0.0f;
             var top = 0.0f;
             var bottom = 0.0f;
-            Legend legend = this.legend;
+            Legend legend = this.Legend;
             if (legend != null && legend.IsEnabled && legend.IsDrawInsideEnabled == false)
             {
                 switch (legend.Orientation)
@@ -346,7 +346,7 @@ namespace XF.ChartLibrary.Charts
             axisRendererRight.ComputeAxis(AxisRight.axisMinimum, AxisRight.axisMaximum, AxisRight.Inverted);
             xAxisRenderer.ComputeAxis(XAxis.axisMinimum, XAxis.axisMaximum, false);
 
-            if (legend != null)
+            if (Legend != null)
                 legendRenderer.ComputeLegend(data);
 
             CalculateOffsets();

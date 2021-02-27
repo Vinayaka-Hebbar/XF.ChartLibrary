@@ -293,12 +293,10 @@ namespace XF.ChartLibrary.Renderer
                     var fill = dataSet.Fill;
                     if (fill != null)
                     {
-
-                        DrawFilledPath(c, filled, RenderPaint, fill);
+                        fill.Draw(c, filled, RenderPaint, ViewPortHandler.ContentRect);
                     }
                     else
                     {
-
                         DrawFilledPath(c, filled, dataSet.FillColor, dataSet.FillAlpha);
                     }
                 }
@@ -363,7 +361,6 @@ namespace XF.ChartLibrary.Renderer
             IDataSet<Entry> dataSet = lineDataSet;
             if (XBounds.Range >= 1)
             {
-
                 // Take an extra point from the left, and an extra from the right.
                 // That's because we need 4 points for a cubic bezier (cubic=4), otherwise we get lines moving and doing weird stuff on the edges of the chart.
                 // So in the starting `prev` and `cur`, go -2, -1
@@ -436,7 +433,6 @@ namespace XF.ChartLibrary.Renderer
 
             if (XBounds.Range >= 1)
             {
-
                 var prev = ((IDataSet<Entry>)dataSet)[XBounds.Min];
                 var cur = prev;
 
@@ -494,12 +490,10 @@ namespace XF.ChartLibrary.Renderer
             var fill = dataSet.Fill;
             if (fill != null)
             {
-
-                DrawFilledPath(c, spline, RenderPaint, fill);
+                fill.Draw(c, spline, RenderPaint, ViewPortHandler.ContentRect);
             }
             else
             {
-
                 DrawFilledPath(c, spline, dataSet.FillColor, dataSet.FillAlpha);
             }
         }

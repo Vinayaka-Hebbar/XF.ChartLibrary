@@ -4,7 +4,7 @@ namespace XF.ChartLibrary
 {
     partial class ChartUtil
     {
-        static readonly float density;
+        private static float density;
 
         internal static readonly int MaxFlingVelocity;
 
@@ -28,6 +28,12 @@ namespace XF.ChartLibrary
                 var res = context.Resources;
                 density = res.DisplayMetrics.Density;
             }
+        }
+
+        public static float Density
+        {
+            get => density;
+            set => density = value;
         }
 
         public static float DpToPixel(this float self)

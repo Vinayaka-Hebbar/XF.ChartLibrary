@@ -12,9 +12,14 @@ namespace XF.ChartLibrary.Charts
         public static readonly BindableProperty IgnorePixelScalingProperty =
                   BindableProperty.Create(nameof(IgnorePixelScaling), typeof(bool), typeof(ChartBase<TData, TDataSet>), false);
 
+        public static readonly BindableProperty LegendProperty =
+                  BindableProperty.Create(nameof(Legend), typeof(Legend), typeof(ChartBase<TData, TDataSet>), defaultBindingMode: BindingMode.OneWayToSource);
+
         public static readonly BindableProperty DataProperty = BindableProperty.Create(nameof(Data), typeof(TData), typeof(ChartBase<TData, TDataSet>), defaultValue: null, propertyChanged: OnDataChanged);
 
-        public static readonly BindableProperty XAxisProperty = BindableProperty.Create(nameof(XAxis), typeof(XAxis), typeof(ChartBase<TData, TDataSet>), defaultValue: new XAxis(), defaultBindingMode: BindingMode.OneWayToSource);
+        public static readonly BindableProperty XAxisProperty = BindableProperty.Create(nameof(XAxis), typeof(XAxis), typeof(ChartBase<TData, TDataSet>), defaultBindingMode: BindingMode.OneWayToSource);
+
+        public static readonly BindableProperty MarkerProperty = BindableProperty.Create(nameof(Marker), typeof(IMarker), typeof(ChartBase<TData, TDataSet>));
 
         protected SKPaint InfoPaint;
         protected SKPaint DescPaint;
@@ -72,14 +77,27 @@ namespace XF.ChartLibrary.Charts
                 TextSize = 12f,
                 IsAntialias = true
             };
+            XAxis = new XAxis();
             DescPaint = new SKPaint { IsAntialias = false };
             Initialize();
+        }
+
+        public IMarker Marker
+        {
+            get => (IMarker)GetValue(MarkerProperty);
+            set => SetValue(MarkerProperty, value);
         }
 
         public TData Data
         {
             get => data;
             set => SetValue(DataProperty, value);
+        }
+
+        public Legend Legend
+        {
+            get => (Legend)GetValue(LegendProperty);
+            protected set => SetValue(LegendProperty, value);
         }
 
         public XAxis XAxis

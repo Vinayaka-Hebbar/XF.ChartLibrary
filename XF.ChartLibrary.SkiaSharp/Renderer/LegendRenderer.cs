@@ -297,7 +297,6 @@ namespace XF.ChartLibrary.Renderer
             {
                 case Orientation.Horizontal:
                     {
-
                         IList<Utils.ChartSize> calculatedLineSizes = Legend.CalculatedLineSizes;
                         IList<Utils.ChartSize> calculatedLabelSizes = Legend.CalculatedLabelSizes;
                         IList<bool> calculatedLabelBreakPoints = Legend.CalculatedLabelBreakPoints;
@@ -310,7 +309,6 @@ namespace XF.ChartLibrary.Renderer
                             case VerticalAlignment.Top:
                                 posY = yoffset;
                                 break;
-
                             case VerticalAlignment.Bottom:
                                 posY = ViewPortHandler.ChartHeight - yoffset - Legend.NeededHeight;
                                 break;
@@ -522,7 +520,7 @@ namespace XF.ChartLibrary.Renderer
 
                 case Form.Square:
                     legendFormPaint.Style = SKPaintStyle.Fill;
-                    c.DrawRect(x, y - half, x + formSize, y + half, legendFormPaint);
+                    c.DrawRect(x, y - half, formSize, formSize, legendFormPaint);
                     break;
 
                 case Form.Line:

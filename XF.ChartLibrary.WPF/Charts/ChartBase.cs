@@ -13,7 +13,11 @@ namespace XF.ChartLibrary.Charts
     {
         public static readonly DependencyProperty DataProperty = DependencyProperty.Register(nameof(Data), typeof(TData), typeof(ChartBase<TData, TDataSet>), new PropertyMetadata(null, OnDataChanged));
 
+        public static readonly DependencyProperty LegendProperty = DependencyProperty.Register(nameof(Legend), typeof(Legend), typeof(ChartBase<TData, TDataSet>));
+
         public static readonly DependencyProperty XAxisProperty = DependencyProperty.Register(nameof(XAxis), typeof(XAxis), typeof(ChartBase<TData, TDataSet>), new PropertyMetadata(new XAxis()));
+
+        public static readonly DependencyProperty MarkerProperty = DependencyProperty.Register(nameof(Marker), typeof(XAxis), typeof(ChartBase<TData, TDataSet>));
 
         static void OnDataChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -66,10 +70,22 @@ namespace XF.ChartLibrary.Charts
             }
         }
 
+        public IMarker Marker
+        {
+            get => (IMarker)GetValue(MarginProperty);
+            set => SetValue(MarkerProperty, value);
+        }
+
+        public Legend Legend
+        {
+            get => (Legend)GetValue(LegendProperty);
+            protected set => SetValue(LegendProperty, value);
+        }
+
         public XAxis XAxis
         {
             get => (XAxis)GetValue(XAxisProperty);
-            set => SetValue(XAxisProperty, value);
+            protected set => SetValue(XAxisProperty, value);
         }
 
         public TData Data

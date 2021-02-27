@@ -4,7 +4,7 @@
              x:Class="Sample.MainPage">
 
     <Grid x:Name="LayoutRoot"
-          RowDefinitions="Auto,*">
+          RowDefinitions="Auto,3*,*">
         <Frame BackgroundColor="#2196F3"
                Padding="24"
                CornerRadius="0">

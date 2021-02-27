@@ -5,11 +5,21 @@ namespace XF.ChartLibrary.Charts
 {
     public abstract partial class ChartBase<TData, TDataSet> : UIKit.UIView
     {
-        public XAxis XAxis { get; set; }
+        private IMarker marker;
+
+        public XAxis XAxis { get; protected set; }
+
+        public Legend Legend { get; protected set; }
 
         protected ChartBase()
         {
             XAxis = new XAxis();
+        }
+
+        public IMarker Marker
+        {
+            get => marker;
+            set => marker = value;
         }
 
         public TData Data

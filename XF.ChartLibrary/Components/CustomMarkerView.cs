@@ -1,25 +1,12 @@
 ﻿using SkiaSharp;
-using System;
 using XF.ChartLibrary.Charts;
-using XF.ChartLibrary.Data;
-
-#if WPF
-using Thickness = System.Windows.Thickness;
-#else
-using Thickness = Xamarin.Forms.Thickness;
-#endif
+using XF.ChartLibrary.Utils;
 
 namespace XF.ChartLibrary.Components
 {
-    /// <summary>
-    /// <see cref="https://www.programmersought.com/article/71324588374/"/>
-    /// </summary>
-    public class MarkerText : IMarker
+    public class CustomMarkerView : MarkerView
     {
-        private string text;
         private SKPoint offset;
-
-        private Thickness padding;
 
         private int arrowSize; // The size of the arrow
         private float circleOffset;//Because my turning point here is a circle, it needs to be offset to prevent it from pointing directly to the center of the circle
@@ -45,29 +32,14 @@ namespace XF.ChartLibrary.Components
 
         private readonly SKPath path = new SKPath();
 
-        protected SKPaint TextPaint;
-
         protected SKPaint ContentPaint;
 
         protected SKPaint BorderPaint;
 
         private int index;
 
-        private SKColor backgroundColor = SKColors.White;
-        public SKColor BackgroundColor
+        public CustomMarkerView()
         {
-            get => backgroundColor;
-            set => backgroundColor = value;
-        }
-
-        public MarkerText()
-        {
-            TextPaint = new SKPaint
-            {
-                IsAntialias = true,
-                TextSize = 11f.DpToPixel(),
-                Color = Utils.ColorTemplate.Black
-            };
             ContentPaint = new SKPaint()
             {
                 IsAntialias = true,
@@ -79,39 +51,23 @@ namespace XF.ChartLibrary.Components
                 IsAntialias = true,
                 StrokeJoin = SKStrokeJoin.Round,
             };
-            float horizontal = 10f.DpToPixel();
-            float vertical = 6f.DpToPixel();
-            padding = new Thickness(horizontal, vertical, horizontal, vertical);
             strokeWidth = 2f.DpToPixel();
             arrowSize = (int)12f.DpToPixel();
             circleOffset = 4f.DpToPixel();
         }
 
-        public SKPoint Offset => offset;
-
-        public void Draw(SKCanvas canvas, SKPoint pos, IChartBase chart)
+        public override void OnDraw(SKCanvas canvas, SKPoint pos, IChartBase chart)
         {
-            if (text == null)
-                return;
             var paint = BorderPaint;//The brush for drawing the border
             paint.StrokeWidth = strokeWidth;
             paint.Color = chart.Data[index].Color;
 
             var whitePaint = ContentPaint;//Draw a brush with a white background
-            whitePaint.Color = backgroundColor;
+            whitePaint.Color = BackgroundColor.ToSKColor();
 
-            SKRect bounds = SKRect.Empty;
-            float lineHeight = paint.GetFontMetrics(out SKFontMetrics fontMatrics);
-            TextPaint.MeasureText(text, ref bounds);
-            var padding = this.padding;
-            var size = new SKRect(bounds.Left - (float)padding.Left, bounds.Top - (float)padding.Top, bounds.Right + (float)padding.Right, bounds.Bottom + (float)padding.Bottom);
-            float width = size.Width;
-            float height = size.Height;
+            float width = ((float)Width).DpToPixel();
+            float height = ((float)Height).DpToPixel();
 
-            var offset = GetOffsetForDrawingAtPoint(size, pos.X, pos.Y, chart);
-            int saveId = canvas.Save();
-            var offsetX = (float)padding.Left - strokeWidth;
-            var offsetY = lineHeight;
             path.Reset();
             if (pos.Y < height + arrowSize)
             {
@@ -146,7 +102,6 @@ namespace XF.ChartLibrary.Components
                 path.LineTo(0, 0 + height);
                 path.LineTo(0, 0);
                 path.Offset(pos.X + offset.X, pos.Y + offset.Y);
-                offsetY += (float)padding.Bottom * 0.8f;
             }
             else
             {
@@ -179,25 +134,21 @@ namespace XF.ChartLibrary.Components
                 }
                 path.LineTo(0, 0);
                 path.Offset(pos.X + offset.X, pos.Y + offset.Y);
-                offsetY += (float)padding.Top * 0.8f;
             }
 
             // translate to the correct position and draw
             canvas.DrawPath(path, whitePaint);
             canvas.DrawPath(path, paint);
-            canvas.Translate(pos.X + offset.X, pos.Y + offset.Y);
-            canvas.DrawText(text, offsetX, offsetY, TextPaint);
-            canvas.RestoreToCount(saveId);
         }
 
-        public virtual SKPoint GetOffsetForDrawingAtPoint(SKRect size, float posX, float posY, IChartBase chart)
+        public override SKPoint GetOffsetForDrawingAtPoint(SKPoint pos, SKImageInfo info, IChartBase chart)
         {
-            float width = size.Width;
-            float height = size.Height;
+            float width = info.Width;
+            float height = info.Height;
 
             // posY \posX refers to the position of the upper left corner of the markerView on the chart
             //Handle Y direction
-            if (posY <= height + arrowSize)
+            if (pos.Y <= height + arrowSize)
             {
                 // If the y coordinate of the point is less than the height of the markerView, if it is not processed, it will exceed the upper boundary. After processing, the arrow is up at this time, and we need to move the icon down by the size of the arrow
                 offset.Y = arrowSize;
@@ -208,7 +159,7 @@ namespace XF.ChartLibrary.Components
                 offset.Y = -height - arrowSize - strokeWidth; // 40 arrow height   5 stroke width
             }
             //Processing the X direction, divided into 3 cases, 1. On the left side of the chart 2. On the middle of the chart 3. On the right side of the chart
-            if (posX > chart.ChartWidth - width)
+            if (pos.X > chart.ChartWidth - width)
             {
                 //If it exceeds the right boundary, offset the width of the markerView to the left
                 offset.X = -width;
@@ -218,7 +169,7 @@ namespace XF.ChartLibrary.Components
                 //By default, no offset (because the point is in the upper left corner)
                 offset.X = 0;
                 float half = width / 2;
-                if (posX > half)
+                if (pos.X > half)
                 {
                     //If it is greater than half of the markerView, the arrow is in the middle, so it is offset by half the width to the right
                     offset.X = -half;
@@ -228,15 +179,10 @@ namespace XF.ChartLibrary.Components
             return offset;
         }
 
-        public virtual void RefreshContent(Entry e, Highlight.Highlight highlight)
+        public override void RefreshContent(Data.Entry e, Highlight.Highlight highlight)
         {
-            text = GetText(e, highlight);
             index = highlight.DataSetIndex;
-        }
-
-        protected virtual string GetText(Entry e, Highlight.Highlight highlight)
-        {
-            return e.Y.ToString();
+            base.RefreshContent(e, highlight);
         }
     }
 }

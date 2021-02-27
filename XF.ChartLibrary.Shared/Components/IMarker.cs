@@ -6,8 +6,10 @@ using XF.ChartLibrary.Data;
 
 #if NETSTANDARD || SKIASHARP
 using Canvas = SkiaSharp.SKCanvas;
+using Point = SkiaSharp.SKPoint;
 #elif __IOS__ || __TVOS__
 using Canvas = CoreGraphics.CGContext;
+using Point = CoreGraphics.CGPoint;
 #elif __ANDROID__
 using Canvas = Android.Graphics.Canvas;
 #endif
@@ -23,12 +25,22 @@ namespace XF.ChartLibrary.Components
         /// <param name="highlight">The highlight object contains information about the highlighted value such as it's dataset-index, the selected range or stack-index (only stacked bar entries).</param>
         void RefreshContent(Entry e, Highlight.Highlight highlight);
 
+#if __ANDROID__ && !SKIASHARP
         /// <summary>
         /// Draws the IMarker on the given position on the screen with the given Canvas object.
         /// </summary>
         /// <param name="canvas"></param>
         /// <param name="posX"></param>
         /// <param name="posY"></param>
-        void Draw(Canvas canvas, float posX, float posY, IChartBase chart);
+        void Draw(Canvas canvas, float posX, float posY, IChartBase chart); 
+#else
+        /// <summary>
+        /// Draws the IMarker on the given position on the screen with the given Canvas object.
+        /// </summary>
+        /// <param name="canvas"></param>
+        /// <param name="posX"></param>
+        /// <param name="posY"></param>
+        void Draw(Canvas canvas, Point pos, IChartBase chart);
+#endif
     }
 }

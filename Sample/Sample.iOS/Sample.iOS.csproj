@@ -128,9 +128,18 @@
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>
+    <ProjectReference Include="..\..\XF.ChartLibrary\XF.ChartLibrary.csproj">
+      <Project>{789bbaed-7fd8-4ba2-a90b-7b8e7aa95940}</Project>
+      <Name>XF.ChartLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Sample\Sample.csproj">
       <Project>{6B68ADA6-4BE2-42EF-B989-98B92D0A207E}</Project>
       <Name>Sample</Name>
     </ProjectReference>
   </ItemGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties TriggeredFromHotReload="False" />
+    </VisualStudio>
+  </ProjectExtensions>
 </Project>

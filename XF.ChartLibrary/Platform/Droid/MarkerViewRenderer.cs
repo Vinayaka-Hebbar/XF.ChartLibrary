@@ -50,10 +50,6 @@ namespace XF.ChartLibrary.Platform.Droid
             }
         }
 
-        protected override void UpdateBackgroundColor()
-        {
-        }
-
         protected override void OnSizeChanged(int w, int h, int oldw, int oldh)
         {
             base.OnSizeChanged(w, h, oldw, oldh);
@@ -101,6 +97,15 @@ namespace XF.ChartLibrary.Platform.Droid
 
             bitmap.Dispose();
             bitmap = null;
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+            if (disposing)
+            {
+                FreeBitmap();
+            }
         }
     }
 }

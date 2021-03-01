@@ -4,11 +4,18 @@ using UIKit;
 
 namespace XF.ChartLibrary.Gestures
 {
-    partial class ChartGestureRecognizer : NSObject, IUIGestureRecognizerDelegate
+    partial class ChartGestureRecognizer : NSObject
     {
         private readonly PinchEvent pinch;
         private readonly PanEvent pan;
         private TapEvent tap;
+
+        private nfloat scale;
+
+        public nfloat Scale
+        {
+            get => scale;
+        }
 
         private UIScrollView outerScrollView;
 
@@ -22,7 +29,6 @@ namespace XF.ChartLibrary.Gestures
             tapGestureRecognizer = new UITapGestureRecognizer();
             pinchGestureRecognizer = new UIPinchGestureRecognizer()
             {
-                Delegate = this,
                 ShouldRecognizeSimultaneously = GeestureRecognize
             };
             doubleTapGestureRecognizer = new UITapGestureRecognizer
@@ -31,7 +37,6 @@ namespace XF.ChartLibrary.Gestures
             };
             panGestureRecognizer = new UIPanGestureRecognizer()
             {
-                Delegate = this,
                 ShouldRecognizeSimultaneously = GeestureRecognize,
             };
             pinch = new PinchEvent();
@@ -90,9 +95,10 @@ namespace XF.ChartLibrary.Gestures
 
         private UIView view;
 
-        public void OnInitialize(UIView view)
+        public void OnInitialize(UIView view, nfloat scale)
         {
             this.view = view;
+            this.scale = scale;
             tapToken = tapGestureRecognizer.AddTarget(HandleTap);
             pinchToken = pinchGestureRecognizer.AddTarget(HandlePinch);
             doubleTapToken = doubleTapGestureRecognizer.AddTarget(HandleDoubleTap);
@@ -103,6 +109,8 @@ namespace XF.ChartLibrary.Gestures
             view.AddGestureRecognizer(panGestureRecognizer);
         }
 
+        public void SetScale(nfloat scale) => this.scale = scale;
+
         void HandlePan()
         {
             var recognizer = panGestureRecognizer;
@@ -110,10 +118,10 @@ namespace XF.ChartLibrary.Gestures
             {
                 pan.state = TouchState.Begin;
                 var location = recognizer.LocationOfTouch(0, view);
-                pan.x = (float)location.X;
-                pan.y = (float)location.Y;
+                pan.x = (float)(location.X * scale);
+                pan.y = (float)(location.Y * scale);
                 var translation = recognizer.TranslationInView(view);
-                OnPan(pan, (float)translation.X, (float)translation.Y);
+                OnPan(pan, (float)(translation.X * scale), (float)(translation.Y * scale));
                 // user drag
                 if (pan.Mode == PanState.Drag && outerScrollView != null)
                 {
@@ -129,10 +137,10 @@ namespace XF.ChartLibrary.Gestures
             {
                 pan.state = TouchState.Changed;
                 var location = recognizer.LocationOfTouch(0, view);
-                pan.x = (float)location.X;
-                pan.y = (float)location.Y;
+                pan.x = (float)(location.X * scale);
+                pan.y = (float)(location.Y * scale);
                 var translation = recognizer.TranslationInView(view);
-                OnPan(pan, (float)translation.X, (float)translation.Y);
+                OnPan(pan, (float)(translation.X * scale), (float)(translation.Y * scale));
             }
             else if (recognizer.State == UIGestureRecognizerState.Ended || recognizer.State == UIGestureRecognizerState.Cancelled)
             {
@@ -161,7 +169,7 @@ namespace XF.ChartLibrary.Gestures
             if (doubleTapGestureRecognizer.State == UIGestureRecognizerState.Ended)
             {
                 var location = doubleTapGestureRecognizer.LocationInView(view);
-                OnDoubleTap((float)location.X, (float)location.Y);
+                OnDoubleTap((float)(location.X * scale), (float)(location.Y * scale));
             }
         }
 
@@ -174,15 +182,15 @@ namespace XF.ChartLibrary.Gestures
                     pinch.state = TouchState.Begin;
                     var location = recognizer.LocationInView(view);
                     var locationInTouch = recognizer.LocationOfTouch(1, view);
-                    pinch.xDist = Math.Abs((float)(location.X - locationInTouch.X));
-                    pinch.yDist = Math.Abs((float)(location.Y - locationInTouch.Y));
+                    pinch.xDist = Math.Abs((float)((location.X - locationInTouch.X) * scale));
+                    pinch.yDist = Math.Abs((float)((location.Y - locationInTouch.Y) * scale));
                     OnPinch(pinch, pinch.xDist, pinch.yDist);
                     break;
 
                 case UIGestureRecognizerState.Changed:
                     pinch.state = TouchState.Changed;
                     location = recognizer.LocationInView(view);
-                    OnPinch(pinch, (float)location.X, (float)location.Y);
+                    OnPinch(pinch, (float)(location.X * scale), (float)(location.Y * scale));
                     break;
                 case UIGestureRecognizerState.Cancelled:
                 case UIGestureRecognizerState.Ended:
@@ -200,16 +208,16 @@ namespace XF.ChartLibrary.Gestures
             {
                 var location = recognizer.LocationInView(view);
                 tap.state = TouchState.Ended;
-                tap.x = (float)location.X;
-                tap.y = (float)location.Y;
+                tap.x = (float)(location.X * scale);
+                tap.y = (float)(location.Y * scale);
                 OnTap(tap);
             }
             else if (recognizer.State == UIGestureRecognizerState.Began)
             {
                 var location = recognizer.LocationInView(view);
                 tap.state = TouchState.Begin;
-                tap.x = (float)location.X;
-                tap.y = (float)location.Y;
+                tap.x = (float)(location.X * scale);
+                tap.y = (float)(location.Y * scale);
                 OnTap(tap);
             }
         }

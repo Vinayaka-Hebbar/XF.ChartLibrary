@@ -3,7 +3,7 @@ using Xamarin.Forms;
 
 namespace XF.ChartLibrary.Animation
 {
-    public partial class Animator : BindableObject
+    public partial class Animator 
     {
         private float durationX;
         private float durationY;
@@ -27,7 +27,7 @@ namespace XF.ChartLibrary.Animation
             ticker.Stop += OnStop;
         }
 
-        private void OnUpdate(float elapsed)
+        void OnUpdate(float elapsed)
         {
             if (enabledX)
             {
@@ -53,17 +53,7 @@ namespace XF.ChartLibrary.Animation
             UpdateBlock?.Invoke();
         }
 
-        public void OnStop()
-        {
-            StopAnimator();
-        }
-
-        public void Stop()
-        {
-            this.Dispatcher.BeginInvokeOnMainThread(StopAnimator);
-        }
-
-        void StopAnimator()
+        void OnStop()
         {
             enabledX = false;
             enabledY = false;
@@ -82,9 +72,14 @@ namespace XF.ChartLibrary.Animation
             StopBlock?.Invoke();
         }
 
+        public void Stop()
+        {
+            ticker.Cancel();
+        }
+
         public void Animate(long xAxisDuration, long yAxisDuration, EasingFunction easingX, EasingFunction easingY)
         {
-            Stop();
+            ticker.Cancel();
 
             durationX = xAxisDuration;
             durationY = yAxisDuration;
@@ -103,6 +98,8 @@ namespace XF.ChartLibrary.Animation
 
         public void AnimateX(long xAxisDuration, EasingFunction easing)
         {
+            ticker.Cancel();
+
             durationX = xAxisDuration;
             enabledX = xAxisDuration > 0.0;
 
@@ -117,6 +114,8 @@ namespace XF.ChartLibrary.Animation
 
         public void AnimateY(long yAxisDuration, EasingFunction easing)
         {
+            ticker.Cancel();
+
             durationY = yAxisDuration;
             enabledY = yAxisDuration > 0.0;
 

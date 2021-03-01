@@ -14,7 +14,7 @@ namespace Sample
 
         public override void RefreshContent(Entry e, Highlight highlight)
         {
-            Field.Text = $"x: {e.X}";
+            Field.Text = $"x: {e.X}, y: {e.Y}";
             base.RefreshContent(e, highlight);
         }
     }

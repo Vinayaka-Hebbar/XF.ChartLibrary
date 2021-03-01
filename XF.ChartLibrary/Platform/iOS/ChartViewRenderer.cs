@@ -4,10 +4,11 @@ using System;
 using System.ComponentModel;
 using UIKit;
 using Xamarin.Forms.Platform.iOS;
+using XF.ChartLibrary.Charts;
 
 namespace XF.ChartLibrary.Platform.iOS
 {
-    public class ChartViewRenderer<TElement> : VisualElementRenderer<TElement>, IComponent where TElement : Xamarin.Forms.VisualElement, IChartController
+    public class ChartViewRenderer<TElement> : VisualElementRenderer<TElement>, IComponent, IVisualElementRenderer where TElement : Xamarin.Forms.VisualElement, IChartController
     {
         private static readonly NSString boundsPath = new NSString("bounds");
 
@@ -35,7 +36,7 @@ namespace XF.ChartLibrary.Platform.iOS
         {
             add { DisposedInternal += value; }
             remove { DisposedInternal -= value; }
-        } 
+        }
         #endregion
 
         public ChartViewRenderer()
@@ -46,6 +47,9 @@ namespace XF.ChartLibrary.Platform.iOS
         void Initialize()
         {
             designMode = ((IComponent)this).Site?.DesignMode == true;
+
+            AddObserver(this, keyPath: boundsPath, options: NSKeyValueObservingOptions.New, context: IntPtr.Zero);
+            AddObserver(this, keyPath: framePath, options: NSKeyValueObservingOptions.New, context: IntPtr.Zero);
         }
 
         public override void AwakeFromNib()
@@ -53,11 +57,28 @@ namespace XF.ChartLibrary.Platform.iOS
             Initialize();
         }
 
+        /// <summary>
+        /// Overriding Set size
+        /// </summary>
+        /// <param name="size"></param>
+        void IVisualElementRenderer.SetElementSize(Xamarin.Forms.Size size)
+        {
+            Element.OnSizeChanged((float)size.Width, (float)size.Height);
+            SetElementSize(size);
+        }
+
         protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(ICanvasController.IgnorePixelScaling))
             {
+                gesture?.SetScale(Element.IgnorePixelScaling ? 1f: ContentScaleFactor );
                 SetNeedsDisplay();
+                return;
+            }
+            if (e.PropertyName == nameof(IChartBase.Marker))
+            {
+                UpdateMarker();
+                return;
             }
             base.OnElementPropertyChanged(sender, e);
         }
@@ -74,12 +95,28 @@ namespace XF.ChartLibrary.Platform.iOS
             {
                 var newElement = e.NewElement;
                 gesture = newElement.Gesture;
-                gesture.OnInitialize(this);
-                OnCreateElement(newElement);
+                gesture.OnInitialize(this, newElement.IgnorePixelScaling ? 1f : ContentScaleFactor);
                 newElement.SurfaceInvalidated += SetNeedsDisplay;
+                UpdateMarker();
+                OnCreateElement(newElement);
                 SetNeedsDisplay();
             }
             base.OnElementChanged(e);
+        }
+
+        void UpdateMarker()
+        {
+            if (Element.Marker is Components.MarkerView marker)
+            {
+                MarkerViewRenderer renderer = Xamarin.Forms.Platform.iOS.Platform.GetRenderer(marker) as MarkerViewRenderer;
+                if (renderer == null)
+                {
+                    renderer = new MarkerViewRenderer();
+                    Xamarin.Forms.Platform.iOS.Platform.SetRenderer(marker, renderer);
+                }
+                renderer.SetElement(marker);
+                renderer.UpdateMarkerLayout();
+            }
         }
 
         protected virtual void Detach()
@@ -117,10 +154,9 @@ namespace XF.ChartLibrary.Platform.iOS
 
         public SkiaSharp.SKSurface CreateSurface(CGRect contentsBounds, nfloat scale, out SkiaSharp.SKImageInfo info)
         {
-            // apply a scale
             contentsBounds.Width *= scale;
             contentsBounds.Height *= scale;
-
+            // apply a scale
             // get context details
             this.info = info = new SkiaSharp.SKImageInfo((int)contentsBounds.Width, (int)contentsBounds.Height);
 
@@ -141,6 +177,7 @@ namespace XF.ChartLibrary.Platform.iOS
             {
                 bitmapData = NSMutableData.FromLength(info.BytesSize);
                 dataProvider = new CGDataProvider(bitmapData.MutableBytes, info.BytesSize, Dummy);
+                Element.OnSizeChanged((float)contentsBounds.Width, (float)contentsBounds.Height);
             }
 
             return SkiaSharp.SKSurface.Create(info, bitmapData.MutableBytes, info.RowBytes);
@@ -150,6 +187,7 @@ namespace XF.ChartLibrary.Platform.iOS
         {
             // do nothing as we manage the memory separately
         }
+
 
         public void DrawSurface(CGContext ctx, CGRect viewBounds, SkiaSharp.SKImageInfo info, SkiaSharp.SKSurface surface)
         {
@@ -183,7 +221,6 @@ namespace XF.ChartLibrary.Platform.iOS
         public override void LayoutSubviews()
         {
             base.LayoutSubviews();
-
             Layer.SetNeedsDisplay();
         }
 
@@ -192,6 +229,8 @@ namespace XF.ChartLibrary.Platform.iOS
             if (disposing)
             {
                 gesture?.Dispose();
+                RemoveObserver(this, keyPath: boundsPath);
+                RemoveObserver(this, keyPath: framePath);
             }
             base.Dispose(disposing);
             // make sure we free the image data
@@ -235,9 +274,9 @@ namespace XF.ChartLibrary.Platform.iOS
                 (viewPortHandler.HasNoDragOffset && viewPortHandler.IsFullyZoomedOut && !controller.HighlightPerDragEnabled) ||
                 (!controller.DragYEnabled && Math.Abs(velocity.Y) > Math.Abs(velocity.X)) ||
                 (!controller.DragXEnabled && Math.Abs(velocity.Y) < Math.Abs(velocity.X))))
-            {
+                {
                     return false;
-            }
+                }
             }
             else
             {

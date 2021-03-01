@@ -22,7 +22,7 @@ namespace XF.ChartLibrary.Animation
         partial void OnStart()
         {
             startTime = Environment.TickCount;
-            endTime = startTime + endTime;
+            endTime = startTime + duration;
             // Take care of the first frame if rendering is already scheduled...
             OnUpdate(0);
             displayLink = CADisplayLink.Create(UpdateAnimation);

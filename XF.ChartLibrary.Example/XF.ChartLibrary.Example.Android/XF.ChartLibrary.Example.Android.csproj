@@ -88,12 +88,6 @@
     <AndroidResource Include="Resources\drawable\icon_about.png" />
     <AndroidResource Include="Resources\drawable\icon_feed.png" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\XF.ChartLibrary.Example\XF.ChartLibrary.Example.csproj">
-      <Project>{6861669A-CEFC-47A8-9A00-69131D11A4D2}</Project>
-      <Name>XF.ChartLibrary.Example</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>

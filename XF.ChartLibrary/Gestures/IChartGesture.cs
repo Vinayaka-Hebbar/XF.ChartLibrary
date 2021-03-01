@@ -6,7 +6,9 @@
         void OnInitialize(Android.Views.View view);
         bool OnTouch(Android.Views.View view, Android.Views.MotionEvent e);
 #elif __IOS__ || __TVOS__
-        void OnInitialize(UIKit.UIView view);
+        void OnInitialize(UIKit.UIView view, System.nfloat scale);
+        void SetScale(System.nfloat scale);
+        System.nfloat Scale {get;}
 #endif
     }
 }

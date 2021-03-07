@@ -11,7 +11,7 @@ using Color = Android.Graphics.Color;
 
 namespace XF.ChartLibrary.Interfaces.DataSets
 {
-    public interface IPieDataSet : IDataSet<PieEntry>
+    public interface IPieDataSet : IDataSet<PieEntry>, IDataSet
     {
         /// <summary>
         /// Returns the space that is set to be between the piechart-slices of this
@@ -23,7 +23,7 @@ namespace XF.ChartLibrary.Interfaces.DataSets
         /// When enabled, slice spacing will be 0.0 when the smallest value is going to be
         ///  smaller than the slice spacing itself.
         /// </summary>
-        bool IsAutomaticallyDisableSliceSpacingEnabled { get; }
+        bool IsAutomaticallyDisableSliceSpacing { get; }
 
         /// <summary>
         ///  Returns the distance a highlighted piechart slice is "shifted" away from
@@ -72,6 +72,6 @@ namespace XF.ChartLibrary.Interfaces.DataSets
         /// <summary>
         /// Gets the color for the highlighted sector
         /// </summary>
-        Color HighlightColor { get; }
+        Color? HighlightColor { get; }
     }
 }

@@ -33,7 +33,7 @@ namespace XF.ChartLibrary.Data
         /// <summary>
         /// the color used for drawing the bar shadows
         /// </summary>
-        private Color barShadowColor = ChartUtil.FromRGB(215, 215, 215);
+        private Color barShadowColor = ColorTemplate.FromRGB(215, 215, 215);
 
         private float barBorderWidth = 0.0f;
 
@@ -56,7 +56,7 @@ namespace XF.ChartLibrary.Data
 
         public BarDataSet(IList<BarEntry> yVals, string label) : base(yVals, label)
         {
-            highLightColor = ChartUtil.FromRGB(0, 0, 0);
+            highLightColor = ColorTemplate.FromRGB(0, 0, 0);
 
             CalcStackSize(yVals);
             CalcEntryCountIncludingStacks(yVals);

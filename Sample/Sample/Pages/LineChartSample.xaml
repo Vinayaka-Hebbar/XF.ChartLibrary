@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:charts="clr-namespace:XF.ChartLibrary.Charts;assembly=XF.ChartLibrary"
+             xmlns:sample="clr-namespace:Sample"
+             x:Class="Sample.Pages.LineChartSample">
+    <ContentPage.Content>
+        <charts:LineChart x:Name="Chart" HorizontalOptions="FillAndExpand" VisibleXRangeMaximum="40" VisibleXRangeMinimum="20">
+            <charts:LineChart.Marker>
+                <sample:MarkerViewXY />
+            </charts:LineChart.Marker>
+        </charts:LineChart>
+    </ContentPage.Content>
+</ContentPage>

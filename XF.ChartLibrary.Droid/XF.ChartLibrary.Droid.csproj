@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>monoandroid10.0</TargetFramework>
     <LangVersion>8</LangVersion>
+    <DefineConstants>ANDROID;NATIVE;PIXELSCALE</DefineConstants>
   </PropertyGroup>
 
   <Import Project="..\XF.ChartLibrary.Shared\XF.ChartLibrary.Shared.projitems" Label="Shared" />

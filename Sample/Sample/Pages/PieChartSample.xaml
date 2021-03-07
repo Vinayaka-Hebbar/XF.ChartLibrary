@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<pages:BasePage  xmlns:pages="clr-namespace:Sample.Pages"
+                 xmlns="http://xamarin.com/schemas/2014/forms"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                 xmlns:charts="clr-namespace:XF.ChartLibrary.Charts;assembly=XF.ChartLibrary"
+                 x:Class="Sample.Pages.PieChartSample">
+    <ContentPage.Content>
+        <charts:PieChart x:Name="Chart">
+            <charts:PieChart.CenterText>
+                <FormattedString>
+                    <FormattedString.Spans>
+                        <Span TextColor="Gray"
+                              FontAttributes="Bold">Xamarin Forms</Span>
+                        <Span Text="{x:Static x:Environment.NewLine}" />
+                        <Span FontSize="10"
+                              TextColor="Blue">Chart Library</Span>
+                    </FormattedString.Spans>
+                </FormattedString>
+            </charts:PieChart.CenterText>
+        </charts:PieChart>
+    </ContentPage.Content>
+</pages:BasePage>

@@ -17,6 +17,8 @@ namespace XF.ChartLibrary.Charts
 
         public static readonly DependencyProperty XAxisProperty = DependencyProperty.Register(nameof(XAxis), typeof(XAxis), typeof(ChartBase<TData, TDataSet>), new PropertyMetadata(new XAxis()));
 
+        public static readonly DependencyProperty DescriptionProperty = DependencyProperty.Register(nameof(Description), typeof(Description), typeof(ChartBase<TData, TDataSet>));
+
         public static readonly DependencyProperty MarkerProperty = DependencyProperty.Register(nameof(Marker), typeof(XAxis), typeof(ChartBase<TData, TDataSet>));
 
         static void OnDataChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -74,6 +76,12 @@ namespace XF.ChartLibrary.Charts
         {
             get => (IMarker)GetValue(MarginProperty);
             set => SetValue(MarkerProperty, value);
+        }
+
+        public Description Description
+        {
+            get => (Description)GetValue(DescriptionProperty);
+            set => SetValue(DescriptionProperty, value);
         }
 
         public Legend Legend
@@ -229,9 +237,8 @@ namespace XF.ChartLibrary.Charts
         protected void DrawDescription(SKCanvas c)
         {
             // check if description should be drawn
-            if (description != null && description.IsEnabled)
+            if (Description is Description description && description.IsEnabled)
             {
-
                 var position = description.Position;
 
                 DescPaint.Typeface = description.Typeface;

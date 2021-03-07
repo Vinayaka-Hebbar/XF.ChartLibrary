@@ -550,8 +550,8 @@ namespace XF.ChartLibrary.Renderer
 
                         if (entry.Icon != null && dataSet.IsDrawIconsEnabled)
                         {
-                            c.DrawImage(
-                                    entry.Icon,
+                            entry.Icon.Draw(
+                                    c,
                                     (int)(pos.X + iconsOffset.X),
                                     (int)(pos.Y + iconsOffset.Y));
                         }
@@ -736,7 +736,6 @@ namespace XF.ChartLibrary.Renderer
             /// </summary>
             public bool Init(ILineDataSet set)
             {
-
                 int size = set.CircleColorCount;
                 var changeRequired = false;
 

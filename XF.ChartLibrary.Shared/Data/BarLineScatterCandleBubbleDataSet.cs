@@ -17,7 +17,7 @@ namespace XF.ChartLibrary.Data
     public abstract class BarLineScatterCandleBubbleDataSet<TEntry>
         : DataSet<TEntry>, Interfaces.DataSets.IBarLineScatterCandleBubbleDataSet<TEntry> where TEntry : Entry
     {
-        internal Color highLightColor = ChartUtil.FromRGB(255, 187, 115);
+        internal Color highLightColor = Utils.ColorTemplate.FromRGB(255, 187, 115);
 
         /// <summary>
         /// Sets the color that is used for drawing the highlight indicators.

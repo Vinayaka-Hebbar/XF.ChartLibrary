@@ -25,7 +25,6 @@ namespace XF.ChartLibrary.Platform.Droid
         private TElement element;
         private SkiaSharp.SKImageInfo info;
         private VisualElementTracker _tracker;
-        private Gestures.IChartGesture gesture;
         private int? _defaultLabelFor;
         private bool _disposed;
 
@@ -105,6 +104,11 @@ namespace XF.ChartLibrary.Platform.Droid
                 UpdateBackgroundColor();
                 return;
             }
+            if(e.PropertyName == nameof(IChartController.TouchEnabled))
+            {
+                UpdateGesture(element);
+                return;
+            }
             if (e.PropertyName == nameof(Xamarin.Forms.VisualElement.Background))
             {
                 UpdateBackground();
@@ -126,6 +130,20 @@ namespace XF.ChartLibrary.Platform.Droid
                 return;
             }
             ElementPropertyChanged?.Invoke(this, e);
+        }
+
+        void UpdateGesture(TElement element)
+        {
+            if (element == null)
+                return;
+            if (element.TouchEnabled && element.Gesture is Gestures.IChartGesture gesture)
+            {
+                SetOnTouchListener(gesture);
+            }
+            else
+            {
+                SetOnTouchListener(null);
+            }
         }
 
         void UpdateMarker()
@@ -175,15 +193,6 @@ namespace XF.ChartLibrary.Platform.Droid
         {
             canvas.ClipShape(Context, Element);
             base.Draw(canvas);
-        }
-
-        public override bool OnTouchEvent(MotionEvent e)
-        {
-            if (gesture != null)
-            {
-                return gesture.OnTouch(this, e);
-            }
-            return false;
         }
 
         #region OnDraw
@@ -332,14 +341,15 @@ namespace XF.ChartLibrary.Platform.Droid
                 oldElement.SurfaceInvalidated -= Invalidate;
                 oldElement.FocusChangeRequested -= OnFocusChangeRequested;
                 oldElement.PropertyChanged -= OnElementPropertyChanged;
-                oldElement.Gesture.Dispose();
+                // clear all values
+                oldElement.Gesture?.Clear();
+                SetOnTouchListener(null);
 
                 if (element.BackgroundColor != oldElement.BackgroundColor)
                     UpdateBackgroundColor();
             }
             var newElement = element as TElement;
             this.element = newElement;
-            gesture = newElement.Gesture;
             newElement.SurfaceInvalidated += Invalidate;
             newElement.FocusChangeRequested += OnFocusChangeRequested;
             UpdateFlowDirection();
@@ -349,7 +359,13 @@ namespace XF.ChartLibrary.Platform.Droid
             if (newElement.Background != null)
                 UpdateBackground();
             element.PropertyChanged += OnElementPropertyChanged;
-            gesture.OnInitialize(this);
+            var gesture = newElement.Gesture;
+            if(gesture != null)
+            {
+                gesture.Clear();
+                gesture.OnInitialize(this);
+                SetOnTouchListener(gesture);
+            }
             if (_tracker == null)
             {
                 // Can't set up the tracker in the constructor because it access the Element (for now)
@@ -394,7 +410,10 @@ namespace XF.ChartLibrary.Platform.Droid
             {
                 _disposed = true;
                 if (element != null)
+                {
                     element.SurfaceInvalidated -= Invalidate;
+                    element.Gesture?.Clear();
+                }
 
                 OnFocusChangeListener = null;
                 _tracker?.Dispose();

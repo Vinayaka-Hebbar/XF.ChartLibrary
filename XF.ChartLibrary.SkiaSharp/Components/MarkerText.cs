@@ -110,8 +110,6 @@ namespace XF.ChartLibrary.Components
 
             var offset = GetOffsetForDrawingAtPoint(size, pos.X, pos.Y, chart);
             int saveId = canvas.Save();
-            var offsetX = (float)padding.Left - strokeWidth;
-            var offsetY = lineHeight;
             path.Reset();
             if (pos.Y < height + arrowSize)
             {
@@ -146,7 +144,6 @@ namespace XF.ChartLibrary.Components
                 path.LineTo(0, 0 + height);
                 path.LineTo(0, 0);
                 path.Offset(pos.X + offset.X, pos.Y + offset.Y);
-                offsetY += (float)padding.Bottom * 0.8f;
             }
             else
             {
@@ -179,14 +176,13 @@ namespace XF.ChartLibrary.Components
                 }
                 path.LineTo(0, 0);
                 path.Offset(pos.X + offset.X, pos.Y + offset.Y);
-                offsetY += (float)padding.Top * 0.8f;
             }
 
             // translate to the correct position and draw
             canvas.DrawPath(path, whitePaint);
             canvas.DrawPath(path, paint);
             canvas.Translate(pos.X + offset.X, pos.Y + offset.Y);
-            canvas.DrawText(text, offsetX, offsetY, TextPaint);
+            canvas.DrawText(text, (width / 2) - arrowSize / 2, (height / 2) + arrowSize / 2, TextPaint);
             canvas.RestoreToCount(saveId);
         }
 

@@ -5,7 +5,7 @@ using System;
 
 namespace XF.ChartLibrary.Gestures
 {
-    partial class ChartGestureRecognizer : Java.Lang.Object, View.IOnTouchListener
+    partial class BarLineChartGesture 
     {
         internal const int ShowPress = 1;
         internal const int LongPress = 2;
@@ -29,7 +29,7 @@ namespace XF.ChartLibrary.Gestures
         private readonly PinchEvent pinchEvent;
         private readonly PanEvent panEvent;
         private TapEvent tapEvent;
-        private GestureState lastState;
+        private GestureMode lastState;
 
         private MotionEvent currentDownEvent;
         private MotionEvent previousUpEvent;
@@ -72,7 +72,7 @@ namespace XF.ChartLibrary.Gestures
             }
         }
 
-        public ChartGestureRecognizer()
+        public BarLineChartGesture()
         {
             pinchEvent = new PinchEvent();
             panEvent = new PanEvent();
@@ -83,14 +83,14 @@ namespace XF.ChartLibrary.Gestures
             minScalePointerDistance = 3.5f.DpToPixel();
         }
 
-        public void OnInitialize(View view)
+        public override void OnInitialize(View view)
         {
             ViewConfiguration configuration = ViewConfiguration.Get(view.Context);
             var doubleTapSlop = configuration.ScaledDoubleTapSlop;
             doubleTapSlopSquare = doubleTapSlop * doubleTapSlop;
         }
 
-        public bool OnTouch(View v, MotionEvent e)
+        public override bool OnTouch(View v, MotionEvent e)
         {
             // double tap, pan, pinch, single tap features from android source code and MPChartAndroid
             if (velocityTracker == null)
@@ -105,7 +105,7 @@ namespace XF.ChartLibrary.Gestures
                     tapEvent.state = TouchState.Begin;
                     tapEvent.x = e.GetX();
                     tapEvent.y = e.GetY();
-                    if (lastState == GestureState.None)
+                    if (lastState == GestureMode.None)
                     {
                         bool hadTapMessage = handler.HasMessages(Click);
                         if (hadTapMessage)
@@ -166,13 +166,13 @@ namespace XF.ChartLibrary.Gestures
                     if (pinchEvent.Spacing > 10)
                     {
                         OnPinch(pinchEvent, x, y);
-                        lastState = pinchEvent.IsZooming ? GestureState.Zoom : lastState;
+                        lastState = pinchEvent.IsZooming ? GestureMode.Zoom : lastState;
                     }
                     mid.X = (x + x1) / 2f;
                     mid.Y = (y + y1) / 2f;
                     ClearTaps();
                     break;
-                case MotionEventActions.PointerDown when lastState == GestureState.None:
+                case MotionEventActions.PointerDown when lastState == GestureMode.None:
                     handler.RemoveMessages(ShowPress);
                     handler.RemoveMessages(LongPress);
                     handler.RemoveMessages(Click);
@@ -183,7 +183,7 @@ namespace XF.ChartLibrary.Gestures
                     stillDown = false;
                     break;
                 case MotionEventActions.Move:
-                    if (panEvent.Mode == PanState.Drag)
+                    if (panEvent.mode == PanMode.Drag)
                     {
                         DisableScroll(v);
                         panEvent.state = TouchState.Changed;
@@ -202,11 +202,11 @@ namespace XF.ChartLibrary.Gestures
                             var totalDist = MathF.Sqrt(distX * distX + distY * distY);
                             if (totalDist > minScalePointerDistance)
                             {
-                                if (pinchEvent.Mode == PinchState.PinchZoom)
+                                if (pinchEvent.mode == PinchMode.PinchZoom)
                                 {
                                     pinchEvent.Scale = totalDist / pinchEvent.Spacing;
                                 }
-                                else if (pinchEvent.Mode == PinchState.XZoom)
+                                else if (pinchEvent.mode == PinchMode.XZoom)
                                 {
                                     pinchEvent.Scale = Math.Abs(distX) / pinchEvent.xDist;
                                 }
@@ -219,7 +219,7 @@ namespace XF.ChartLibrary.Gestures
                             }
                         }
                     }
-                    else if (panEvent.Mode == PanState.None)
+                    else if (panEvent.mode == PanMode.None)
                     {
                         panEvent.state = TouchState.Begin;
                         panEvent.x = e.GetX();
@@ -229,7 +229,7 @@ namespace XF.ChartLibrary.Gestures
                         if (Math.Abs(Spacing(distanceX, distanceY)) > dragTriggerDist)
                         {
                             OnPan(panEvent, distanceY, distanceY);
-                            lastState = panEvent.Mode == PanState.Drag ? GestureState.Drag : lastState;
+                            lastState = panEvent.mode == PanMode.Drag ? GestureMode.Drag : lastState;
                             ClearTaps();
                         }
                     }
@@ -260,7 +260,7 @@ namespace XF.ChartLibrary.Gestures
                         if (Math.Abs(velocityX) > ChartUtil.MinimumFlingVelocity ||
                             Math.Abs(velocityY) > ChartUtil.MinimumFlingVelocity)
                         {
-                            if (panEvent.Mode == PanState.Drag)
+                            if (panEvent.mode == PanMode.Drag)
                             {
                                 panEvent.state = TouchState.Ended;
                                 panEvent.x = e.GetX();
@@ -277,9 +277,9 @@ namespace XF.ChartLibrary.Gestures
                         }
                     }
 
-                    pinchEvent.Mode = PinchState.None;
-                    panEvent.Mode = PanState.None;
-                    lastState = GestureState.None;
+                    pinchEvent.mode = PinchMode.None;
+                    panEvent.mode = PanMode.None;
+                    lastState = GestureMode.None;
                     EnableScroll(v);
                     if (previousUpEvent != null)
                     {
@@ -374,33 +374,13 @@ namespace XF.ChartLibrary.Gestures
             return (deltaX * deltaX + deltaY * deltaY < slopSquare);
         }
 
-
-        void DisableScroll(View v)
-        {
-            var parent = v.Parent;
-            if (parent != null)
-                parent.RequestDisallowInterceptTouchEvent(true);
-        }
-
-        void EnableScroll(View v)
-        {
-            var parent = v.Parent;
-            if (parent != null)
-                parent.RequestDisallowInterceptTouchEvent(false);
-        }
-
-        float Spacing(float x, float y)
-        {
-            return MathF.Sqrt(x * x + y * y);
-        }
-
-        public bool OnDoubleTap(MotionEvent e)
+        public virtual bool OnDoubleTap(MotionEvent e)
         {
             OnDoubleTap(e.GetX(), e.GetY());
             return true;
         }
 
-        public bool OnSingleTapUp(MotionEvent e)
+        public virtual bool OnSingleTapUp(MotionEvent e)
         {
             tapEvent.state = TouchState.Ended;
             tapEvent.x = e.GetX();
@@ -409,17 +389,22 @@ namespace XF.ChartLibrary.Gestures
             return true;
         }
 
-        public void OnLongPress(MotionEvent _)
+        public virtual void OnLongPress(MotionEvent e)
         {
         }
 
-        protected override void Dispose(bool disposing)
+        public override void Clear()
         {
             if (velocityTracker != null)
             {
                 velocityTracker.Recycle();
                 velocityTracker = null;
             }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            Clear();
             base.Dispose(disposing);
         }
 
@@ -433,9 +418,9 @@ namespace XF.ChartLibrary.Gestures
 
     internal class GestureHandler : Handler
     {
-        private readonly ChartGestureRecognizer gesture;
+        private readonly BarLineChartGesture gesture;
 
-        internal GestureHandler(ChartGestureRecognizer gesture)
+        internal GestureHandler(BarLineChartGesture gesture)
         {
             this.gesture = gesture;
         }
@@ -444,7 +429,7 @@ namespace XF.ChartLibrary.Gestures
         {
             switch (msg.What)
             {
-                case ChartGestureRecognizer.LongPress:
+                case BarLineChartGesture.LongPress:
                     gesture.DispatchLongPress();
                     break;
             }

@@ -65,6 +65,10 @@ namespace XF.ChartLibrary.Components
         /// </summary>
         private IList<LegendEntry> extraEntries;
         private bool drawInside = false;
+        internal float neededHeight = 0.0f;
+        internal float neededWidth = 0.0f;
+        internal float textWidthMax = 0.0f;
+        internal float textHeightMax = 0.0f;
 
         /// <summary>
         ///  The horizontal alignment of the legend
@@ -128,7 +132,7 @@ namespace XF.ChartLibrary.Components
         {
             this.entries = entries;
 #if __IOS__ || __TVS__
-yOffset = 3f;
+            yOffset = 3f;
 #else
             yOffset = 3f.DpToPixel();
 #endif
@@ -193,7 +197,7 @@ yOffset = 3f;
 
             foreach (var entry in Entries)
             {
-#if __ANDROID__ || SKIASHARP
+#if PIXELSCALE
                 var formSize = (float.IsNaN(entry.FormSize) ? FormSize : entry.FormSize).DpToPixel();
 #else
                 var formSize = float.IsNaN(entry.FormSize) ? FormSize : entry.FormSize;
@@ -218,7 +222,7 @@ yOffset = 3f;
                 else
                 { continue; }
             }
-#if __ANDROID__ || SKIASHARP
+#if PIXELSCALE
             return new ChartSize(
                 width: maxW + maxFormSize + FormToTextSpace.DpToPixel(),
                 height: maxH
@@ -232,11 +236,29 @@ yOffset = 3f;
         }
 
 
-        public float NeededWidth { get; set; } = 0.0f;
-        public float NeededHeight { get; set; } = 0.0f;
-        public float TextWidthMax { get; set; } = 0.0f;
-        public float TextHeightMax { get; set; } = 0.0f;
+        public float NeededWidth
+        {
+            get => neededWidth;
+            set => neededWidth = value;
+        }
 
+        public float NeededHeight
+        {
+            get => neededHeight;
+            set => neededHeight = value;
+        }
+
+        public float TextWidthMax
+        {
+            get => textWidthMax;
+            set => textWidthMax = value;
+        }
+
+        public float TextHeightMax
+        {
+            get => textHeightMax;
+            set => textHeightMax = value;
+        }
         /// flag that indicates if word wrapping is enabled
         /// this is currently supported only for `orientation == Horizontal`.
         /// you may want to set maxSizePercent when word wrapping, to set the point where the text wraps.

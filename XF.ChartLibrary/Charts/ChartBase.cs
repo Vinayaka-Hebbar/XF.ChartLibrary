@@ -15,16 +15,24 @@ namespace XF.ChartLibrary.Charts
         public static readonly BindableProperty LegendProperty =
                   BindableProperty.Create(nameof(Legend), typeof(Legend), typeof(ChartBase<TData, TDataSet>), defaultBindingMode: BindingMode.OneWayToSource);
 
+        public static readonly BindableProperty TouchEnabledProperty = BindableProperty.Create(nameof(TouchEnabled), typeof(bool), typeof(ChartBase<TData, TDataSet>), true, propertyChanged: OnTouchEnableChanged);
+
+        public static readonly BindableProperty HighlightPerTapEnabledProperty = BindableProperty.Create(nameof(HighlightPerTapEnabled), typeof(bool), typeof(ChartBase<TData, TDataSet>), true);
+
+        public static readonly BindableProperty DescriptionProperty = BindableProperty.Create(nameof(Description), typeof(Description), typeof(ChartBase<TData, TDataSet>));
+
         public static readonly BindableProperty DataProperty = BindableProperty.Create(nameof(Data), typeof(TData), typeof(ChartBase<TData, TDataSet>), defaultValue: null, propertyChanged: OnDataChanged);
 
         public static readonly BindableProperty XAxisProperty = BindableProperty.Create(nameof(XAxis), typeof(XAxis), typeof(ChartBase<TData, TDataSet>), defaultBindingMode: BindingMode.OneWayToSource);
 
         public static readonly BindableProperty MarkerProperty = BindableProperty.Create(nameof(Marker), typeof(IMarker), typeof(ChartBase<TData, TDataSet>));
 
+        public static readonly BindableProperty DragDecelerationEnabledProperty = BindableProperty.Create(nameof(HighlightPerTapEnabled), typeof(bool), typeof(ChartBase<TData, TDataSet>), true);
+
         protected SKPaint InfoPaint;
         protected SKPaint DescPaint;
 
-        private float _dragDecelerationFrictionCoef = 0.9f;
+        internal float _dragDecelerationFrictionCoef = 0.9f;
         /// <summary>
         /// Deceleration friction coefficient in [0 ; 1] interval, higher values indicate that speed will decrease slowly, for e
         /// if it set to 0, it will stop immediately.
@@ -42,6 +50,12 @@ namespace XF.ChartLibrary.Charts
             }
         }
 
+        public bool DragDecelerationEnabled
+        {
+            get { return (bool)GetValue(DragDecelerationEnabledProperty); }
+            set { SetValue(DragDecelerationEnabledProperty, value); }
+        }
+
         public bool IgnorePixelScaling
         {
             get { return (bool)GetValue(IgnorePixelScalingProperty); }
@@ -51,6 +65,15 @@ namespace XF.ChartLibrary.Charts
         static void OnDataChanged(BindableObject bindable, object oldValue, object newValue)
         {
             ((ChartBase<TData, TDataSet>)bindable).OnDataChanged((TData)oldValue, (TData)newValue);
+        }
+
+        static void OnTouchEnableChanged(BindableObject bindable, object oldValue, object newValue)
+        {
+            var chart = (ChartBase<TData, TDataSet>)bindable;
+            if (chart.Gesture != null)
+            {
+                chart.Gesture.TouchEnabled = (bool)newValue;
+            }
         }
 
         protected virtual void OnDataChanged(TData oldValue, TData newValue)
@@ -78,6 +101,7 @@ namespace XF.ChartLibrary.Charts
                 IsAntialias = true
             };
             XAxis = new XAxis();
+            Description = new Description();
             DescPaint = new SKPaint { IsAntialias = false };
             Initialize();
         }
@@ -86,6 +110,24 @@ namespace XF.ChartLibrary.Charts
         {
             get => (IMarker)GetValue(MarkerProperty);
             set => SetValue(MarkerProperty, value);
+        }
+
+        public bool TouchEnabled
+        {
+            get => (bool)GetValue(TouchEnabledProperty);
+            set => SetValue(TouchEnabledProperty, value);
+        }
+
+        public bool HighlightPerTapEnabled
+        {
+            get => (bool)GetValue(HighlightPerTapEnabledProperty);
+            set => SetValue(HighlightPerTapEnabledProperty, value);
+        }
+
+        public Description Description
+        {
+            get => (Description)GetValue(DescriptionProperty);
+            set => SetValue(DescriptionProperty, value);
         }
 
         public TData Data
@@ -100,13 +142,13 @@ namespace XF.ChartLibrary.Charts
             protected set => SetValue(LegendProperty, value);
         }
 
-        public XAxis XAxis
+        public virtual XAxis XAxis
         {
             get => (XAxis)GetValue(XAxisProperty);
             protected set => SetValue(XAxisProperty, value);
         }
 
-        public virtual Gestures.IChartGesture Gesture { get; }
+        public abstract Gestures.IChartGesture Gesture { get; }
 
         public event Action SurfaceInvalidated;
 
@@ -162,9 +204,9 @@ namespace XF.ChartLibrary.Charts
         protected void DrawDescription(SKCanvas c)
         {
             // check if description should be drawn
-            if (description != null && description.IsEnabled)
+            // check if null or not
+            if (Description is Description description && description.IsEnabled)
             {
-
                 var position = description.Position;
 
                 DescPaint.Typeface = description.Typeface;

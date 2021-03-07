@@ -145,36 +145,41 @@ namespace XF.ChartLibrary.Data
         }
 
 
-#if !__IOS__ || !__TVOS__
+#if !(__IOS__ || __TVOS__) || SKIASHARP
 
         public Font ValueTypeface { get; set; }
+#else
+        public Font ValueFont { get; set; }
+#endif
 
-        private float valueTextSize;
+
 
         protected DataSetBase(string label)
         {
             Label = label;
 
-#if !__IOS__ || !__TVOS__
+#if !(__IOS__ || __TVOS__) || PIXELSCALE
             valueTextSize = 12f.DpToPixel();
 #endif
         }
 
+#if __ANDROID__ || SKIASHARP
+        private float valueTextSize;
         public float ValueTextSize
         {
             get => valueTextSize;
             set
             {
-#if __ANDROID__ || SKIASHARP
+#if PIXELSCALE
                 valueTextSize = value.DpToPixel();
 #else
                 valueTextSize = value;
 #endif
             }
         }
-#else
-        public Font ValueFont {get;set;}
+        
 #endif
+
         public float ValueLabelAngle { get; set; }
 
         public Form Form
@@ -276,6 +281,11 @@ namespace XF.ChartLibrary.Data
             if (valueColors == null)
                 return Utils.ColorTemplate.DefaultValueTextColor;
             return valueColors[index % valueColors.Count];
+        }
+
+        public void SetValueTextColors(IList<Color> colors)
+        {
+            valueColors = colors;
         }
 
         public abstract int EntryIndex(TEntry e);

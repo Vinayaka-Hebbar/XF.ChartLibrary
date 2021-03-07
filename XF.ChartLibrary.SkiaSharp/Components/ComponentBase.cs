@@ -15,7 +15,15 @@ namespace XF.ChartLibrary.Components
         public float TextSize
         {
             get => textSize;
-            set => textSize = value;
+            set
+            {
+                value = value.DpToPixel();
+                if (value > 24f)
+                    value = 24f;
+                if (value < 6f)
+                    value = 6f;
+                textSize = value;
+            }
         }
 
         public SKColor TextColor { get; set; } = SKColors.Black;

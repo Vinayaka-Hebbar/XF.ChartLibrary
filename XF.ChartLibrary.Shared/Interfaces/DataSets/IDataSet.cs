@@ -130,14 +130,20 @@ namespace XF.ChartLibrary.Interfaces.DataSets
         /// Sets/get a single color for value text.
         /// Setting the color clears the colors array and adds a single color.
         /// Getting will return the first color in the array.
-        Color ValueTextColor
-        { get; set; }
+        Color ValueTextColor { get; set; }
 
         /// - Returns: The color at the specified index that is used for drawing the values inside the chart. Uses modulus internally.
         Color ValueTextColorAt(int index);
 
+        /// <summary>
+        ///  Sets a list of colors to be used as the colors for the drawn values.
+        /// </summary>
+        /// <param name="colors">list of colors</param>
+        /// <returns></returns>
+        void SetValueTextColors(IList<Color> colors);
 
-#if !__IOS__ || !__TVOS__ || SKIASHARP
+
+#if !(__IOS__ || __TVOS__) || SKIASHARP
 
         /// the font for the value-text labels
         Font ValueTypeface { get; set; }

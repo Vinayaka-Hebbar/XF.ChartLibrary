@@ -15,8 +15,11 @@ namespace XF.ChartLibrary.Renderer
 {
     public abstract partial class DataRenderer : ChartRenderer
     {
-        protected DataRenderer(ViewPortHandler viewPortHandler) : base(viewPortHandler)
+        protected readonly Animation.Animator Animator;
+
+        protected DataRenderer(Animation.Animator animator, ViewPortHandler viewPortHandler) : base(viewPortHandler)
         {
+            Animator = animator;
         }
 
         public abstract void DrawValues(Canvas c);

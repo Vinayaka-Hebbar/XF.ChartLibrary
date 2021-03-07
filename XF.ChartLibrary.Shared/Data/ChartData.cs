@@ -344,7 +344,7 @@ namespace XF.ChartLibrary.Data
         /// Get the Entry for a corresponding highlight object
         /// </summary>
         /// <returns> the entry that is highlighted</returns>
-        public Entry GetEntryForHighlight(Highlight.Highlight highlight)
+        public virtual Entry GetEntryForHighlight(Highlight.Highlight highlight)
         {
             if (dataSets == null)
                 return null;
@@ -361,7 +361,7 @@ namespace XF.ChartLibrary.Data
         /// Returns the DataSet object with the given label. Search can be case
         /// sensitive or not.IMPORTANT: This method does calculations at runtime.
         /// Use with care in performance critical situations.
-        public TDataSet GetDataSetByLabel(string label, bool ignorecase)
+        public virtual TDataSet GetDataSetByLabel(string label, bool ignorecase)
         {
             if (dataSets == null)
                 return default;
@@ -371,14 +371,6 @@ namespace XF.ChartLibrary.Data
                 return default;
             else
                 return dataSets[index];
-        }
-
-        public TDataSet GetDataSetByIndex(int index)
-        {
-            if (dataSets == null || index < 0 || index >= dataSets.Count)
-                return default;
-
-            return dataSets[index];
         }
 
         /// <summary>
@@ -595,6 +587,118 @@ namespace XF.ChartLibrary.Data
         }
 
         /// <summary>
+        ///  Sets a custom IValueFormatter for all DataSets this data object contains.
+        /// </summary>
+        /// <param name="f">Value Formatter</param>
+        public void SetValueFormatter(Formatter.IValueFormatter f)
+        {
+            if (f == null)
+                return;
+            else
+            {
+                foreach (IDataSet set in dataSets)
+                {
+                    set.ValueFormatter = f;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Sets the color of the value-text (color in which the value-labels are
+        /// drawn) for all DataSets this data object contains.
+        /// </summary>
+        /// <param name="color">Value text color</param>
+        public void SetValueTextColor(Color color)
+        {
+            foreach (IDataSet set in dataSets)
+            {
+                set.ValueTextColor = (color);
+            }
+        }
+
+        /// <summary>
+        /// Sets the same list of value-colors for all DataSets this
+        /// data object contains.
+        /// </summary>
+        /// <param name="colors"></param>
+        public void SetValueTextColors(List<Color> colors)
+        {
+            foreach (IDataSet set in dataSets)
+            {
+                set.SetValueTextColors(colors);
+            }
+        }
+
+#if __ANDROID__ || SKIASHARP
+        /// <summary>
+        /// Sets the Typeface for all value-labels for all DataSets this data object
+        /// contains.
+        /// </summary>
+        /// <param name="tf"></param>
+        public void SetValueTypeface(Font tf)
+        {
+            foreach (IDataSet set in dataSets)
+            {
+                set.ValueTypeface = tf;
+            }
+        }
+#endif
+
+#if __ANDROID__ || SKIASHARP
+        /// <summary>
+        /// Sets the size (in dp) of the value-text for all DataSets this data object
+        /// contains.
+        /// </summary>
+        /// <param name="size"></param>
+        public void SetValueTextSize(float size)
+        {
+            foreach (IDataSet set in dataSets)
+            {
+                set.ValueTextSize = size;
+            }
+        } 
+#endif
+
+        /// <summary>
+        ///  Enables / disables drawing values (value-text) for all DataSets this data
+        /// object contains.
+        /// </summary>
+        /// <param name="enabled"></param>
+        public void SetDrawValues(bool enabled)
+        {
+            foreach (IDataSet set in dataSets)
+            {
+                set.IsDrawValuesEnabled = enabled;
+            }
+        }
+
+
+        /// <summary>
+        /// Enables / disables highlighting values for all DataSets this data object
+        /// contains.If set to true, this means that values can
+        /// be highlighted programmatically or by touch gesture.
+        /// </summary>
+        public bool IsHighlightEnabled
+        {
+            get
+            {
+                foreach (IDataSet set in dataSets)
+                {
+                    if (!set.IsHighlightEnabled)
+                        return false;
+                }
+                return true;
+            }
+            set
+            {
+                foreach (IDataSet set in dataSets)
+                {
+                    set.IsHighlightEnabled = value;
+                }
+            }
+        }
+
+        /// <summary>
         /// Clears this data object from all DataSets and removes all Entries. Don't
         /// forget to invalidate the chart after this.
         /// </summary>
@@ -647,9 +751,22 @@ namespace XF.ChartLibrary.Data
             }
         }
 
-        public TDataSet this[int index] => dataSets[index];
+        public virtual TDataSet this[int index]
+        {
+            get
+            {
+                if (dataSets == null || index < 0 || index >= dataSets.Count)
+                    return default;
+                return dataSets[index];
+            }
+        }
 
         IDataSet IChartData.this[int index] => dataSets[index];
+
+        IDataSet IChartData.GetMaxEntryCountSet()
+        {
+            return GetMaxEntryCountSet();
+        }
 
         /// <summary>
         /// Returns the DataSet object with the maximum number of entries or null if there are no DataSets.

@@ -21,7 +21,7 @@ namespace XF.ChartLibrary.Components
             get => xOffset;
             set
             {
-#if __ANDROID__ || SKIASHARP
+#if PIXELSCALE
                 xOffset = value.DpToPixel();
 #else
                 xOffset = value;
@@ -34,7 +34,7 @@ namespace XF.ChartLibrary.Components
             get => yOffset;
             set
             {
-#if __ANDROID__ || SKIASHARP
+#if PIXELSCALE
                 yOffset = value.DpToPixel();
 #else
                 yOffset = value;

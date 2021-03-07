@@ -17,6 +17,8 @@ namespace XF.ChartLibrary.Interfaces
     public interface IChartData : IChartDataBase
     { 
         DataSets.IDataSet this[int index] { get; }
+
+        DataSets.IDataSet GetMaxEntryCountSet();
     }
 
     public interface IChartDataBase

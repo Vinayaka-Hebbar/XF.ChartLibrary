@@ -9,12 +9,15 @@ using XF.ChartLibrary.Utils;
 
 #if NETSTANDARD || SKIASHARP
 using Rect = SkiaSharp.SKRect;
+using Point = SkiaSharp.SKPoint;
 using Paint = SkiaSharp.SKPaint;
 #elif __IOS__ || __TVOS__
 using Rect = CoreGraphics.CGRect;
+using Point = CoreGraphics.CGPoint;
 #elif __ANDROID__
 using Rect = Android.Graphics.RectF;
 using Paint = Android.Graphics.Paint;
+using Point = Android.Graphics.PointF;
 #endif
 
 
@@ -389,6 +392,40 @@ namespace XF.ChartLibrary.Charts
             // calculate axis range (min / max) according to provided data
             AxisLeft.Calculate(data.GetYMin(YAxisDependency.Left), data.GetYMax(YAxisDependency.Left));
             AxisRight.Calculate(data.GetYMin(YAxisDependency.Right), data.GetYMax(YAxisDependency.Right));
+        }
+
+
+        /// <summary>
+        /// returns the DataSet object displayed at the touched position of the chart
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
+        public IBarLineScatterCandleBubbleDataSet GetDataSetByTouchPoint(float x, float y)
+        {
+            Highlight.Highlight h = GetHighlightByTouchPoint(x, y);
+            if (h != null)
+            {
+                return ((IChartData<TDataSet>)data)[h.DataSetIndex];
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Returns a recyclable MPPointF instance.
+        /// Returns the position(in pixels) the provided Entry has inside the chart
+        /// view or null, if the provided Entry is null.
+        /// </summary>
+        /// <param name="e"></param>
+        /// <param name="axis"></param>
+        /// <returns></returns>
+        public Point GetPosition(Data.Entry e, YAxisDependency axis)
+        {
+
+            if (e == null)
+                return default;
+
+            return GetTransformer(axis).PointValueToPixel(e.X, e.Y);
         }
 
         /// <summary>

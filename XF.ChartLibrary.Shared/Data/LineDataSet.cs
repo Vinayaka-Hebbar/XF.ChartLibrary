@@ -52,7 +52,7 @@ namespace XF.ChartLibrary.Data
                 {
                     value = new List<Color>()
                     {
-                        ChartUtil.FromRGB(140, 234, 255)
+                        Utils.ColorTemplate.FromRGB(140, 234, 255)
                     };
                 }
                 circleColors = value;
@@ -72,7 +72,7 @@ namespace XF.ChartLibrary.Data
             get => circleRadius;
             set
             {
-#if __ANDROID__ || SKIASHARP
+#if PIXELSCALE
                 circleRadius = value.DpToPixel();
 #else
                 circleRadius = value; 
@@ -87,7 +87,7 @@ namespace XF.ChartLibrary.Data
             get => circleHoleRadius;
             set
             {
-#if __ANDROID__ || SKIASHARP
+#if PIXELSCALE
                 circleHoleRadius = value.DpToPixel();
 #else
                 circleHoleRadius = value; 

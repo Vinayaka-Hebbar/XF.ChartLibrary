@@ -286,7 +286,7 @@ namespace XF.ChartLibrary.Components
             get => axisLineWidth;
             set
             {
-#if __ANDROID__ || SKIASHARP
+#if PIXELSCALE
                 axisLineWidth = value.DpToPixel();
 #else
                 axisLineWidth = value;
@@ -304,7 +304,7 @@ namespace XF.ChartLibrary.Components
             get => axisLineWidth;
             set
             {
-#if __ANDROID__ || SKIASHARP
+#if PIXELSCALE
                 gridLineWidth = value.DpToPixel();
 #else
                 gridLineWidth = value;

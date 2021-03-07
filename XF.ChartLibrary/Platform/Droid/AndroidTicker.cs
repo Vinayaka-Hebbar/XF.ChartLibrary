@@ -40,8 +40,7 @@ namespace XF.ChartLibrary.Animation
 
         partial void OnStart()
         {
-            _val = new ValueAnimator();
-            _val.SetFloatValues(0f, 1f);
+            _val = ValueAnimator.OfFloat(0f,1f);
             _val.SetDuration(duration);
             _val.AddUpdateListener(this);
             _val.AddListener(this);

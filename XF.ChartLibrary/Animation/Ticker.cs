@@ -13,6 +13,11 @@ namespace XF.ChartLibrary.Animation
             get => duration;
         }
 
+        public Ticker()
+        {
+
+        }
+
         public event AnimationUpdate Update;
 
         public event Action Stop;

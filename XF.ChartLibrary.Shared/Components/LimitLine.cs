@@ -21,7 +21,7 @@
         private float _lineWidth = 2f;
 
         /** the color of the limit line */
-        private Color _lineColor = ChartUtil.FromRGB(237, 91, 91);
+        private Color _lineColor = Utils.ColorTemplate.FromRGB(237, 91, 91);
 
 #if NETSTANDARD || SKIASHARP
         private PaintStyle _textStyle = PaintStyle.StrokeAndFill;
@@ -93,7 +93,7 @@
                     value = 0.2f;
                 if (value > 12.0f)
                     value = 12.0f;
-#if __ANDROID__ || SKIASHARP
+#if PIXELSCALE
                 _lineWidth = value.DpToPixel();
 #else
                 _lineWidth = value;
@@ -114,7 +114,7 @@
         }
 
 
-#if __ANDROID__ || NETSTANDARD || SKIASHARP
+#if __ANDROID__ || SKIASHARP
         public PaintStyle TextStyle
         {
             get => _textStyle;

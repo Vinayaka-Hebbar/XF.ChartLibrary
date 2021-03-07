@@ -41,12 +41,11 @@ namespace XF.ChartLibrary.Charts
 #endif
 
     public abstract partial class ChartBase<TData, TDataSet> : IChartBase, IChartDataProvider, IAnimator
-        where TData : IChartData<TDataSet> where TDataSet : IDataSet, IBarLineScatterCandleBubbleDataSet
+        where TData : IChartData<TDataSet> where TDataSet : IDataSet
     {
         /// flag that indicates if offsets calculation has already been done or not
         private bool offsetsCalculated = false;
         private Animator animator;
-        private Description description = new Description();
 
         internal LegendRenderer legendRenderer;
 
@@ -54,9 +53,9 @@ namespace XF.ChartLibrary.Charts
 
         protected Highlight.Highlight LastHighlighted;
 
-        private Listener.IChartSelectionListener selectionListener;
+        private Listener.IChartValueSelectionListener selectionListener;
 
-        public Listener.IChartSelectionListener SelectionListener
+        public Listener.IChartValueSelectionListener ValueSelectionListener
         {
             get => selectionListener;
             set => selectionListener = value;
@@ -110,13 +109,57 @@ namespace XF.ChartLibrary.Charts
 
         public bool IsDrawMarkersEnabled { get; set; } = true;
 
-        public float ExtraTopOffset { get; set; }
+        public float ExtraTopOffset
+        {
+            get => extraTopOffset;
+            set
+            {
+#if PIXELSCALE
+                extraTopOffset = value.DpToPixel();
+#else
+                extraTopOffset = value;
+#endif
+            }
+        }
 
-        public float ExtraLeftOffset { get; set; }
+        public float ExtraLeftOffset
+        {
+            get => extraLeftOffset;
+            set
+            {
+#if PIXELSCALE
+                extraLeftOffset = value.DpToPixel();
+#else
+                extraLeftOffset = value;
+#endif
+            }
+        }
 
-        public float ExtraRightOffset { get; set; }
+        public float ExtraRightOffset
+        {
+            get => extraRightOffset;
+            set
+            {
+#if PIXELSCALE
+                extraRightOffset = value.DpToPixel();
+#else
+                extraRightOffset = value;
+#endif
+            }
+        }
 
-        public float ExtraBottomOffset { get; set; }
+        public float ExtraBottomOffset
+        {
+            get => extraBottomOffset;
+            set
+            {
+#if PIXELSCALE
+                extraBottomOffset = value.DpToPixel();
+#else
+                extraBottomOffset = value;
+#endif
+            }
+        }
 
         /// <summary>
         /// default value-formatter, number of digits depends on provided chart-data
@@ -124,6 +167,10 @@ namespace XF.ChartLibrary.Charts
         protected DefaultValueFormatter DefaultValueFormatter = new DefaultValueFormatter(0);
 
         private float maxHighlightDistance;
+        private float extraTopOffset;
+        private float extraLeftOffset;
+        private float extraRightOffset;
+        private float extraBottomOffset;
 
 
         /// <summary>
@@ -141,6 +188,11 @@ namespace XF.ChartLibrary.Charts
         }
 
         public string NoDataText { get; set; } = "No Data";
+
+        /// <summary>
+        /// The center of the chart taking offsets under consideration. (returns the center of the content rectangle)
+        /// </summary>
+        public Point CenterOffsets => ViewPortHandler.ContentCenter;
 
         public abstract float YChartMax { get; }
 
@@ -168,7 +220,15 @@ namespace XF.ChartLibrary.Charts
 
         }
 
-#if  SKIASHARP
+        public void SetExtraOffsets(float left, float top, float right, float bottom)
+        {
+            ExtraLeftOffset = left;
+            ExtraTopOffset = top;
+            ExtraRightOffset = right;
+            ExtraBottomOffset = bottom;
+        }
+
+#if SKIASHARP || __ANDROID
         /// <summary>
         /// set a new paint object for the specified parameter 
         /// </summary>
@@ -249,7 +309,7 @@ namespace XF.ChartLibrary.Charts
             this.InvalidateView();
         }
 
-        protected abstract void CalculateOffsets();
+        public abstract void CalculateOffsets();
 
         /// <summary>
         /// Calculates the y-min and y-max value and the y-delta and x-delta value
@@ -271,7 +331,7 @@ namespace XF.ChartLibrary.Charts
         protected void DrawMarkers(Canvas canvas)
         {
             // if there is no marker view or drawing marker is disabled
-            if (! (Marker is IMarker marker) || !IsDrawMarkersEnabled || !ValuesToHighlight)
+            if (!(Marker is IMarker marker) || !IsDrawMarkersEnabled || !ValuesToHighlight)
                 return;
             var data = Data;
             for (int i = 0; i < indicesToHighlight.Count; i++)
@@ -315,22 +375,6 @@ namespace XF.ChartLibrary.Charts
         }
 
         /// <summary>
-        /// returns the DataSet object displayed at the touched position of the chart
-        /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <returns></returns>
-        public IBarLineScatterCandleBubbleDataSet GetDataSetByTouchPoint(float x, float y)
-        {
-            Highlight.Highlight h = GetHighlightByTouchPoint(x, y);
-            if (h != null)
-            {
-                return data[h.DataSetIndex];
-            }
-            return null;
-        }
-
-        /// <summary>
         /// Returns the Highlight object (contains x-index and DataSet index) of the
         /// selected value at the given touch point inside the Line-, Scatter-, or
         /// CandleStick-Chart.
@@ -343,9 +387,27 @@ namespace XF.ChartLibrary.Charts
         }
 
         /// <summary>
-        /// /**
+        ///  Highlights the values at the given indices in the given DataSets. Provide
+        /// null or an empty array to undo all highlighting.This should be used to
+        /// programmatically highlight values.
+        ///This method* will not* call the listener.
+        /// </summary>
+        /// <param name="highs"></param>
+        public void HighlightValues(Highlight.Highlight[] highs)
+        {
+
+            // set the indices to highlight
+            indicesToHighlight = highs;
+
+            SetLastHighlighted(highs);
+
+            // redraw the chart
+            this.InvalidateView();
+        }
+
+        /// <summary>
         /// Highlights the value selected by touch gesture.Unlike
-        /// highlightValues(...), this generates a callback to the
+        /// <see cref="HighlightValues(Highlight.Highlight[])"/>, this generates a callback to the
         /// OnChartValueSelectedListener.
         /// </summary>
         /// <param name="high">the highlight object</param>
@@ -403,7 +465,7 @@ namespace XF.ChartLibrary.Charts
         /// <summary>
         /// Returns the actual position in pixels of the MarkerView for the given
         /// Highlight object.
-        protected Point GetMarkerPosition(Highlight.Highlight value)
+        protected virtual Point GetMarkerPosition(Highlight.Highlight value)
         {
             return new Point(value.DrawX, value.DrawY);
         }

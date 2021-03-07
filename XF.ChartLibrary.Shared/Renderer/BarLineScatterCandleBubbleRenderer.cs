@@ -14,11 +14,8 @@ namespace XF.ChartLibrary.Renderer
          */
         protected readonly Bounds XBounds = new Bounds();
 
-        protected readonly Animator Animator;
-
-        public BarLineScatterCandleBubbleRenderer(Animator animator, ViewPortHandler viewPortHandler): base(viewPortHandler)
+        public BarLineScatterCandleBubbleRenderer(Animator animator, ViewPortHandler viewPortHandler) : base(animator, viewPortHandler)
         {
-            Animator = animator;
         }
 
         /// <summary>

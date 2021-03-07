@@ -11,6 +11,7 @@ namespace XF.ChartLibrary.Charts
         Utils.ViewPortHandler ViewPortHandler { get; }
         float ChartWidth { get; }
         Components.IMarker Marker { get; }
+        Animation.Animator Animator { get; }
         float ChartHeight { get; }
 
         Interfaces.IChartData Data { get; }

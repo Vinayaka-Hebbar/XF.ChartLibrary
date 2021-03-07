@@ -8,7 +8,7 @@ using XF.ChartLibrary.Utils;
 
 namespace XF.ChartLibrary.Charts
 {
-    partial class BarLineChartBase<TData, TDataSet> : IGestureController
+    partial class BarLineChartBase<TData, TDataSet> : IGestureController, IBarLineChartBase
     {
         public static readonly BindableProperty DragXEnabledProperty = BindableProperty.Create(nameof(DragXEnabled), typeof(bool), typeof(BarLineChartBase<TData, TDataSet>), true);
 
@@ -19,8 +19,6 @@ namespace XF.ChartLibrary.Charts
         public static readonly BindableProperty ScaleYEnabledProperty = BindableProperty.Create(nameof(ScaleYEnabled), typeof(bool), typeof(BarLineChartBase<TData, TDataSet>), true);
 
         public static readonly BindableProperty HighlightPerDragEnabledProperty = BindableProperty.Create(nameof(HighlightPerDragEnabled), typeof(bool), typeof(BarLineChartBase<TData, TDataSet>), true);
-
-        public static readonly BindableProperty HighlightPerTapEnabledProperty = BindableProperty.Create(nameof(HighlightPerTapEnabled), typeof(bool), typeof(BarLineChartBase<TData, TDataSet>), true);
 
         public static readonly BindableProperty AxisLeftProperty = BindableProperty.Create(nameof(AxisLeft), typeof(YAxis), typeof(BarLineChartBase<TData, TDataSet>), defaultBindingMode: BindingMode.OneWayToSource);
 
@@ -53,7 +51,10 @@ namespace XF.ChartLibrary.Charts
             ((BarLineChartBase<TData, TDataSet>)bindable).GridBackgroundPaint.Color = ((Color)newValue).ToSKColor();
         }
 
+        public long DecelerationDuration { get; set; } = 2500;
+
         private SKPoint touchStartPoint;
+        private Animation.Ticker ticker;
 
         #region Scale & Pan
         private SKMatrix savedMatrix;
@@ -82,7 +83,7 @@ namespace XF.ChartLibrary.Charts
                 StrokeWidth = 1f
             };
 
-            ChartGestureRecognizer gesture = new ChartGestureRecognizer();
+            BarLineChartGesture gesture = new BarLineChartGesture();
             Gesture = gesture;
             gesture.Tap += OnTap;
             gesture.Pan += OnPan;
@@ -205,37 +206,34 @@ namespace XF.ChartLibrary.Charts
 
         private void OnPinch(PinchEvent e, float x, float y)
         {
-            bool scaleXEnabled;
-            bool scaleYEnabled;
-            if (e.state == TouchState.Begin)
+            if (e.State == TouchState.Begin)
             {
                 StopDeceleration();
                 SaveTouchStart(x, y);
                 if (PinchZoomEnabled)
                 {
-                    e.Mode = PinchState.PinchZoom;
+                    e.Mode = PinchMode.PinchZoom;
                 }
                 else
                 {
-                    if (ScaleXEnabled != ScaleYEnabled)
+                    var scaleXEnabled = ScaleXEnabled;
+                    if (scaleXEnabled != ScaleYEnabled)
                     {
-                        e.Mode = ScaleXEnabled ? PinchState.XZoom : PinchState.YZoom;
+                        e.Mode = scaleXEnabled ? PinchMode.XZoom : PinchMode.YZoom;
                     }
                     else
                     {
-                        e.Mode = e.xDist > e.yDist ? PinchState.XZoom : PinchState.YZoom;
+                        e.Mode = e.XDist > e.YDist ? PinchMode.XZoom : PinchMode.YZoom;
                     }
                 }
             }
-            else if (e.state == TouchState.Ended)
+            else if (e.State == TouchState.Ended)
             {
                 CalculateOffsets();
                 InvalidateSurface();
             }
-            else if (e.state == TouchState.Changed)
+            else if (e.State == TouchState.Changed)
             {
-                scaleXEnabled = ScaleXEnabled;
-                scaleYEnabled = ScaleYEnabled;
                 x -= ViewPortHandler.OffsetLeft;
 
                 if (IsTouchInverted())
@@ -247,23 +245,20 @@ namespace XF.ChartLibrary.Charts
                     y = -(ViewPortHandler.ChartHeight - y - ViewPortHandler.OffsetBottom);
                 }
                 var isZoomingOut = e.Scale < 1;
-                if (e.Mode == PinchState.PinchZoom)
+                if (e.Mode == PinchMode.PinchZoom)
                 {
                     var canZoomMoreX = isZoomingOut ? ViewPortHandler.CanZoomOutMoreX : ViewPortHandler.CanZoomInMoreX;
                     var canZoomMoreY = isZoomingOut ? ViewPortHandler.CanZoomOutMoreY : ViewPortHandler.CanZoomInMoreY;
                     if (canZoomMoreX || canZoomMoreY)
                     {
-                        var scaleX = scaleXEnabled ? e.Scale : 1f;
-                        var scaleY = scaleYEnabled ? e.Scale : 1f;
-
-                        ViewPortHandler.Refresh(savedMatrix.PostConcat(SKMatrix.CreateScale(scaleX, scaleY, x, y)), chart: this, invalidate: true);
+                        ViewPortHandler.Refresh(savedMatrix.PostConcat(SKMatrix.CreateScale(ScaleXEnabled ? e.Scale : 1f, ScaleYEnabled ? e.Scale : 1f, x, y)), chart: this, invalidate: true);
                     }
                 }
-                else if (e.Mode == PinchState.XZoom && scaleYEnabled && (isZoomingOut ? ViewPortHandler.CanZoomOutMoreX : ViewPortHandler.CanZoomInMoreX))
+                else if (e.Mode == PinchMode.XZoom && ScaleXEnabled && (isZoomingOut ? ViewPortHandler.CanZoomOutMoreX : ViewPortHandler.CanZoomInMoreX))
                 {
                     ViewPortHandler.Refresh(savedMatrix.PostConcat(SKMatrix.CreateScale(e.Scale, 1f, x, y)), chart: this, invalidate: true);
                 }
-                else if (e.Mode == PinchState.YZoom && scaleYEnabled && (isZoomingOut ? ViewPortHandler.CanZoomOutMoreY : ViewPortHandler.CanZoomInMoreY))
+                else if (e.Mode == PinchMode.YZoom && ScaleYEnabled && (isZoomingOut ? ViewPortHandler.CanZoomOutMoreY : ViewPortHandler.CanZoomInMoreY))
                 {
                     ViewPortHandler.Refresh(savedMatrix.PostConcat(SKMatrix.CreateScale(1f, e.Scale, x, y)), chart: this, invalidate: true);
                 }
@@ -274,13 +269,13 @@ namespace XF.ChartLibrary.Charts
 
         private void OnPan(PanEvent e, float distanceX, float distanceY)
         {
-            if (e.state == TouchState.Begin)
+            if (e.State == TouchState.Begin)
             {
                 if (data is null)
                     return;
                 if (!ViewPortHandler.HasNoDragOffset || !ViewPortHandler.IsFullyZoomedOut)
                 {
-                    e.Mode = PanState.Drag;
+                    e.Mode = PanMode.Drag;
                     lastPanPoint.X = distanceX;
                     lastPanPoint.Y = distanceY;
                     closestDataSetToTouch = GetDataSetByTouchPoint(e.X, e.Y);
@@ -295,22 +290,22 @@ namespace XF.ChartLibrary.Charts
 
 
                     // Check to see if user dragged at all and if so, can the chart be dragged by the given amount
-                    if ((distanceX != 0.0f || distanceY != 0.0f) && !PerformPanChange(translation: lastPanPoint))
+                    if ((distanceX != 0.0f || distanceY != 0.0f) && !PerformPanChange(lastPanPoint.X, lastPanPoint.Y))
                     {
                         // We can stop dragging right now, and let the scroll view take control
-                        e.Mode = PanState.None;
+                        e.Mode = PanMode.None;
                     }
 
                 }
                 else if (HighlightPerDragEnabled)
                 {
                     // We will only handle highlights on Changed
-                    e.Mode = PanState.None;
+                    e.Mode = PanMode.None;
                 }
             }
-            else if (e.state == TouchState.Changed)
+            else if (e.State == TouchState.Changed)
             {
-                if (e.Mode == PanState.Drag)
+                if (e.Mode == PanMode.Drag)
                 {
                     var translation = new SKPoint(x: distanceX - lastPanPoint.X, y: distanceY - lastPanPoint.Y);
                     lastPanPoint.X = distanceX;
@@ -325,7 +320,7 @@ namespace XF.ChartLibrary.Charts
                         translation.Y = 0.0f;
                     }
 
-                    _ = PerformPanChange(translation: translation);
+                    _ = PerformPanChange(translation.X, translation.Y);
 
                 }
                 else if (HighlightPerDragEnabled)
@@ -336,21 +331,25 @@ namespace XF.ChartLibrary.Charts
 
                     if (h != lastHighlighted)
                     {
-                        this.LastHighlighted = h;
+                        LastHighlighted = h;
                         HighlightValue(h, true);
                     }
                 }
             }
-            else if (e.state == TouchState.Ended)
+            else if (e.State == TouchState.Ended)
             {
-                if (e.Mode == PanState.Drag)
+                if (e.Mode == PanMode.Drag)
                 {
                     StopDeceleration();
-
                     decelerationLastTime = Environment.TickCount;
                     decelerationVelocity.X = e.VelocityX;
                     decelerationVelocity.Y = e.VelocityY;
-                    Dispatcher.BeginInvokeOnMainThread(DecelerationLoop);
+                    if (ticker == null)
+                    {
+                        ticker = new Animation.Ticker();
+                        ticker.Update += OnDecelerationLoop;
+                    }
+                    ticker.Start(DecelerationDuration);
                 }
 
 
@@ -358,32 +357,17 @@ namespace XF.ChartLibrary.Charts
             }
         }
 
-        void DecelerationLoop()
+        void OnDecelerationLoop(float _)
         {
-            var currentTime = Environment.TickCount;
+            decelerationVelocity.X *= _dragDecelerationFrictionCoef;
+            decelerationVelocity.Y *= _dragDecelerationFrictionCoef;
 
-            decelerationVelocity.X *= DragDecelerationFrictionCoef;
-            decelerationVelocity.Y *= DragDecelerationFrictionCoef;
+            var current = Environment.TickCount;
 
+            var timeInterval = (current - decelerationLastTime) / 1000f;
+            PerformPanChange(decelerationVelocity.X * timeInterval, decelerationVelocity.Y * timeInterval);
 
-            var timeInterval = (currentTime - decelerationLastTime) / 1000;
-
-
-            var distance = new SKPoint(
-                x: decelerationVelocity.X * timeInterval,
-                y: decelerationVelocity.Y * timeInterval
-            );
-
-
-            if (!PerformPanChange(translation: distance))
-            {
-                // We reached the edge, stop
-                decelerationVelocity.X = 0.0f;
-                decelerationVelocity.Y = 0.0f;
-            }
-
-            decelerationLastTime = currentTime;
-
+            decelerationLastTime = current;
 
             if (Math.Abs(decelerationVelocity.X) < 0.001f && Math.Abs(decelerationVelocity.Y) < 0.001f)
             {
@@ -395,7 +379,7 @@ namespace XF.ChartLibrary.Charts
             }
         }
 
-        private bool PerformPanChange(SKPoint translation)
+        bool PerformPanChange(float tranX, float tranY)
         {
             if (IsTouchInverted())
             {
@@ -406,19 +390,12 @@ namespace XF.ChartLibrary.Charts
                 }
                 else
                 {
-                    translation.Y = -translation.Y;
+                    tranY = -tranY;
                 }
             }
 
             var originalMatrix = ViewPortHandler.touchMatrix;
-            var matrix = ViewPortHandler.Refresh(originalMatrix.PostConcat(SKMatrix.CreateTranslation(translation.X, y: translation.Y)), chart: this, invalidate: false);
-
-
-            if (matrix != originalMatrix)
-            {
-                InvalidateSurface();
-                // Chart translated
-            }
+            var matrix = ViewPortHandler.Refresh(originalMatrix.PostConcat(SKMatrix.CreateTranslation(tranX, tranY)), chart: this, invalidate: true);
 
             // Did we managed to actually drag or did we reach the edge?
             return matrix.TransX != originalMatrix.TransX || matrix.TransY != originalMatrix.TransY;
@@ -426,14 +403,19 @@ namespace XF.ChartLibrary.Charts
 
         private void OnTap(TapEvent e)
         {
-            if (e.state == TouchState.Ended)
+            if(e.State == TouchState.Begin)
+            {
+                SaveTouchStart(e.X, e.Y);
+                return;
+            }
+            if (e.State == TouchState.Ended)
             {
                 if (!HighlightPerTapEnabled)
                 {
                     return;
                 }
 
-                var h = GetHighlightByTouchPoint(e.x, e.y);
+                var h = GetHighlightByTouchPoint(e.X, e.Y);
                 if (h == null || h.Equals(LastHighlighted))
                 {
                     HighlightValue(null, true);
@@ -450,6 +432,10 @@ namespace XF.ChartLibrary.Charts
 
         public void StopDeceleration()
         {
+            if (ticker != null)
+            {
+                ticker.Cancel();
+            }
             decelerationVelocity = SKPoint.Empty;
         }
 

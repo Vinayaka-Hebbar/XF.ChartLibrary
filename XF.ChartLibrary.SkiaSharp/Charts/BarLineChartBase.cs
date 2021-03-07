@@ -46,12 +46,6 @@ namespace XF.ChartLibrary.Charts
             set => SetValue(HighlightPerDragEnabledProperty, value);
         }
 
-        public bool HighlightPerTapEnabled
-        {
-            get => (bool)GetValue(HighlightPerTapEnabledProperty);
-            set => SetValue(HighlightPerTapEnabledProperty, value);
-        }
-
         /// <summary>
         /// the object representing the labels on the left y-axis
         /// </summary>
@@ -93,8 +87,7 @@ namespace XF.ChartLibrary.Charts
             }
         }
 
-
-        protected override void CalculateOffsets()
+        public override void CalculateOffsets()
         {
             if (!customViewPortEnabled)
             {

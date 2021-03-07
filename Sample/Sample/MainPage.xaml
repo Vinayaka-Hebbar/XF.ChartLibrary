@@ -1,18 +1,33 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             Title="Chart Samples"
              x:Class="Sample.MainPage">
-
     <Grid x:Name="LayoutRoot"
           RowDefinitions="Auto,3*,*">
-        <Frame BackgroundColor="#2196F3"
-               Padding="24"
-               CornerRadius="0">
-            <Label Text="Welcome to Xamarin.Forms!"
-                   HorizontalTextAlignment="Center"
-                   TextColor="White"
-                   FontSize="36" />
-        </Frame>
+        <ListView ItemsSource="{Binding Charts}"
+                  SelectionMode="None"
+                  SelectedItem="{Binding SelectedItem}"
+                  IsGroupingEnabled="True">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <TextCell Text="{Binding Name}"
+                              Detail="{Binding Description}"
+                              Tapped="OnItemTap" />
+                </DataTemplate>
+            </ListView.ItemTemplate>
+            <ListView.GroupHeaderTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <Label Text="{Binding Header}"
+                               Margin="2,0"
+                               HorizontalTextAlignment="Center"
+                               FontSize="Large"
+                               FontAttributes="Bold" />
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.GroupHeaderTemplate>
+        </ListView>
     </Grid>
 
 </ContentPage>

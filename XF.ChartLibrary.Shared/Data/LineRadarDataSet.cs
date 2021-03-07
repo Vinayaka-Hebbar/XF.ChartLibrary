@@ -14,7 +14,7 @@ namespace XF.ChartLibrary.Data
 
     public abstract class LineRadarDataSet<TEntry> : LineScatterCandleRadarDataSet<TEntry>, Interfaces.DataSets.ILineRadarDataSet<TEntry> where TEntry : Entry
     {
-        private Color fillColor = ChartUtil.FromRGB(140, 234, 255);
+        private Color fillColor = ColorTemplate.FromRGB(140, 234, 255);
         private IFill fill;
 #if __ANDROID__ || SKIASHARP
         private float lineWidth = 2.5f;
@@ -50,7 +50,7 @@ namespace XF.ChartLibrary.Data
                     value = 0.0f;
                 if (value > 10.0f)
                     value = 10.0f;
-#if __ANDROID__ || SKIASHARP
+#if PIXELSCALE
                 lineWidth = value.DpToPixel();
 #else
                 lineWidth = value;

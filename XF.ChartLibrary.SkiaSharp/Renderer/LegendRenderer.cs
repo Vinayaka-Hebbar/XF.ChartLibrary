@@ -38,6 +38,8 @@ namespace XF.ChartLibrary.Renderer
             };
         }
 
+        public SKPaint LabelPaint => legendLabelPaint;
+
         /// <summary>
         /// Prepares the legend and calculates all needed forms, labels and colors.
         /// </summary>
@@ -110,7 +112,7 @@ namespace XF.ChartLibrary.Renderer
                         {
 
                             computedEntries.Add(new LegendEntry(
-                                    pds[j].Label,
+                                    ((IDataSet<Data.PieEntry>)pds)[j].Label,
                                     dataSet.Form,
                                     dataSet.FormSize,
                                     dataSet.FormLineWidth,

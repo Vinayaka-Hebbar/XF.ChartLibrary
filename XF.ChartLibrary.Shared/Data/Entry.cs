@@ -4,22 +4,28 @@ namespace XF.ChartLibrary.Data
 {
     public partial class Entry : EntryBase, ICloneable
     {
+        private float x;
+
         public Entry()
         {
         }
 
         public Entry(float x, float y) : base(y)
         {
-            X = x;
+            this.x = x;
         }
 
         public Entry(float x, float y, object data) : base(y)
         {
-            X = x;
+            this.x = x;
             Data = data;
         }
 
-        public float X { get; set; }
+        public virtual float X
+        {
+            get => x;
+            set => x = value;
+        }
 
         object ICloneable.Clone()
         {

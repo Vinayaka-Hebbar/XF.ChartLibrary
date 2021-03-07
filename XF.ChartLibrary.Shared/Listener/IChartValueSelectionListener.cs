@@ -6,7 +6,7 @@ namespace XF.ChartLibrary.Listener
     /// Listener for callbacks when selecting values inside the chart by
     /// touch-gesture.
     /// </summary>
-    public interface IChartSelectionListener
+    public interface IChartValueSelectionListener
     {
         /// <summary>
         ///  Called when a value has been selected inside the chart.

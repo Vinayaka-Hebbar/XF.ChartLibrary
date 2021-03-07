@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<pages:BasePage  xmlns:pages="clr-namespace:Sample.Pages"
+                 xmlns="http://xamarin.com/schemas/2014/forms"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                 xmlns:charts="clr-namespace:XF.ChartLibrary.Charts;assembly=XF.ChartLibrary"
+                 xmlns:sample="clr-namespace:Sample"
+                 x:Class="Sample.Pages.BarChartSample">
+    <ContentPage.Content>
+        <charts:BarChart x:Name="Chart"
+                         IsDrawValueAboveBar="True"
+                         IsDrawBarShadow="False">
+            <charts:BarChart.Marker>
+                <sample:MarkerViewXY />
+            </charts:BarChart.Marker>
+        </charts:BarChart>
+    </ContentPage.Content>
+</pages:BasePage>

@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>netcoreapp3.1;net472</TargetFrameworks>
     <UseWPF>true</UseWPF>
-    <DefineConstants>SKIASHARP;WPF;NATIVE</DefineConstants>
+    <DefineConstants>SKIASHARP;WPF;NATIVE;PIXELSCALE</DefineConstants>
     <LangVersion>8</LangVersion>
   </PropertyGroup>
 

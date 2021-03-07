@@ -75,6 +75,14 @@ namespace XF.ChartLibrary.Utils
             }
         }
 
+        public Point ContentCenter
+        {
+            get
+            {
+                return new Point(contentRect.Left + contentRect.Width / 2, contentRect.Top + contentRect.Height / 2);
+            }
+        }
+
         public float OffsetLeft
         {
             get => (float)contentRect.Left;
@@ -117,6 +125,9 @@ namespace XF.ChartLibrary.Utils
 
         public float ChartWidth => chartWidth;
 
+        /// <summary>
+        /// Returns the smallest extension of the content rect (width or height).
+        /// </summary>
         public float SmallestContentExtension => Math.Min((float)contentRect.Width, (float)contentRect.Height);
 
         public bool IsInBoundsX(float x)

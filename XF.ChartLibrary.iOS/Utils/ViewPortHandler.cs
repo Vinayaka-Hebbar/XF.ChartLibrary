@@ -10,6 +10,8 @@ namespace XF.ChartLibrary.Utils
 
         private CGRect contentRect = new CGRect();
 
+        public CGRect ContentRect => contentRect;
+
         public void RestrainViewPort(float offsetLeft, float offsetTop, float offsetRight, float offsetBottom)
         {
             contentRect.Offset(offsetLeft, offsetTop);

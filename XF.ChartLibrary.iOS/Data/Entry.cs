@@ -11,13 +11,13 @@ namespace XF.ChartLibrary.Data
     {
         public Entry(float x, float y, NSUIImage icon) : base(y)
         {
-            X = x;
+            this.x = x;
             Icon = icon;
         }
 
         public Entry(float x, float y, NSUIImage icon, object data) : base(y)
         {
-            X = x;
+            this.x = x;
             Icon = icon;
             Data = data;
         }

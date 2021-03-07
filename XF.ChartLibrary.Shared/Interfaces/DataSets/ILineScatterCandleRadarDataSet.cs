@@ -16,7 +16,7 @@ namespace XF.ChartLibrary.Interfaces.DataSets
     {
         bool DrawHorizontalHighlightIndicatorEnabled { get; }
         bool DrawVerticalHighlightIndicatorEnabled { get; }
-#if __ANDROID__ || NETSTANDARD || SKIASHARP
+#if __ANDROID__ || SKIASHARP
         float HighlightLineWidth { get; }
         DashPathEffect DashPathEffectHighlight { get; }
 #endif

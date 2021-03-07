@@ -37,102 +37,103 @@
     public class YAxis : AxisBase
     {
 
-        /**
-         * indicates if the bottom y-label entry is drawn or not
-         */
+        /// <summary>
+        ///  indicates if the bottom y-label entry is drawn or not
+        /// </summary>
         public bool DrawBottomYLabelEntry { get; set; } = true;
 
-        /**
-         * indicates if the top y-label entry is drawn or not
-         */
+        /// <summary>
+        /// indicates if the top y-label entry is drawn or not
+        /// </summary>
         public bool DrawTopYLabelEntry { get; set; } = true;
 
-        /**
-         * flag that indicates if the axis is inverted or not
-         */
+        /// <summary>
+        /// flag that indicates if the axis is inverted or not
+        /// </summary>
         public bool Inverted { get; set; } = false;
 
-        /**
-         * flag that indicates if the zero-line should be drawn regardless of other grid lines
-         */
+        /// <summary>
+        /// flag that indicates if the zero-line should be drawn regardless of other grid lines
+        /// </summary>
         public bool DrawZeroLine { get; set; } = false;
 
-        /**
-         * flag indicating that auto scale min restriction should be used
-         */
+        /// <summary>
+        /// flag indicating that auto scale min restriction should be used
+        /// </summary>
         public bool UseAutoScaleRestrictionMin { get; set; } = false;
 
-        /**
-         * flag indicating that auto scale max restriction should be used
-         */
+        /// <summary>
+        /// flag indicating that auto scale max restriction should be used
+        /// </summary>
         public bool UseAutoScaleRestrictionMax { get; set; } = false;
 
-        /**
-         * Color of the zero line
-         */
+        /// <summary>
+        /// Color of the zero line
+        /// </summary>
         public Color ZeroLineColor { get; set; } = Colors.Gray;
 
-        /**
-         * Width of the zero line in pixels
-         */
+        /// <summary>
+        /// Width of the zero line in pixels
+        /// </summary>
         public float ZeroLineWidth
         {
             get => zeroLineWidth;
             set
             {
-#if __ANDROID__ || SKIASHARP
+#if PIXELSCALE
                 zeroLineWidth = value.DpToPixel();
 #else
                 zeroLineWidth = value;
 #endif
             }
         }
-        /**
-         * axis space from the largest value to the top in percent of the total axis range
-         */
+
+        /// <summary>
+        /// axis space from the largest value to the top in percent of the total axis range
+        /// </summary>
         public float SpacePercentTop { get; set; } = 10f;
 
-        /**
-         * axis space from the smallest value to the bottom in percent of the total axis range
-         */
+        /// <summary>
+        /// axis space from the smallest value to the bottom in percent of the total axis range
+        /// </summary>
         public float SpacePercentBottom { get; set; } = 10f;
 
-        /**
-         * the position of the y-labels relative to the chart
-         */
+        /// <summary>
+        ///  the position of the y-labels relative to the chart
+        /// </summary>
         public YAxisLabelPosition Position { get; set; } = YAxisLabelPosition.OutSideChart;
 
-        /**
-         * the horizontal offset of the y-label
-         */
+        /// <summary>
+        /// the horizontal offset of the y-label
+        /// </summary>
         public float XLabelOffset { get; set; } = 0.0f;
 
-        /**
-         * enum for the position of the y-labels relative to the chart
-         */
+        /// <summary>
+        /// enum for the position of the y-labels relative to the chart
+        /// </summary>
         public enum YAxisLabelPosition
         {
             OutSideChart, InsideChart
         }
 
-        /**
-         * the side this axis object represents
-         */
+        /// <summary>
+        /// the side this axis object represents
+        /// </summary>
         public YAxisDependency AxisDependency { get; set; }
 
-        /**
-         * the minimum width that the axis should take (in dp).
-         * <p/>
-         * default: 0.0
-         */
+        /// <summary>
+        ///  the minimum width that the axis should take (in dp).
+        /// default: 0.0
+        /// </summary>
         public float MinWidth { get; set; } = 0.0f;
 
-        /**
-         * the maximum width that the axis can take (in dp).
-         * use Inifinity for disabling the maximum
-         * default: Float.POSITIVE_INFINITY (no maximum specified)
-         */
+        /// <summary>
+        /// the maximum width that the axis can take (in dp).
+        /// use Inifinity for disabling the maximum
+        /// default: <see cref="float.PositiveInfinity"/> (no maximum specified)
+        /// </summary>
         public float MaxWidth { get; set; } = float.MaxValue;
+
         private float zeroLineWidth = 1f;
 
 
@@ -152,7 +153,7 @@
         /// <summary>
         /// This is for normal(not horizontal) charts horizontal spacing.
         /// </summary>
-#if __ANDROID__ || NETSTANDARD || SKIASHARP
+#if __ANDROID__ || SKIASHARP
         public float GetRequiredWidthSpace(Paint p)
         {
             p.TextSize = TextSize;
@@ -163,7 +164,7 @@
             float minWidth = MinWidth;
             float maxWidth = MaxWidth;
 
-#if __ANDROID__ || SKIASHARP
+#if PIXELSCALE
             if (minWidth > 0.0f)
                 minWidth = minWidth.DpToPixel();
             if (maxWidth > 0.0f && !float.IsPositiveInfinity(maxWidth))
@@ -189,7 +190,7 @@
             float minWidth = MinWidth;
             float maxWidth = MaxWidth;
 
-#if __ANDROID__ || SKIASHARP
+#if PIXELSCALE
             if (minWidth > 0.0f)
                 minWidth = minWidth.DpToPixel();
             if (maxWidth > 0.0f && !float.IsPositiveInfinity(maxWidth))
@@ -219,11 +220,9 @@
 #endif
 
 
-        /**
-         * Returns true if this axis needs horizontal offset, false if no offset is needed.
-         *
-         * @return
-         */
+        /// <summary>
+        /// Returns true if this axis needs horizontal offset, false if no offset is needed.
+        /// </summary>
         public bool NeedsOffset
         {
             get

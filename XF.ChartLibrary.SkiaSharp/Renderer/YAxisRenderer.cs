@@ -33,7 +33,7 @@ namespace XF.ChartLibrary.Renderer
             if (!YAxis.IsEnabled || !YAxis.IsDrawLabelsEnabled)
                 return;
 
-            var positions = GetTransformedPositions();
+            SKPoint[] positions = GetTransformedPositions();
 
             AxisLabelPaint.Typeface = YAxis.Typeface;
             AxisLabelPaint.TextSize = YAxis.TextSize;
@@ -42,8 +42,8 @@ namespace XF.ChartLibrary.Renderer
             float xoffset = YAxis.XOffset;
             float yoffset = AxisLabelPaint.MeasureHeight("A") / 2.5f + YAxis.YOffset;
 
-            var dependency = YAxis.AxisDependency;
-            var labelPosition = YAxis.Position;
+            YAxisDependency dependency = YAxis.AxisDependency;
+            YAxis.YAxisLabelPosition labelPosition = YAxis.Position;
 
             float xPos;
             if (dependency == YAxisDependency.Left)
@@ -116,7 +116,7 @@ namespace XF.ChartLibrary.Renderer
             // draw
             for (int i = from; i < to; i++)
             {
-                String text = YAxis.GetFormattedLabel(i);
+                string text = YAxis.GetFormattedLabel(i);
 
                 c.DrawText(text,
                         fixedPosition + xOffset,
@@ -125,7 +125,7 @@ namespace XF.ChartLibrary.Renderer
             }
         }
 
-        protected SKPath mRenderGridLinesPath = new SKPath();
+        protected SKPath RenderGridLinesPath = new SKPath();
 
         public void RenderGridLines(SKCanvas c)
         {
@@ -139,13 +139,13 @@ namespace XF.ChartLibrary.Renderer
                 int clipRestoreCount = c.Save();
                 c.ClipRect(GetGridClippingRect());
 
-                var positions = GetTransformedPositions();
+                SKPoint[] positions = GetTransformedPositions();
 
                 GridPaint.Color = YAxis.GridColor;
                 GridPaint.StrokeWidth = YAxis.GridLineWidth;
                 GridPaint.PathEffect = YAxis.GridDashedLine;
 
-                var gridLinePath = mRenderGridLinesPath;
+                SKPath gridLinePath = RenderGridLinesPath;
                 gridLinePath.Reset();
 
                 // draw the grid
@@ -196,7 +196,7 @@ namespace XF.ChartLibrary.Renderer
             {
                 TransformedPositionsBuffer = new SKPoint[YAxis.entryCount];
             }
-            var positions = TransformedPositionsBuffer;
+            SKPoint[] positions = TransformedPositionsBuffer;
 
             for (int i = 0; i < positions.Length; i++)
             {
@@ -207,7 +207,7 @@ namespace XF.ChartLibrary.Renderer
             return Trasformer.PointValuesToPixel(positions);
         }
 
-        protected SKPath mDrawZeroLinePath = new SKPath();
+        protected SKPath DrawZeroLinePath = new SKPath();
 
         /// <summary>
         /// Draws the zero line.
@@ -216,16 +216,16 @@ namespace XF.ChartLibrary.Renderer
         {
 
             int clipRestoreCount = c.Save();
-            var rect = ViewPortHandler.ContentRect.InsetVertically(YAxis.ZeroLineWidth);
+            SKRect rect = ViewPortHandler.ContentRect.InsetVertically(YAxis.ZeroLineWidth);
             c.ClipRect(rect);
 
             // draw zero line
-            var pos = Trasformer.PixelsToValue(0f, 0f);
+            SKPoint pos = Trasformer.PixelsToValue(0f, 0f);
 
             ZeroLinePaint.Color = YAxis.ZeroLineColor;
             ZeroLinePaint.StrokeWidth = YAxis.ZeroLineWidth;
 
-            var zeroLinePath = mDrawZeroLinePath;
+            SKPath zeroLinePath = DrawZeroLinePath;
             zeroLinePath.Reset();
 
             zeroLinePath.MoveTo(ViewPortHandler.ContentLeft, (float)pos.Y);
@@ -255,7 +255,7 @@ namespace XF.ChartLibrary.Renderer
                     continue;
 
                 int clipRestoreCount = c.Save();
-                var mLimitLineClippingRect = ViewPortHandler.ContentRect.InsetVertically(l.LineWidth);
+                SKRect mLimitLineClippingRect = ViewPortHandler.ContentRect.InsetVertically(l.LineWidth);
                 c.ClipRect(mLimitLineClippingRect);
 
                 LimitLinePaint.Style = SKPaintStyle.Stroke;
@@ -263,7 +263,7 @@ namespace XF.ChartLibrary.Renderer
                 LimitLinePaint.StrokeWidth = l.LineWidth;
                 LimitLinePaint.PathEffect = l.DashPathEffect;
 
-                var pt = Trasformer.PointValueToPixel(0f, l.Limit);
+                SKPoint pt = Trasformer.PointValueToPixel(0f, l.Limit);
 
                 limitLinePath.MoveTo(ViewPortHandler.ContentLeft, pt.Y);
                 limitLinePath.LineTo(ViewPortHandler.ContentRight, pt.Y);
@@ -272,7 +272,7 @@ namespace XF.ChartLibrary.Renderer
                 limitLinePath.Reset();
                 // c.drawLines(pts, mLimitLinePaint);
 
-                String label = l.Label;
+                string label = l.Label;
 
                 // if drawing the limit-value label is enabled
                 if (string.IsNullOrEmpty(label) == false)
@@ -289,7 +289,7 @@ namespace XF.ChartLibrary.Renderer
                     float xOffset = 4f.DpToPixel() + l.XOffset;
                     float yOffset = l.LineWidth + labelLineHeight + l.YOffset;
 
-                    var position = l.LabelPosition;
+                    LimitLine.LimitLabelPosition position = l.LabelPosition;
 
                     if (position == LimitLine.LimitLabelPosition.RightTop)
                     {

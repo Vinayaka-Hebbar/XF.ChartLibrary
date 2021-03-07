@@ -20,8 +20,6 @@ namespace XF.ChartLibrary.Platform.iOS
         private NSMutableData bitmapData;
         private CGDataProvider dataProvider;
 
-        private Gestures.IChartGesture gesture;
-
 #pragma warning disable IDE0052 // Not Used
         private SkiaSharp.SKImageInfo info;
 #pragma warning restore IDE0052 
@@ -71,8 +69,13 @@ namespace XF.ChartLibrary.Platform.iOS
         {
             if (e.PropertyName == nameof(ICanvasController.IgnorePixelScaling))
             {
-                gesture?.SetScale(Element.IgnorePixelScaling ? 1f: ContentScaleFactor );
+                Element?.Gesture?.SetScale(Element.IgnorePixelScaling ? 1f : ContentScaleFactor);
                 SetNeedsDisplay();
+                return;
+            }
+            if (e.PropertyName == nameof(IChartController.TouchEnabled))
+            {
+                UpdateGesture(Element);
                 return;
             }
             if (e.PropertyName == nameof(IChartBase.Marker))
@@ -83,22 +86,44 @@ namespace XF.ChartLibrary.Platform.iOS
             base.OnElementPropertyChanged(sender, e);
         }
 
+        void UpdateGesture(TElement element)
+        {
+            if (element == null)
+                return;
+            if (element.Gesture is Gestures.IChartGesture gesture)
+            {
+                if (element.TouchEnabled)
+                {
+                    gesture.Attach(this);
+                }
+                else
+                {
+                    gesture.Detach(this);
+                }
+            }
+        }
+
         protected override void OnElementChanged(ElementChangedEventArgs<TElement> e)
         {
             if (e.OldElement != null)
             {
                 var oldElement = e.OldElement;
                 oldElement.SurfaceInvalidated -= SetNeedsDisplay;
-                Detach();
+                oldElement.Gesture?.Clear();
             }
             if (e.NewElement != null)
             {
                 var newElement = e.NewElement;
-                gesture = newElement.Gesture;
-                gesture.OnInitialize(this, newElement.IgnorePixelScaling ? 1f : ContentScaleFactor);
+                var gesture = newElement.Gesture;
+                if (gesture != null)
+                {
+                    // clear previous if not
+                    gesture.Clear();
+                    gesture.OnInitialize(this, newElement.IgnorePixelScaling ? 1f : ContentScaleFactor);
+                }
+
                 newElement.SurfaceInvalidated += SetNeedsDisplay;
                 UpdateMarker();
-                OnCreateElement(newElement);
                 SetNeedsDisplay();
             }
             base.OnElementChanged(e);
@@ -117,14 +142,6 @@ namespace XF.ChartLibrary.Platform.iOS
                 renderer.SetElement(marker);
                 renderer.UpdateMarkerLayout();
             }
-        }
-
-        protected virtual void Detach()
-        {
-        }
-
-        protected virtual void OnCreateElement(TElement element)
-        {
         }
 
         #region Draw
@@ -228,7 +245,7 @@ namespace XF.ChartLibrary.Platform.iOS
         {
             if (disposing)
             {
-                gesture?.Dispose();
+                Element?.Gesture?.Clear();
                 RemoveObserver(this, keyPath: boundsPath);
                 RemoveObserver(this, keyPath: framePath);
             }

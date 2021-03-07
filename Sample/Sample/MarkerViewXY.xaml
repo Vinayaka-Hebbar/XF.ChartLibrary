@@ -3,8 +3,12 @@
                         xmlns="http://xamarin.com/schemas/2014/forms"
                         xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
                         BackgroundColor="White"
+                              IsClippedToBounds="True"
                         x:Class="Sample.MarkerViewXY">
     <ContentView.Content>
-        <Label x:Name="Field" Margin="5,2" HorizontalTextAlignment="Center" TextColor="Black"/>
+        <Label x:Name="Field"
+               Margin="5,2"
+               HorizontalTextAlignment="Center"
+               TextColor="Black" />
     </ContentView.Content>
 </components:CustomMarkerView>

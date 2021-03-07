@@ -6,10 +6,6 @@ namespace XF.ChartLibrary
 {
     public static partial class ChartUtil
     {
-        public const double DEG2RAD = Math.PI / 180.0;
-
-        public const float FDEG2RAD = MathF.PI / 180.0f;
-
         public static SKPoint DpToPixel(this SKPoint self)
         {
             self.X *= density;
@@ -65,6 +61,15 @@ namespace XF.ChartLibrary
             return self;
         }
 
+        public static SKRect Inset(this SKRect self, float dx, float dy)
+        {
+            self.Left -= dx;
+            self.Top -= dx;
+            self.Right += dy;
+            self.Bottom += dy;
+            return self;
+        }
+
         public static SKRect InsetHorizontally(this SKRect self, float value)
         {
             self.Left -= value;
@@ -79,7 +84,7 @@ namespace XF.ChartLibrary
         public static ChartSize GetSizeOfRotatedRectangleByDegrees(float rectangleWidth, float
                 rectangleHeight, float degrees)
         {
-            return GetSizeOfRotatedRectangleByRadians(rectangleWidth, rectangleHeight, degrees * FDEG2RAD);
+            return GetSizeOfRotatedRectangleByRadians(rectangleWidth, rectangleHeight, degrees * FDegToRad);
         }
 
         /// <summary>

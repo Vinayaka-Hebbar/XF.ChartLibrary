@@ -1,15 +1,13 @@
-﻿using SkiaSharp;
-
-namespace XF.ChartLibrary.Data
+﻿namespace XF.ChartLibrary.Data
 {
     partial class BarEntry
     {
-        public BarEntry(float x, float y, SKImage icon) : base(x, y)
+        public BarEntry(float x, float y, Components.IDrawable icon) : base(x, y)
         {
             Icon = icon;
         }
 
-        public BarEntry(float x, float y, SKImage icon, object data) : base(x, y)
+        public BarEntry(float x, float y, Components.IDrawable icon, object data) : base(x, y)
         {
             Icon = icon;
             Data = data;
@@ -21,7 +19,7 @@ namespace XF.ChartLibrary.Data
         /// <param name="x"></param>
         /// <param name="vals">the stack values, use at least 2</param>
         /// <param name="icon">icon image</param>
-        public BarEntry(float x, float[] vals, SKImage icon) : base(x, CalcSum(vals), icon)
+        public BarEntry(float x, float[] vals, Components.IDrawable icon) : base(x, CalcSum(vals), icon)
         {
             yVals = vals;
             CalcPosNegSum();
@@ -36,7 +34,7 @@ namespace XF.ChartLibrary.Data
         /// <param name="vals">the stack values, use at least 2</param>
         /// <param name="icon">icon image</param>
         /// <param name="data">Spot for additional data this Entry represents.</param>
-        public BarEntry(float x, float[] vals, SKImage icon, object data) : base(x, CalcSum(vals), icon, data)
+        public BarEntry(float x, float[] vals, Components.IDrawable icon, object data) : base(x, CalcSum(vals), icon, data)
         {
             yVals = vals;
             CalcPosNegSum();

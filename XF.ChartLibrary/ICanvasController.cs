@@ -19,5 +19,6 @@ namespace XF.ChartLibrary
 
     public interface IChartController : ICanvasController, Charts.IChartBase
     {
+        bool TouchEnabled { get; }
     }
 }

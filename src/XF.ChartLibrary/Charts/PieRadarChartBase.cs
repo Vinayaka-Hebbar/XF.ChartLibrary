@@ -32,7 +32,6 @@ namespace XF.ChartLibrary.Charts
             gesture.Tap += OnTap;
             gesture.Touch += OnTouch;
             Gesture = gesture;
-            GestureRecognizers.Add(gesture);
             _velocitySamples = new List<AngularVelocitySample>();
         }
 

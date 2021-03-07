@@ -110,6 +110,7 @@ namespace XF.ChartLibrary.Platform.iOS
                 var oldElement = e.OldElement;
                 oldElement.SurfaceInvalidated -= SetNeedsDisplay;
                 oldElement.Gesture?.Clear();
+                oldElement.OnUnbind();
             }
             if (e.NewElement != null)
             {

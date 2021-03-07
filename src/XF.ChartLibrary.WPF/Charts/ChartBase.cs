@@ -17,6 +17,8 @@ namespace XF.ChartLibrary.Charts
 
         public static readonly DependencyProperty XAxisProperty = DependencyProperty.Register(nameof(XAxis), typeof(XAxis), typeof(ChartBase<TData, TDataSet>), new PropertyMetadata(new XAxis()));
 
+        public static readonly DependencyProperty HighlightPerTapEnabledProperty = DependencyProperty.Register(nameof(HighlightPerTapEnabled), typeof(bool), typeof(ChartBase<TData, TDataSet>), new PropertyMetadata(true));
+
         public static readonly DependencyProperty DescriptionProperty = DependencyProperty.Register(nameof(Description), typeof(Description), typeof(ChartBase<TData, TDataSet>));
 
         public static readonly DependencyProperty MarkerProperty = DependencyProperty.Register(nameof(Marker), typeof(XAxis), typeof(ChartBase<TData, TDataSet>));
@@ -70,6 +72,12 @@ namespace XF.ChartLibrary.Charts
                 ignorePixelScaling = value;
                 InvalidateVisual();
             }
+        }
+
+        public bool HighlightPerTapEnabled
+        {
+            get => (bool)GetValue(HighlightPerTapEnabledProperty);
+            set => SetValue(HighlightPerTapEnabledProperty, value);
         }
 
         public IMarker Marker

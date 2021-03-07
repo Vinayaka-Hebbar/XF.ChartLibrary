@@ -25,8 +25,6 @@ namespace XF.ChartLibrary.Charts
 
         public static readonly DependencyProperty HighlightPerDragEnabledProperty = DependencyProperty.Register(nameof(HighlightPerDragEnabled), typeof(bool), typeof(BarLineChartBase<TData, TDataSet>), new PropertyMetadata(true));
 
-        public static readonly DependencyProperty HighlightPerTapEnabledProperty = DependencyProperty.Register(nameof(HighlightPerTapEnabled), typeof(bool), typeof(BarLineChartBase<TData, TDataSet>), new PropertyMetadata(true));
-
         public static readonly DependencyProperty IsDrawGridBackgroundProperty = DependencyProperty.Register(nameof(IsDrawGridBackground), typeof(bool), typeof(BarLineChartBase<TData, TDataSet>));
 
         public static readonly DependencyProperty DrawBordersProperty = DependencyProperty.Register(nameof(DrawBorders), typeof(bool), typeof(BarLineChartBase<TData, TDataSet>));
@@ -69,6 +67,12 @@ namespace XF.ChartLibrary.Charts
                 Color = SKColors.Black,
                 StrokeWidth = 1f.DpToPixel()
             };
+            MouseLeftButtonUp += OnMouseLeftButtonUp;
+        }
+
+        private void OnMouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+           
         }
 
         /// <summary>

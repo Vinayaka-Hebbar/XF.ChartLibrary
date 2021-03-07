@@ -1,37 +1,63 @@
-﻿using Xamarin.Forms;
+﻿using System.Windows;
+using System.Windows.Documents;
 
 namespace XF.ChartLibrary.Charts
 {
     public partial class PieChart
     {
-        public static readonly BindableProperty DrawRoundedSlicesEnabledProperty = BindableProperty.Create(nameof(DrawRoundedSlicesEnabled), typeof(bool), typeof(PieChart));
+        public static readonly DependencyProperty DrawRoundedSlicesEnabledProperty = DependencyProperty.Register(nameof(DrawRoundedSlicesEnabled), typeof(bool), typeof(PieChart));
 
-        public static readonly BindableProperty DrawSlicesUnderHoleEnabledProperty = BindableProperty.Create(nameof(DrawSlicesUnderHoleEnabled), typeof(bool), typeof(PieChart));
+        public static readonly DependencyProperty DrawSlicesUnderHoleEnabledProperty = DependencyProperty.Register(nameof(DrawSlicesUnderHoleEnabled), typeof(bool), typeof(PieChart));
 
-        public static readonly BindableProperty DrawHoleEnabledProperty = BindableProperty.Create(nameof(DrawHoleEnabled), typeof(bool), typeof(PieChart), defaultValue: true);
+        public static readonly DependencyProperty DrawHoleEnabledProperty = DependencyProperty.Register(nameof(DrawHoleEnabled), typeof(bool), typeof(PieChart), new PropertyMetadata(true));
 
-        public static readonly BindableProperty DrawEntryLabelsProperty = BindableProperty.Create(nameof(DrawEntryLabels), typeof(bool), typeof(PieChart), defaultValue: true);
+        public static readonly DependencyProperty DrawEntryLabelsProperty = DependencyProperty.Register(nameof(DrawEntryLabels), typeof(bool), typeof(PieChart), new PropertyMetadata(true));
 
-        public static readonly BindableProperty DrawCenterTextEnabledProperty = BindableProperty.Create(nameof(DrawCenterTextEnabled), typeof(bool), typeof(PieChart), defaultValue: true);
+        public static readonly DependencyProperty DrawCenterTextEnabledProperty = DependencyProperty.Register(nameof(DrawCenterTextEnabled), typeof(bool), typeof(PieChart), new PropertyMetadata(true));
 
-        public static readonly BindableProperty UsePercenValuesEnabledProperty = BindableProperty.Create(nameof(UsePercenValuesEnabled), typeof(bool), typeof(PieChart));
+        public static readonly DependencyProperty UsePercenValuesEnabledProperty = DependencyProperty.Register(nameof(UsePercenValuesEnabled), typeof(bool), typeof(PieChart));
 
-        public static readonly BindableProperty MaxAngleProperty = BindableProperty.Create(nameof(MaxAngle), typeof(float), typeof(PieChart), defaultValue: 360f);
+        public static readonly DependencyProperty MaxAngleProperty = DependencyProperty.Register(nameof(MaxAngle), typeof(float), typeof(PieChart), new PropertyMetadata(360f, null, MaxAngleClamp));
 
-        public static readonly BindableProperty MinAngleForSlicesProperty = BindableProperty.Create(nameof(MinAngleForSlices), typeof(float), typeof(PieChart), defaultValue: 0f);
+        public static readonly DependencyProperty MinAngleForSlicesProperty = DependencyProperty.Register(nameof(MinAngleForSlices), typeof(float), typeof(PieChart), new PropertyMetadata(null,null,  LimitMinAngleForSlices));
 
-        public static readonly BindableProperty CenterTextProperty = BindableProperty.Create(nameof(CenterText), typeof(FormattedString), typeof(PieChart), defaultValue: null);
+        public static readonly DependencyProperty CenterTextProperty = DependencyProperty.Register(nameof(CenterText), typeof(string), typeof(PieChart), new PropertyMetadata(null, null, (b, v) => v ?? string.Empty));
 
-        public static readonly BindableProperty HoleRadiusProperty = BindableProperty.Create(nameof(HoleRadius), typeof(float), typeof(PieChart), defaultValue: 50f);
+        public static readonly DependencyProperty HoleRadiusProperty = DependencyProperty.Register(nameof(HoleRadius), typeof(float), typeof(PieChart), new PropertyMetadata(50f));
 
-        public static readonly BindableProperty TransparentCircleRadiusPercentProperty = BindableProperty.Create(nameof(TransparentCircleRadiusPercent), typeof(float), typeof(PieChart), defaultValue: 55f);
+        public static readonly DependencyProperty TransparentCircleRadiusPercentProperty = DependencyProperty.Register(nameof(TransparentCircleRadiusPercent), typeof(float), typeof(PieChart), new PropertyMetadata(55f));
 
-        public static readonly BindableProperty CenterTextRadiusPercentProperty = BindableProperty.Create(nameof(CenterTextRadiusPercent), typeof(float), typeof(PieChart), defaultValue: 100f);
+        public static readonly DependencyProperty CenterTextRadiusPercentProperty = DependencyProperty.Register(nameof(CenterTextRadiusPercent), typeof(float), typeof(PieChart), new PropertyMetadata(100f));
+
+
+        static object MaxAngleClamp(DependencyObject bindable, object value)
+        {
+            var newValue = (float)value;
+            if (newValue > 360)
+                return 360f;
+
+            if (newValue < 90)
+                return 90f;
+            return value;
+        }
+
+        static object LimitMinAngleForSlices(DependencyObject bindable, object value)
+        {
+            var newValue = (float)value;
+            var maxAngle = (float)bindable.GetValue(MaxAngleProperty);
+            if (newValue > (maxAngle / 2f))
+                return maxAngle / 2f;
+            else if (newValue < 0)
+                return 0f;
+            return value;
+        }
+
 
         public PieChart()
         {
 
         }
+
 
         /// <summary>
         /// If true, the slices of the piechart are rounded
@@ -87,15 +113,7 @@ namespace XF.ChartLibrary.Charts
         public float MaxAngle
         {
             get => (float)GetValue(MaxAngleProperty);
-            set
-            {
-                if (value > 360)
-                    value = 360f;
-
-                if (value < 90)
-                    value = 90f;
-                SetValue(MaxAngleProperty, value);
-            }
+            set => SetValue(MaxAngleProperty, value);
         }
 
         /// <summary>
@@ -106,28 +124,16 @@ namespace XF.ChartLibrary.Charts
         public float MinAngleForSlices
         {
             get => (float)GetValue(MinAngleForSlicesProperty);
-            set
-            {
-                if (value > (MaxAngle / 2f))
-                    value = MaxAngle / 2f;
-                else if (value < 0)
-                    value = 0f;
-                SetValue(MinAngleForSlicesProperty, value);
-            }
+            set => SetValue(MinAngleForSlicesProperty, value);
         }
 
         /// <summary>
         /// Variable for the text that is drawn in the center of the pie-chart
         /// </summary>
-        public FormattedString CenterText
+        public string CenterText
         {
-            get => (FormattedString)GetValue(CenterTextProperty);
-            set
-            {
-                if (value == null)
-                    value = string.Empty;
-                SetValue(CenterTextProperty, value);
-            }
+            get => (string)GetValue(CenterTextProperty);
+            set => SetValue(CenterTextProperty, value);
         }
 
         /// <summary>
@@ -169,12 +175,5 @@ namespace XF.ChartLibrary.Charts
             set => SetValue(CenterTextRadiusPercentProperty, value);
         }
 
-        public override float RequiredLegendOffset
-        {
-            get
-            {
-                return LegendRenderer.LabelPaint.TextSize * 2.0f;
-            }
-        }
     }
 }

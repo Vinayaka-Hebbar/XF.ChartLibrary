@@ -104,7 +104,7 @@ namespace XF.ChartLibrary.Platform.Droid
                 UpdateBackgroundColor();
                 return;
             }
-            if(e.PropertyName == nameof(IChartController.TouchEnabled))
+            if (e.PropertyName == nameof(IChartController.TouchEnabled))
             {
                 UpdateGesture(element);
                 return;
@@ -198,7 +198,8 @@ namespace XF.ChartLibrary.Platform.Droid
         #region OnDraw
         protected override void OnDraw(Canvas canvas)
         {
-            base.OnDraw(canvas);// bail out if the view is not actually visible
+            base.OnDraw(canvas);
+            // bail out if the view is not actually visible
             if (Visibility != ViewStates.Visible)
             {
                 FreeBitmap();
@@ -343,6 +344,7 @@ namespace XF.ChartLibrary.Platform.Droid
                 oldElement.PropertyChanged -= OnElementPropertyChanged;
                 // clear all values
                 oldElement.Gesture?.Clear();
+                oldElement.OnUnbind();
                 SetOnTouchListener(null);
 
                 if (element.BackgroundColor != oldElement.BackgroundColor)
@@ -360,7 +362,7 @@ namespace XF.ChartLibrary.Platform.Droid
                 UpdateBackground();
             element.PropertyChanged += OnElementPropertyChanged;
             var gesture = newElement.Gesture;
-            if(gesture != null)
+            if (gesture != null)
             {
                 gesture.Clear();
                 gesture.OnInitialize(this);

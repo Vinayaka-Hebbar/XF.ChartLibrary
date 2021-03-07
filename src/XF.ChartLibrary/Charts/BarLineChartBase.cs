@@ -89,8 +89,6 @@ namespace XF.ChartLibrary.Charts
             gesture.Pan += OnPan;
             gesture.DoubleTap += OnDoubleTap;
             gesture.Pinch += OnPinch;
-            // does not required to add gesture
-            GestureRecognizers.Add(Gesture);
             savedMatrix = SKMatrix.Identity;
         }
 

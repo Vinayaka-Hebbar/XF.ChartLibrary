@@ -725,6 +725,20 @@ namespace XF.ChartLibrary.Renderer
             }
         }
 
+        /// <summary>
+        /// Releases the drawing bitmap.
+        /// </summary>
+        public void ReleaseBitmap()
+        {
+            if (DrawBitmap != null && DrawBitmap.TryGetTarget(out SKBitmap value))
+            {
+                value.Dispose();
+                DrawBitmap.SetTarget(null);
+            }
+            BitmapCanvas = null;
+            
+        }
+
         protected class DataSetImageCache
         {
             public SKPath CirclePathBuffer = new SKPath();

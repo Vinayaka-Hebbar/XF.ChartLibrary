@@ -5,6 +5,14 @@ namespace XF.ChartLibrary.Charts
 {
     partial class PieChart
     {
+        public override float RequiredLegendOffset
+        {
+            get
+            {
+                return LegendRenderer.LabelPaint.TextSize * 2.0f;
+            }
+        }
+
         public override void OnPaintSurface(SKSurface surface, SKImageInfo e)
         {
             base.OnPaintSurface(surface, e);
@@ -12,6 +20,7 @@ namespace XF.ChartLibrary.Charts
                 return;
 
             SKCanvas c = surface.Canvas;
+            // clear previous 
             c.Clear(SKColors.Transparent);
             Renderer.DrawData(c);
 

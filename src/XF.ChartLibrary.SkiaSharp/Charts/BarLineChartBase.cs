@@ -163,6 +163,7 @@ namespace XF.ChartLibrary.Charts
             }
 
             var canvas = surface.Canvas;
+            // clear canvas
             canvas.Clear(SKColors.Transparent);
             // execute all drawing commands
             DrawGridBackground(canvas);

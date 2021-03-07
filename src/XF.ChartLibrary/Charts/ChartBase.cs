@@ -165,11 +165,11 @@ namespace XF.ChartLibrary.Charts
 
         public virtual void OnPaintSurface(SKSurface surface, SKImageInfo e)
         {
-            var canvas = surface.Canvas;
             if (data == null && !string.IsNullOrEmpty(NoDataText))
             {
                 var pt = Bounds.Center;
-
+                var canvas = surface.Canvas;
+                canvas.Clear(SKColors.Transparent);
                 switch (InfoPaint.TextAlign)
                 {
                     case SKTextAlign.Left:
@@ -192,7 +192,6 @@ namespace XF.ChartLibrary.Charts
 
             if (!offsetsCalculated)
             {
-
                 CalculateOffsets();
                 offsetsCalculated = true;
             }
@@ -258,6 +257,13 @@ namespace XF.ChartLibrary.Charts
                     job.DoJob();
                 }
             }
+        }
+
+        /// <summary>
+        /// Called when element is removed from view
+        /// </summary>
+        public virtual void OnUnbind()
+        {
 
         }
     }

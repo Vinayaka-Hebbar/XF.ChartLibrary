@@ -10,7 +10,7 @@ namespace XF.ChartLibrary
 
         bool IgnorePixelScaling { get; }
 
-        Gestures.IChartGesture Gesture { get; }
+        internal Gestures.IChartGesture Gesture { get; }
 
         void OnSizeChanged(float w, float h);
 

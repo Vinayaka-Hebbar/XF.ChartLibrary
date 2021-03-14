@@ -7,7 +7,7 @@ using XF.ChartLibrary.Jobs;
 
 namespace XF.ChartLibrary.Charts
 {
-    public abstract partial class ChartBase<TData, TDataSet> : View, IAnimator, IChartController
+    public abstract partial class ChartBase<TData, TDataSet> : View, IAnimator
     {
         public static readonly BindableProperty IgnorePixelScalingProperty =
                   BindableProperty.Create(nameof(IgnorePixelScaling), typeof(bool), typeof(ChartBase<TData, TDataSet>), false);
@@ -69,7 +69,7 @@ namespace XF.ChartLibrary.Charts
 
         static void OnTouchEnableChanged(BindableObject bindable, object oldValue, object newValue)
         {
-            var chart = (ChartBase<TData, TDataSet>)bindable;
+            var chart = (IChartController)bindable;
             if (chart.Gesture != null)
             {
                 chart.Gesture.TouchEnabled = (bool)newValue;
@@ -147,8 +147,6 @@ namespace XF.ChartLibrary.Charts
             get => (XAxis)GetValue(XAxisProperty);
             protected set => SetValue(XAxisProperty, value);
         }
-
-        public abstract Gestures.IChartGesture Gesture { get; }
 
         public event Action SurfaceInvalidated;
 

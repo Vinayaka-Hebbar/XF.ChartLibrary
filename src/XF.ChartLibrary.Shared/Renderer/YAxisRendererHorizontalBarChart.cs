@@ -3,20 +3,23 @@ using XF.ChartLibrary.Utils;
 
 namespace XF.ChartLibrary.Renderer
 {
-    public partial class XAxisRenderer : AxisRenderer
+    public partial class YAxisRendererHorizontalBarChart : YAxisRenderer
     {
-        protected readonly XAxis XAxis;
-
-        public XAxisRenderer(ViewPortHandler viewPortHandler, XAxis axis, Transformer trans) : base(viewPortHandler, axis, trans)
+        public YAxisRendererHorizontalBarChart(ViewPortHandler viewPortHandler, YAxis axis, Transformer trans) : base(viewPortHandler, axis, trans)
         {
-            XAxis = axis;
         }
 
+        /// <summary>
+        /// Computes the axis values.
+        /// </summary>
+        /// <param name="min">the minimum y-value in the data object for this axis</param>
+        /// <param name="max">the maximum y-value in the data object for this axis</param>
+        /// <param name="inverted"></param>
         public override void ComputeAxis(float min, float max, bool inverted)
         {
             // calculate the starting and entry point of the y-labels (depending on
             // zoom / contentrect bounds)
-            if (ViewPortHandler.ContentWidth > 10 && !ViewPortHandler.IsFullyZoomedOutX)
+            if (ViewPortHandler.ChartHeight > 10 && !ViewPortHandler.IsFullyZoomedOutX)
             {
 
                 var p1 = Trasformer.ValueByTouchPoint(ViewPortHandler.ContentLeft, ViewPortHandler.ContentTop);
@@ -29,7 +32,6 @@ namespace XF.ChartLibrary.Renderer
                 }
                 else
                 {
-
                     min = (float)p1.X;
                     max = (float)p2.X;
                 }
@@ -37,16 +39,5 @@ namespace XF.ChartLibrary.Renderer
 
             ComputeAxisValues(min, max);
         }
-
-        protected override void ComputeAxisValues(float min, float max)
-        {
-            base.ComputeAxisValues(min, max);
-#if SKIASHARP
-            ComputeSize(); 
-#else
-            throw null;
-#endif
-        }
     }
-
 }

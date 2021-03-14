@@ -27,9 +27,8 @@ namespace XF.ChartLibrary.Renderer
         /// <summary>
         /// draws the y-axis labels to the screen
         /// </summary>
-        public void RenderAxisLabels(SKCanvas c)
+        public virtual void RenderAxisLabels(SKCanvas c)
         {
-
             if (!YAxis.IsEnabled || !YAxis.IsDrawLabelsEnabled)
                 return;
 
@@ -79,9 +78,8 @@ namespace XF.ChartLibrary.Renderer
             DrawYLabels(c, xPos, positions, yoffset);
         }
 
-        public void RenderAxisLine(SKCanvas c)
+        public virtual void RenderAxisLine(SKCanvas c)
         {
-
             if (!YAxis.IsEnabled || !YAxis.IsDrawAxisLineEnabled)
                 return;
 
@@ -103,9 +101,8 @@ namespace XF.ChartLibrary.Renderer
         /// <summary>
         /// draws the y-labels on the specified x-position
         /// </summary>
-        protected void DrawYLabels(SKCanvas c, float fixedPosition, SKPoint[] positions, float offset)
+        protected virtual void DrawYLabels(SKCanvas c, float fixedPosition, SKPoint[] positions, float offset)
         {
-
             int from = YAxis.DrawBottomYLabelEntry ? 0 : 1;
             int to = YAxis.DrawTopYLabelEntry
                     ? YAxis.entryCount
@@ -116,9 +113,7 @@ namespace XF.ChartLibrary.Renderer
             // draw
             for (int i = from; i < to; i++)
             {
-                string text = YAxis.GetFormattedLabel(i);
-
-                c.DrawText(text,
+                c.DrawText(YAxis.GetFormattedLabel(i),
                         fixedPosition + xOffset,
                         positions[i].Y + offset,
                         AxisLabelPaint);
@@ -165,7 +160,7 @@ namespace XF.ChartLibrary.Renderer
             }
         }
 
-        public SKRect GetGridClippingRect()
+        public virtual SKRect GetGridClippingRect()
         {
             return ViewPortHandler.ContentRect.InsetVertically(Axis.GridLineWidth);
         }
@@ -173,9 +168,8 @@ namespace XF.ChartLibrary.Renderer
         /// <summary>
         /// Calculates the path for a grid line.
         /// </summary>
-        protected SKPath LinePath(SKPath p, SKPoint position)
+        protected virtual SKPath LinePath(SKPath p, SKPoint position)
         {
-
             p.MoveTo(ViewPortHandler.OffsetLeft, position.Y);
             p.LineTo(ViewPortHandler.ContentRight, position.Y);
 
@@ -189,9 +183,8 @@ namespace XF.ChartLibrary.Renderer
         /// of x- and y-coordinates.
         /// </summary>
         /// <returns></returns>
-        protected SKPoint[] GetTransformedPositions()
+        protected virtual SKPoint[] GetTransformedPositions()
         {
-
             if (TransformedPositionsBuffer.Length != YAxis.entryCount)
             {
                 TransformedPositionsBuffer = new SKPoint[YAxis.entryCount];
@@ -212,12 +205,10 @@ namespace XF.ChartLibrary.Renderer
         /// <summary>
         /// Draws the zero line.
         /// </summary>
-        protected void DrawZeroLine(SKCanvas c)
+        protected virtual void DrawZeroLine(SKCanvas c)
         {
-
             int clipRestoreCount = c.Save();
-            SKRect rect = ViewPortHandler.ContentRect.InsetVertically(YAxis.ZeroLineWidth);
-            c.ClipRect(rect);
+            c.ClipRect(ViewPortHandler.ContentRect.InsetVertically(YAxis.ZeroLineWidth));
 
             // draw zero line
             SKPoint pos = Trasformer.PixelsToValue(0f, 0f);
@@ -239,7 +230,7 @@ namespace XF.ChartLibrary.Renderer
 
         protected SKPath RenderLimitLinesPath = new SKPath();
 
-        public void RenderLimitLines(SKCanvas c)
+        public virtual void RenderLimitLines(SKCanvas c)
         {
             IList<LimitLine> limitLines = YAxis.LimitLines;
 
@@ -255,8 +246,8 @@ namespace XF.ChartLibrary.Renderer
                     continue;
 
                 int clipRestoreCount = c.Save();
-                SKRect mLimitLineClippingRect = ViewPortHandler.ContentRect.InsetVertically(l.LineWidth);
-                c.ClipRect(mLimitLineClippingRect);
+                SKRect limitLineClippingRect = ViewPortHandler.ContentRect.InsetVertically(l.LineWidth);
+                c.ClipRect(limitLineClippingRect);
 
                 LimitLinePaint.Style = SKPaintStyle.Stroke;
                 LimitLinePaint.Color = l.LineColor;

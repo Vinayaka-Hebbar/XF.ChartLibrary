@@ -1,5 +1,4 @@
 ﻿using Foundation;
-using System;
 using System.Linq;
 using UIKit;
 using XF.ChartLibrary.Platform.iOS;
@@ -8,8 +7,7 @@ namespace XF.ChartLibrary.Gestures
 {
     partial class PieRadarChartGesture
     {
-
-        private TapEvent tap;
+        private TapEvent tapEvent;
 
         private readonly UIGestureRecognizer tapGesture;
 
@@ -30,18 +28,18 @@ namespace XF.ChartLibrary.Gestures
             if (recognizer.State == UIGestureRecognizerState.Ended)
             {
                 var location = recognizer.LocationInView(View);
-                tap.state = TouchState.Ended;
-                tap.x = (float)(location.X * Scale);
-                tap.y = (float)(location.Y * Scale);
-                OnTap(tap);
+                tapEvent.state = TouchState.Ended;
+                tapEvent.x = (float)(location.X * Scale);
+                tapEvent.y = (float)(location.Y * Scale);
+                OnTap(tapEvent);
             }
             else if (recognizer.State == UIGestureRecognizerState.Began)
             {
                 var location = recognizer.LocationInView(View);
-                tap.state = TouchState.Begin;
-                tap.x = (float)(location.X * Scale);
-                tap.y = (float)(location.Y * Scale);
-                OnTap(tap);
+                tapEvent.state = TouchState.Begin;
+                tapEvent.x = (float)(location.X * Scale);
+                tapEvent.y = (float)(location.Y * Scale);
+                OnTap(tapEvent);
             }
         }
 

@@ -28,7 +28,7 @@ using Paint = Android.Graphics.Paint;
 namespace XF.ChartLibrary.Charts
 {
 
-#if __ANDOIRD__ || SKIASHARP
+#if __ANDROID__ || SKIASHARP
     public enum PaintKind
     {
         GridBackground = 4,

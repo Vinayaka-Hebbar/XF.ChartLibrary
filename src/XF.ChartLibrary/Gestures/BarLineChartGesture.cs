@@ -12,32 +12,52 @@
 
     public partial class BarLineChartGesture : ChartGestureBase
     {
-        public event TapHandler Tap;
+        private TapHandler tap;
+        public TapHandler Tap
+        {
+            get => tap;
+            set => tap = value;
+        }
 
-        public event PanHandler Pan;
+        private PanHandler pan;
+        public PanHandler Pan
+        {
+            get => pan;
+            set => pan = value;
+        }
 
-        public event DoubleTapHandler DoubleTap;
+        private DoubleTapHandler doubleTap;
+        public DoubleTapHandler DoubleTap
+        {
+            get => doubleTap;
+            set => doubleTap = value;
+        }
 
-        public event PinchHandler Pinch;
+        private PinchHandler pinch;
+        public PinchHandler Pinch
+        {
+            get => pinch;
+            set => pinch = value;
+        }
 
         public void OnTap(TapEvent e)
         {
-            Tap?.Invoke(e);
+            tap?.Invoke(e);
         }
 
         public void OnPan(PanEvent e, float distanceX, float distanceY)
         {
-            Pan?.Invoke(e, distanceX, distanceY);
+            pan?.Invoke(e, distanceX, distanceY);
         }
 
         public void OnDoubleTap(float x, float y)
         {
-            DoubleTap?.Invoke(x, y);
+            doubleTap?.Invoke(x, y);
         }
 
         public void OnPinch(PinchEvent e, float x, float y)
         {
-            Pinch?.Invoke(e, x, y);
+            pinch?.Invoke(e, x, y);
         }
     }
 }

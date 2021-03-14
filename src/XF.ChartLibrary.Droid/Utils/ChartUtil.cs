@@ -84,5 +84,12 @@ namespace XF.ChartLibrary
             self.GetTextBounds(text, 0, text.Length, r);
             return r.Width();
         }
+
+        public static float MeasureHeight(this Paint self, string text)
+        {
+            var r = calcTextHeightRect;
+            self.GetTextBounds(text, 0, text.Length, r);
+            return r.Height();
+        }
     }
 }

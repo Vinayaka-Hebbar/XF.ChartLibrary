@@ -17,6 +17,7 @@ namespace XF.ChartLibrary.Charts
     public abstract partial class PieRadarChartBase<TData, TDataSet> : ChartBase<TData, TDataSet>, IPieRadarChartBase where TData : IChartData<TDataSet>, IChartData
         where TDataSet : IDataSet
     {
+
         /// <summary>
         /// holds the normalized version of the current rotation angle of the chart
         /// </summary>
@@ -42,7 +43,7 @@ namespace XF.ChartLibrary.Charts
             get
             {
                 var content = ViewPortHandler.ContentRect;
-#if APPLE
+#if APPLE 
                 Point location = content.Location;
                 var size = content.Size;
                 location.X += ExtraLeftOffset;

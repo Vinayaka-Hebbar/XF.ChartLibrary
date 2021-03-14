@@ -22,9 +22,24 @@ namespace XF.ChartLibrary.Utils
             r.Top *= phaseY;
             r.Bottom *= phaseY;
 
-            r = MatrixValueToPx.MapRect(r);
-            r = ViewPortHandler.touchMatrix.MapRect(r);
-            return MatrixOffset.MapRect(r);
+            return MatrixOffset.MapRect(ViewPortHandler.touchMatrix
+                .MapRect(MatrixValueToPx.MapRect(r)));
+        }
+
+
+        /// <summary>
+        /// Transform a rectangle with all matrices with potential animation phases.
+        /// </summary>
+        /// <param name="r"></param>
+        /// <param name="phaseY"></param>
+        public SKRect RectToPixelPhaseHorizontal(SKRect r, float phaseY)
+        {
+            // multiply the height of the rect with the phase
+            r.Left *= phaseY;
+            r.Right *= phaseY;
+
+            return MatrixOffset.MapRect(ViewPortHandler.touchMatrix
+                .MapRect(MatrixValueToPx.MapRect(r)));
         }
 
         /// <summary>
@@ -164,7 +179,7 @@ namespace XF.ChartLibrary.Utils
         /// <summary>
         /// Prepares the matrix that contains all offsets.
         /// </summary>
-        public void PrepareMatrixOffset(bool inverted)
+        public virtual void PrepareMatrixOffset(bool inverted)
         {
             if (!inverted)
                 MatrixOffset = SKMatrix.Identity.PostConcat(SKMatrix.CreateTranslation(ViewPortHandler.OffsetLeft,

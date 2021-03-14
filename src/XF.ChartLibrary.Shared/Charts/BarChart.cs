@@ -46,7 +46,6 @@ namespace XF.ChartLibrary.Charts
 
         public override Highlight.Highlight GetHighlightByTouchPoint(float x, float y)
         {
-
             if (data == null)
             {
                 System.Diagnostics.Trace.TraceError("Can't select by touch. No data set.");
@@ -65,17 +64,16 @@ namespace XF.ChartLibrary.Charts
             }
         }
 
-        /**
-     * The passed outputRect will be assigned the values of the bounding box of the specified Entry in the specified DataSet.
-     * The rect will be assigned Float.MIN_VALUE in all locations if the Entry could not be found in the charts data.
-     *
-     * @param e
-     * @return
-     */
+        /// <summary>
+        /// The passed outputRect will be assigned the values of the bounding box of the specified Entry in the specified DataSet.
+        /// The rect will be assigned Float.MIN_VALUE in all locations if the Entry could not be found in the charts data.
+        /// </summary>
+        /// <param name="e"></param>
+        /// <returns></returns>
 #if __ANDROID__ && !SKIASHARP
-        public void GetBarBounds(BarEntry e, Rect outputRect) 
+        public virtual void GetBarBounds(BarEntry e, Rect outputRect) 
 #else
-        public Rect GetBarBounds(BarEntry e)
+        public virtual Rect GetBarBounds(BarEntry e)
 #endif
         {
             IBarDataSet set = data.GetDataSetForEntry(e);

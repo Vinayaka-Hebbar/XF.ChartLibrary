@@ -1,5 +1,4 @@
-﻿using SkiaSharp;
-using XF.ChartLibrary.Components;
+﻿using XF.ChartLibrary.Components;
 using XF.ChartLibrary.Renderer;
 using XF.ChartLibrary.Utils;
 
@@ -49,9 +48,6 @@ namespace XF.ChartLibrary.Charts
         bool DragXEnabled { get; set; }
         bool DragYEnabled { get; set; }
         bool DrawBorders { get; set; }
-#if NETSTANDARD
-        Gestures.IChartGesture Gesture { get; } 
-#endif
         PlatformColor GridBackgroundColor { get; set; }
         float HighestVisibleX { get; }
         bool HighlightPerDragEnabled { get; set; }
@@ -81,7 +77,7 @@ namespace XF.ChartLibrary.Charts
         void MoveViewTo(float xValue, float yValue, YAxisDependency axis);
         void MoveViewToX(float xValue);
 #if SKIASHARP
-        void OnPaintSurface(SKSurface surface, SKImageInfo info); 
+        void OnPaintSurface(SkiaSharp.SKSurface surface, SkiaSharp.SKImageInfo info); 
 #endif
         void OnSizeChanged(float w, float h);
         void ResetViewPortOffsets();

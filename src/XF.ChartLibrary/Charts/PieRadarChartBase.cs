@@ -6,11 +6,17 @@ using XF.ChartLibrary.Gestures;
 
 namespace XF.ChartLibrary.Charts
 {
-    partial class PieRadarChartBase<TData, TDataSet>
+    partial class PieRadarChartBase<TData, TDataSet> : IChartController
     {
         public static readonly BindableProperty RotationEnabledProperty = BindableProperty.Create(nameof(RotationEnabled), typeof(bool), typeof(PieRadarChartBase<TData, TDataSet>), defaultValue: true);
 
-        public override IChartGesture Gesture { get; }
+        private readonly PieRadarChartGesture chartGesture;
+        public PieRadarChartGesture ChartGesture
+        {
+            get => chartGesture;
+        }
+
+        IChartGesture ICanvasController.Gesture => chartGesture;
 
         private readonly IList<AngularVelocitySample> _velocitySamples;
 
@@ -28,10 +34,12 @@ namespace XF.ChartLibrary.Charts
 
         public PieRadarChartBase()
         {
-            var gesture = new PieRadarChartGesture();
-            gesture.Tap += OnTap;
-            gesture.Touch += OnTouch;
-            Gesture = gesture;
+            chartGesture = new PieRadarChartGesture
+            {
+                Tap = OnTap,
+                Touch = OnTouch
+            };
+            
             _velocitySamples = new List<AngularVelocitySample>();
         }
 

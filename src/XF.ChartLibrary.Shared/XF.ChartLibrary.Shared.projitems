@@ -15,6 +15,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Charts\BarChart.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Charts\BarLineChartBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Charts\ChartBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Charts\HorizontalBarChart.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Charts\IBarLineChartBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Charts\IChartBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Charts\IPieRadarChartBase.cs" />
@@ -58,6 +59,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Highlight\BarHighlighter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Highlight\ChartHighlighter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Highlight\Highlight.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Highlight\HorizontalBarHighlighter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Highlight\IHighlighter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Highlight\PieHighligher.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Highlight\PieRadarHighlighter.cs" />
@@ -77,7 +79,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces\IChartData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Jobs\AnimatedViewPortJob.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Renderer\BarChartRenderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Renderer\HorizontalBarChartRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Renderer\PieChartRenderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Renderer\XAxisRendererHorizontalBarChart.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Renderer\YAxisRendererHorizontalBarChart.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utils\TransformerHorizontalBarChart.cs" />
     <Compile Include="..\XF.ChartLibrary.Shared\Jobs\MoveViewJob.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Jobs\ViewPortJob.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Listener\IChartValueSelectionListener.cs" />

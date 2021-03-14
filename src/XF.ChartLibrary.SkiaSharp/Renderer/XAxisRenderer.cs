@@ -21,7 +21,7 @@ namespace XF.ChartLibrary.Renderer
             GridPaint.PathEffect = XAxis.GridDashedLine;
         }
 
-        partial void ComputeSize()
+        protected virtual void ComputeSize()
         {
             var longest = XAxis.GetLongestLabel();
 
@@ -45,7 +45,7 @@ namespace XF.ChartLibrary.Renderer
             XAxis.LabelRotatedHeight = (int)MathF.Round(labelRotatedSize.Height);
         }
 
-        public void RenderAxisLabels(SKCanvas c)
+        public virtual void RenderAxisLabels(SKCanvas c)
         {
             if (!XAxis.IsEnabled || !XAxis.IsDrawLabelsEnabled)
                 return;
@@ -82,7 +82,7 @@ namespace XF.ChartLibrary.Renderer
             }
         }
 
-        public void RenderAxisLine(SKCanvas c)
+        public virtual void RenderAxisLine(SKCanvas c)
         {
             if (!XAxis.IsDrawAxisLineEnabled || !XAxis.IsEnabled)
                 return;
@@ -111,9 +111,8 @@ namespace XF.ChartLibrary.Renderer
         /// <summary>
         /// draws the x-labels on the specified y-position
         /// </summary>
-        protected void DrawLabels(SKCanvas c, float pos, SKPoint anchor)
+        protected virtual void DrawLabels(SKCanvas c, float pos, SKPoint anchor)
         {
-
             float labelRotationAngleDegrees = XAxis.LabelRotationAngle;
             var centeringEnabled = XAxis.IsCenterAxisLabelsEnabled;
 
@@ -283,7 +282,7 @@ namespace XF.ChartLibrary.Renderer
         }
 
 
-        public SKRect GetGridClippingRect()
+        public virtual SKRect GetGridClippingRect()
         {
             return ViewPortHandler.ContentRect.InsetHorizontally(Axis.GridLineWidth);
         }
@@ -291,7 +290,7 @@ namespace XF.ChartLibrary.Renderer
         /// <summary>
         /// Draws the grid line at the specified position using the provided path.
         /// </summary>
-        protected void DrawGridLine(SKCanvas c, SKPoint pos, SKPath gridLinePath)
+        protected virtual void DrawGridLine(SKCanvas c, SKPoint pos, SKPath gridLinePath)
         {
             gridLinePath.MoveTo(pos.X, ViewPortHandler.ContentBottom);
             gridLinePath.LineTo(pos.X, ViewPortHandler.ContentTop);
@@ -306,7 +305,7 @@ namespace XF.ChartLibrary.Renderer
         ///  Draws the LimitLines associated with this axis to the screen.
         /// </summary>
         /// <param name="c"></param>
-        public void RenderLimitLines(SKCanvas c)
+        public virtual void RenderLimitLines(SKCanvas c)
         {
             var limitLines = XAxis.LimitLines;
 
@@ -322,8 +321,7 @@ namespace XF.ChartLibrary.Renderer
                     continue;
 
                 int clipRestoreCount = c.Save();
-                var rect = ViewPortHandler.ContentRect.InsetHorizontally(l.LineWidth);
-                c.ClipRect(rect);
+                c.ClipRect(ViewPortHandler.ContentRect.InsetHorizontally(l.LineWidth));
 
                 var position = Trasformer.PointValueToPixel(l.Limit, 0.0f);
 
@@ -335,7 +333,7 @@ namespace XF.ChartLibrary.Renderer
         }
 
         private readonly SKPoint[] LimitLineSegmentsBuffer = new SKPoint[2];
-        private readonly SKPath LimitLinePath = new SKPath();
+        protected readonly SKPath LimitLinePath = new SKPath();
 
         public void RenderLimitLineLine(SKCanvas c, LimitLine limitLine, SKPoint position)
         {

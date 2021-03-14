@@ -4,18 +4,28 @@
 
     public partial class PieRadarChartGesture : ChartGestureBase
     {
-        public event TapHandler Tap;
+        private TapHandler tap;
+        public TapHandler Tap
+        {
+            get => tap;
+            set => tap = value;
+        }
 
-        public event TouchHandler Touch;
+        private TouchHandler touch;
+        public TouchHandler Touch
+        {
+            get => touch;
+            set => touch = value;
+        }
 
         public void OnTap(TapEvent e)
         {
-            Tap?.Invoke(e);
+            tap?.Invoke(e);
         }
 
         public void OnTouch(TouchEvent e)
         {
-            Touch?.Invoke(e);
+            touch?.Invoke(e);
         }
     }
 }

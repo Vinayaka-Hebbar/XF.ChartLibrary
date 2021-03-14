@@ -76,8 +76,7 @@ namespace XF.ChartLibrary.Charts
 
         private readonly RectF offset = new RectF();
 
-
-        protected override void CalculateOffsets()
+        public override void CalculateOffsets()
         {
             if (!customViewPortEnabled)
             {

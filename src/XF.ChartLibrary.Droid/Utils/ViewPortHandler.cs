@@ -11,6 +11,8 @@ namespace XF.ChartLibrary.Utils
 
         private RectangleF contentRect = new RectangleF();
 
+        public RectangleF ContentRect => contentRect;
+
         public void RestrainViewPort(float offsetLeft, float offsetTop, float offsetRight, float offsetBottom)
         {
             contentRect.Offset(offsetLeft, offsetTop);

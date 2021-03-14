@@ -61,7 +61,7 @@ namespace XF.ChartLibrary.Charts
         /// Returns the lowest x-index (value on the x-axis) that is still visible on
         /// the chart.
         /// </summary>
-        public float LowestVisibleX
+        public virtual float LowestVisibleX
         {
             get
             {
@@ -75,7 +75,7 @@ namespace XF.ChartLibrary.Charts
         /// Returns the highest x-index (value on the x-axis) that is still visible
         /// on the chart.
         /// </summary>
-        public float HighestVisibleX
+        public virtual float HighestVisibleX
         {
             get
             {
@@ -103,7 +103,7 @@ namespace XF.ChartLibrary.Charts
         /// 10, no less than a range of 10 on the x-axis can be viewed at once without
         /// scrolling.
         /// </summary>
-        public float VisibleXRangeMinimum
+        public virtual float VisibleXRangeMinimum
         {
             set
             {
@@ -117,7 +117,7 @@ namespace XF.ChartLibrary.Charts
         /// 10, no more than a range of 10 on the x-axis can be viewed at once without
         /// scrolling.
         /// </summary>
-        public float VisibleXRangeMaximum
+        public virtual float VisibleXRangeMaximum
         {
             set
             {
@@ -188,7 +188,7 @@ namespace XF.ChartLibrary.Charts
             LeftAxisTransformer.PrepareMatrixOffset(AxisLeft.Inverted);
         }
 
-        protected void PrepareValuePxMatrix()
+        protected virtual void PrepareValuePxMatrix()
         {
             RightAxisTransformer.PrepareMatrixValuePx(XAxis.axisMinimum,
                     XAxis.axisRange,
@@ -205,7 +205,7 @@ namespace XF.ChartLibrary.Charts
         /// smallest range to be displayed at once is 10, and no more than a range of 100 values can be viewed at once without
         /// scrolling
         /// </summary>
-        public void SetVisibleXRange(float minXRange, float maxXRange)
+        public virtual void SetVisibleXRange(float minXRange, float maxXRange)
         {
             float minScale = XAxis.AxisRange / minXRange;
             float maxScale = XAxis.AxisRange / maxXRange;
@@ -218,7 +218,7 @@ namespace XF.ChartLibrary.Charts
         /// </summary>
         /// <param name="maxYRange">the maximum visible range on the y-axis</param>
         /// <param name="axis">the axis for which this limit should apply</param>
-        public void SetVisibleYRangeMaximum(float maxYRange, YAxisDependency axis)
+        public virtual void SetVisibleYRangeMaximum(float maxYRange, YAxisDependency axis)
         {
             ViewPortHandler.SetMinimumScaleY(GetAxisRange(axis) / maxYRange);
         }
@@ -228,7 +228,7 @@ namespace XF.ChartLibrary.Charts
         /// </summary>
         /// <param name="minYRange">Min Y Range</param>
         /// <param name="axis">the axis for which this limit should apply</param>
-        public void SetVisibleYRangeMinimum(float minYRange, YAxisDependency axis)
+        public virtual void SetVisibleYRangeMinimum(float minYRange, YAxisDependency axis)
         {
             ViewPortHandler.SetMaximumScaleY(GetAxisRange(axis) / minYRange);
         }
@@ -236,7 +236,7 @@ namespace XF.ChartLibrary.Charts
         /// <summary>
         /// Limits the maximum and minimum y range that can be visible by pinching and zooming.
         /// </summary>
-        public void SetVisibleYRange(float minYRange, float maxYRange, YAxisDependency axis)
+        public virtual void SetVisibleYRange(float minYRange, float maxYRange, YAxisDependency axis)
         {
             float range = GetAxisRange(axis);
             ViewPortHandler.SetMinMaxScaleY(range / minYRange, range / maxYRange);
@@ -248,7 +248,7 @@ namespace XF.ChartLibrary.Charts
 
 #else
 
-        protected Rect CalculateLegendOffsets()
+        protected virtual Rect CalculateLegendOffsets()
         {
 #endif
             var left = 0.0f;
@@ -419,9 +419,8 @@ namespace XF.ChartLibrary.Charts
         /// <param name="e"></param>
         /// <param name="axis"></param>
         /// <returns></returns>
-        public Point GetPosition(Data.Entry e, YAxisDependency axis)
+        public virtual Point GetPosition(Data.Entry e, YAxisDependency axis)
         {
-
             if (e == null)
                 return default;
 

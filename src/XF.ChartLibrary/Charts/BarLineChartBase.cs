@@ -8,7 +8,7 @@ using XF.ChartLibrary.Utils;
 
 namespace XF.ChartLibrary.Charts
 {
-    partial class BarLineChartBase<TData, TDataSet> : IGestureController, IBarLineChartBase
+    partial class BarLineChartBase<TData, TDataSet> : IGestureController, IBarLineChartBase, IChartController
     {
         public static readonly BindableProperty DragXEnabledProperty = BindableProperty.Create(nameof(DragXEnabled), typeof(bool), typeof(BarLineChartBase<TData, TDataSet>), true);
 
@@ -64,7 +64,14 @@ namespace XF.ChartLibrary.Charts
         private long decelerationLastTime;
         #endregion
 
-        public override IChartGesture Gesture { get; }
+        private readonly BarLineChartGesture chartGesture;
+        public BarLineChartGesture ChartGesture
+        {
+            get => chartGesture;
+        }
+
+
+        IChartGesture ICanvasController.Gesture => chartGesture;
 
         public BarLineChartBase()
         {
@@ -83,12 +90,13 @@ namespace XF.ChartLibrary.Charts
                 StrokeWidth = 1f
             };
 
-            BarLineChartGesture gesture = new BarLineChartGesture();
-            Gesture = gesture;
-            gesture.Tap += OnTap;
-            gesture.Pan += OnPan;
-            gesture.DoubleTap += OnDoubleTap;
-            gesture.Pinch += OnPinch;
+            chartGesture = new BarLineChartGesture
+            {
+                Tap = OnTap,
+                Pan = OnPan,
+                DoubleTap = OnDoubleTap,
+                Pinch = OnPinch
+            };
             savedMatrix = SKMatrix.Identity;
         }
 
@@ -175,14 +183,14 @@ namespace XF.ChartLibrary.Charts
             }
         }
 
-        private bool IsTouchInverted()
+        protected bool IsTouchInverted()
         {
             return IsAnyAxisInverted &&
                 closestDataSetToTouch != null &&
                 GetAxis(closestDataSetToTouch.AxisDependency).Inverted;
         }
 
-        private void OnDoubleTap(float x, float y)
+        protected void OnDoubleTap(float x, float y)
         {
             if (data is null)
                 return;
@@ -202,7 +210,7 @@ namespace XF.ChartLibrary.Charts
             }
         }
 
-        private void OnPinch(PinchEvent e, float x, float y)
+        protected void OnPinch(PinchEvent e, float x, float y)
         {
             if (e.State == TouchState.Begin)
             {
@@ -265,7 +273,7 @@ namespace XF.ChartLibrary.Charts
             }
         }
 
-        private void OnPan(PanEvent e, float distanceX, float distanceY)
+        protected void OnPan(PanEvent e, float distanceX, float distanceY)
         {
             if (e.State == TouchState.Begin)
             {
@@ -381,10 +389,10 @@ namespace XF.ChartLibrary.Charts
         {
             if (IsTouchInverted())
             {
-                if (false)
+                if (this is HorizontalBarChart)
                 {
                     // TODO for horizontal bar
-                    // translation.X = -translation.X;
+                   tranX = -tranX;
                 }
                 else
                 {

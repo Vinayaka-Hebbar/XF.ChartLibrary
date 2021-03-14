@@ -177,6 +177,17 @@
         }
 
         /// <summary>
+        ///  This is for HorizontalBarChart vertical spacing.
+        /// </summary>
+        /// <param name="p">Paint</param>
+        /// <returns></returns>
+        public float GetRequiredHeightSpace(Paint p)
+        {
+            p.TextSize = TextSize;
+            return (float)p.MeasureHeight(GetLongestLabel()) + YOffset * 2f;
+        }
+
+        /// <summary>
         /// This is for normal(not horizontal) charts horizontal spacing.
         /// </summary>
         public Utils.ChartSize GetRequiredSpace(Paint p)

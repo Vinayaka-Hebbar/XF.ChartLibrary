@@ -134,7 +134,7 @@ namespace XF.ChartLibrary.Highlight
         /// <summary>
         /// An array of `Highlight` objects corresponding to the selected xValue and dataSetIndex.
         /// </summary>
-        protected IList<Highlight> BuildHighlights(IDataSet set, int dataSetIndex, float xVal, DataSetRounding rounding)
+        protected virtual IList<Highlight> BuildHighlights(IDataSet set, int dataSetIndex, float xVal, DataSetRounding rounding)
         {
 
             IList<Highlight> highlights = new List<Highlight>();

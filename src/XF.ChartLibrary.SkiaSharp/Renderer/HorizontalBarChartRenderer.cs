@@ -1,6 +1,5 @@
 ﻿using SkiaSharp;
 using System;
-using System.Collections.Generic;
 using XF.ChartLibrary.Data;
 using XF.ChartLibrary.Interfaces.DataProvider;
 using XF.ChartLibrary.Interfaces.DataSets;
@@ -8,24 +7,12 @@ using XF.ChartLibrary.Utils;
 
 namespace XF.ChartLibrary.Renderer
 {
-    partial class BarChartRenderer
+    public partial class HorizontalBarChartRenderer
     {
-        protected SKPaint ShadowPaint;
-        protected SKPaint BarBorderPaint;
-
-        protected SKPoint[][] BarBuffer;
-
-        #region Buffer
-        public override void InitBuffers()
+        protected override void Initialize()
         {
-            var barData = Chart.BarData;
-            BarBuffer = new SKPoint[barData.DataSetCount][];
-
-            for (int i = 0; i < BarBuffer.Length; i++)
-            {
-                var set = barData[i];
-                BarBuffer[i] = new SKPoint[set.EntryCount * 2 * (set.IsStacked ? set.StackSize : 1)];
-            }
+            base.Initialize();
+            ValuePaint.TextAlign = SKTextAlign.Left;
         }
 
         void PrepareBuffer(IBarDataSet dataSet, int index)
@@ -46,11 +33,12 @@ namespace XF.ChartLibrary.Renderer
                         continue;
 
                     var x = e.X;
-                    var left = x - barWidthHalf;
-                    var right = x + barWidthHalf;
 
                     var y = e.Y;
                     var vals = e.YVals;
+                    float left, right;
+                    var bottom = x - barWidthHalf;
+                    var top = x + barWidthHalf;
                     if (containsStacks && vals != null)
                     {
                         var posY = 0.0f;
@@ -79,16 +67,16 @@ namespace XF.ChartLibrary.Renderer
                                 negY += Math.Abs(value);
                             }
 
-                            var top = isInverted
+                            right = isInverted
                                 ? (y <= yStart ? y : yStart)
                                 : (y >= yStart ? y : yStart);
-                            var bottom = isInverted
+                            left = isInverted
                                 ? (y >= yStart ? y : yStart)
                                 : (y <= yStart ? y : yStart);
 
                             // multiply the height of the rect with the phase
-                            top *= phaseY;
-                            bottom *= phaseY;
+                            right *= phaseY;
+                            left *= phaseY;
 
                             BarBuffer[index][bufferIndex++] = new SKPoint(left, top);
                             BarBuffer[index][bufferIndex++] = new SKPoint(right, bottom);
@@ -96,50 +84,35 @@ namespace XF.ChartLibrary.Renderer
                     }
                     else
                     {
-                        float bottom, top;
-
                         if (isInverted)
                         {
-                            bottom = y >= 0 ? y : 0;
-                            top = y <= 0 ? y : 0;
+                            left = y >= 0 ? y : 0;
+                            right = y <= 0 ? y : 0;
                         }
                         else
                         {
-                            top = y >= 0 ? y : 0;
-                            bottom = y <= 0 ? y : 0;
+                            right = y >= 0 ? y : 0;
+                            left = y <= 0 ? y : 0;
                         }
 
                         // multiply the height of the rect with the phase
-                        if (top > 0)
-                            top *= phaseY;
+                        if (right > 0)
+                            right *= phaseY;
                         else
-                            bottom *= phaseY;
+                            left *= phaseY;
                         BarBuffer[index][bufferIndex++] = new SKPoint(left, top);
                         BarBuffer[index][bufferIndex++] = new SKPoint(right, bottom);
                     }
                 }
             }
         }
-        #endregion
 
-        public override void DrawData(SKCanvas c)
+        protected override SKRect PrepareBarHighlight(SKRect rect, Transformer trans)
         {
-            var barData = Chart.BarData;
-            for (int i = 0; i < barData.DataSetCount; i++)
-            {
-
-                IBarDataSet set = barData[i];
-
-                if (set.IsVisible)
-                {
-                    DrawDataSet(c, set, i);
-                }
-            }
+            return trans.RectToPixelPhaseHorizontal(rect, Animator.PhaseY);
         }
 
-        protected SKRect BarShadowRectBuffer = SKRect.Empty;
-
-        protected virtual void DrawDataSet(SKCanvas c, IBarDataSet barDataSet, int index)
+        protected override void DrawDataSet(SKCanvas c, IBarDataSet barDataSet, int index)
         {
             Transformer trans = Chart.GetTransformer(barDataSet.AxisDependency);
 
@@ -169,19 +142,19 @@ namespace XF.ChartLibrary.Renderer
                     BarEntry e = dataSet[i];
 
                     x = e.X;
-                    BarShadowRectBuffer.Left = x - barWidthHalf;
-                    BarShadowRectBuffer.Right = x + barWidthHalf;
+                    BarShadowRectBuffer.Top = x - barWidthHalf;
+                    BarShadowRectBuffer.Bottom = x + barWidthHalf;
 
                     BarShadowRectBuffer = trans.RectValueToPixel(BarShadowRectBuffer);
 
-                    if (!ViewPortHandler.IsInBoundsLeft(BarShadowRectBuffer.Right))
+                    if (!ViewPortHandler.IsInBoundsLeft(BarShadowRectBuffer.Bottom))
                         continue;
 
-                    if (!ViewPortHandler.IsInBoundsRight(BarShadowRectBuffer.Left))
+                    if (!ViewPortHandler.IsInBoundsRight(BarShadowRectBuffer.Top))
                         break;
 
-                    BarShadowRectBuffer.Top = ViewPortHandler.ContentTop;
-                    BarShadowRectBuffer.Bottom = ViewPortHandler.ContentBottom;
+                    BarShadowRectBuffer.Left = ViewPortHandler.ContentLeft;
+                    BarShadowRectBuffer.Left = ViewPortHandler.ContentRight;
 
                     c.DrawRect(BarShadowRectBuffer, ShadowPaint);
                 }
@@ -203,10 +176,10 @@ namespace XF.ChartLibrary.Renderer
             for (int j = 0, pos = 0; j < pts.Length; j += 2, pos++)
             {
 
-                if (!ViewPortHandler.IsInBoundsLeft(pts[j + 1].X))
+                if (!ViewPortHandler.IsInBoundsLeft(pts[j + 1].Y))
                     continue;
 
-                if (!ViewPortHandler.IsInBoundsRight(pts[j].X))
+                if (!ViewPortHandler.IsInBoundsRight(pts[j].Y))
                     break;
 
                 if (!isSingleColor)
@@ -225,7 +198,7 @@ namespace XF.ChartLibrary.Renderer
                                     pts[j].Y,
                                     pts[j + 1].X,
                                     pts[j + 1].Y,
-                                    isInverted ? FillDirection.Down : FillDirection.Up);
+                                    isInverted ? FillDirection.Left : FillDirection.Right);
                 }
                 else
                 {
@@ -241,32 +214,6 @@ namespace XF.ChartLibrary.Renderer
             }
         }
 
-        protected void DrawRect(SKCanvas c, float left, float top, float right, float bottom, SKPaint paint)
-        {
-            c.DrawRect(left, top, (right - left),
-                                        (bottom - top), paint);
-        }
-
-        protected override void Initialize()
-        {
-            base.Initialize();
-            HighlightPaint.Style = SKPaintStyle.Fill;
-            // set alpha after color
-            HighlightPaint.Color = new SKColor(0, 0, 0).WithAlpha(120);
-
-            ShadowPaint = new SKPaint()
-            {
-                Style = SKPaintStyle.Fill,
-                IsAntialias = true
-            };
-
-            BarBorderPaint = new SKPaint()
-            {
-                Style = SKPaintStyle.Stroke,
-                IsAntialias = true
-            };
-        }
-
         public override void DrawValues(SKCanvas c)
         {
             // if values are drawn
@@ -275,7 +222,7 @@ namespace XF.ChartLibrary.Renderer
                 BarData data = Chart.BarData;
                 var dataSets = data.DataSets;
 
-                float valueOffsetPlus = 4.5f.DpToPixel();
+                float valueOffsetPlus = 5f.DpToPixel();
                 var drawValueAboveBar = Chart.IsDrawValueAboveBar;
 
                 for (int i = 0; i < data.DataSetCount; i++)
@@ -286,23 +233,17 @@ namespace XF.ChartLibrary.Renderer
                     if (!ShouldDrawValues(barDataSet))
                         continue;
 
-                    IDataSet<BarEntry> dataSet = barDataSet;
                     // apply the text-styling defined by the DataSet
                     ApplyValueTextStyle(barDataSet);
+
+                    IDataSet<BarEntry> dataSet = barDataSet;
 
                     var isInverted = Chart.IsInverted(barDataSet.AxisDependency);
 
                     // calculate the correct offset depending on the draw position of
                     // the value
-                    float valueTextHeight = ValuePaint.MeasureHeight("8");
-                    float posOffset = (drawValueAboveBar ? -valueOffsetPlus : valueTextHeight + valueOffsetPlus);
-                    float negOffset = (drawValueAboveBar ? valueTextHeight + valueOffsetPlus : -valueOffsetPlus);
-
-                    if (isInverted)
-                    {
-                        posOffset = -posOffset - valueTextHeight;
-                        negOffset = -negOffset - valueTextHeight;
-                    }
+                    float halfTextHeight = ValuePaint.MeasureHeight("10") / 2f;
+                    var formatter = dataSet.ValueFormatter;
 
                     // get the buffer
                     var buffer = BarBuffer[i];
@@ -319,33 +260,37 @@ namespace XF.ChartLibrary.Renderer
                         for (int j = 0; j < buffer.Length * Animator.PhaseX; j += 2)
                         {
 
-                            float x = (buffer[j].X + buffer[j + 1].X) / 2f;
+                            float y = (buffer[j].Y + buffer[j + 1].Y) / 2f;
 
-                            if (!ViewPortHandler.IsInBoundsRight(x))
+                            if (!ViewPortHandler.IsInBoundsTop(buffer[j].Y))
                                 break;
 
-                            if (!ViewPortHandler.IsInBoundsY(buffer[j].Y)
-                                    || !ViewPortHandler.IsInBoundsLeft(x))
+                            if (!ViewPortHandler.IsInBoundsX(buffer[j].X)
+                                    || !ViewPortHandler.IsInBoundsBottom(buffer[j].Y))
                                 continue;
 
                             BarEntry entry = dataSet[j / 2];
-                            float val = entry.Y;
-
+                            var val = entry.Y;
+                            string formattedValue = formatter.GetFormattedValue(entry.Y, entry, i, ViewPortHandler);
+                            float valueTextWidth = ValuePaint.MeasureWidth(formattedValue);
+                            float posOffset = drawValueAboveBar ? valueOffsetPlus : -(valueTextWidth + valueOffsetPlus);
+                            float negOffset = (drawValueAboveBar ? -(valueTextWidth + valueOffsetPlus) : valueOffsetPlus) - (buffer[j + 1].X - buffer[j].X);
+                            if (isInverted)
+                            {
+                                posOffset = -posOffset - valueTextWidth;
+                                negOffset = -negOffset - valueTextWidth;
+                            }
                             if (barDataSet.IsDrawValuesEnabled)
                             {
-                                DrawValue(c, barDataSet.ValueFormatter, val, entry, i, x,
-                                        val >= 0 ?
-                                                (buffer[j].Y + posOffset) :
-                                                (buffer[j + 1].Y + negOffset),
+                                DrawValue(c, formattedValue, buffer[j + 1].X + val > 0 ? posOffset : negOffset,
+                                       y + halfTextHeight,
                                         barDataSet.ValueTextColorAt(j / 2));
                             }
 
                             if (entry.Icon != null && barDataSet.IsDrawIconsEnabled)
                             {
-                                float px = x;
-                                float py = val >= 0 ?
-                                        (buffer[j].Y + posOffset) :
-                                        (buffer[j + 1].Y + negOffset);
+                                float px = buffer[j + 1].X + val > 0 ? posOffset : negOffset;
+                                float py = y;
 
                                 px += iconsOffset.X;
                                 py += iconsOffset.Y;
@@ -368,40 +313,46 @@ namespace XF.ChartLibrary.Renderer
                         int index = 0;
                         while (index < barDataSet.EntryCount * Animator.PhaseX)
                         {
-
                             BarEntry entry = dataSet[index];
-
-                            var vals = entry.YVals;
-                            float x = (buffer[bufferIndex].X + buffer[bufferIndex + 1].X) / 2f;
 
                             var color = barDataSet.ValueTextColorAt(index);
 
+                            var vals = entry.YVals;
                             // we still draw stacked bars, but there is one
                             // non-stacked
                             // in between
                             if (vals == null)
                             {
 
-                                if (!ViewPortHandler.IsInBoundsRight(x))
+                                if (!ViewPortHandler.IsInBoundsTop(buffer[bufferIndex].Y))
                                     break;
 
-                                if (!ViewPortHandler.IsInBoundsY(buffer[bufferIndex].Y)
-                                        || !ViewPortHandler.IsInBoundsLeft(x))
+                                if (!ViewPortHandler.IsInBoundsX(buffer[bufferIndex].X)
+                                        || !ViewPortHandler.IsInBoundsBottom(buffer[bufferIndex].Y))
                                     continue;
+
+                                var val = entry.Y;
+                                var formattedValue = formatter.GetFormattedValue(val, entry, i, ViewPortHandler);
+                                var valueTextWidth = ValuePaint.MeasureWidth(formattedValue);
+                                float posOffset = drawValueAboveBar ? valueOffsetPlus : -(valueTextWidth + valueOffsetPlus);
+                                float negOffset = drawValueAboveBar ? -(valueTextWidth + valueOffsetPlus) : valueOffsetPlus;
+
+                                if (isInverted)
+                                {
+                                    posOffset = -posOffset - valueTextWidth;
+                                    negOffset = -negOffset - valueTextWidth;
+                                }
 
                                 if (barDataSet.IsDrawValuesEnabled)
                                 {
-                                    DrawValue(c, barDataSet.ValueFormatter, entry.Y, entry, i, x,
-                                            buffer[bufferIndex].Y +
-                                                    (entry.Y >= 0 ? posOffset : negOffset),
+                                    DrawValue(c, formattedValue, buffer[bufferIndex + 1].X + entry.Y >= 0 ? posOffset : negOffset, buffer[bufferIndex].Y + halfTextHeight,
                                             color);
                                 }
 
                                 if (entry.Icon != null && barDataSet.IsDrawIconsEnabled)
                                 {
-                                    float px = x;
-                                    float py = buffer[bufferIndex].Y +
-                                            (entry.Y >= 0 ? posOffset : negOffset);
+                                    float px = buffer[bufferIndex + 1].X + entry.Y >= 0 ? posOffset : negOffset;
+                                    float py = buffer[bufferIndex].Y;
 
                                     px += iconsOffset.X;
                                     py += iconsOffset.Y;
@@ -443,37 +394,41 @@ namespace XF.ChartLibrary.Renderer
                                         negY -= value;
                                     }
 
-                                    transformed[idx].Y = y * phaseY;
+                                    transformed[idx].X = y * phaseY;
                                 }
 
                                 transformed = trans.PointValuesToPixel(transformed);
 
                                 for (int k = 0; k < transformed.Length; k++)
                                 {
-
                                     float val = vals[k / 2];
+                                    var formattedValue = formatter.GetFormattedValue(val, entry, i, ViewPortHandler);
+                                    var valueTextWidth = ValuePaint.MeasureWidth(formattedValue);
+                                    float posOffset = drawValueAboveBar ? valueOffsetPlus : -(valueTextWidth + valueOffsetPlus);
+                                    float negOffset = drawValueAboveBar ? -(valueTextWidth + valueOffsetPlus) : valueOffsetPlus;
+
+                                    if (isInverted)
+                                    {
+                                        posOffset = -posOffset - valueTextWidth;
+                                        negOffset = -negOffset - valueTextWidth;
+                                    }
                                     var drawBelow =
                                             (val == 0.0f && negY == 0.0f && posY > 0.0f) ||
                                                     val < 0.0f;
-                                    float y = transformed[k].Y
+                                    float x = transformed[k].X
                                             + (drawBelow ? negOffset : posOffset);
+                                    var y = buffer[bufferIndex].Y + buffer[bufferIndex + 1].Y;
 
-                                    if (!ViewPortHandler.IsInBoundsRight(x))
+                                    if (!ViewPortHandler.IsInBoundsTop(y))
                                         break;
 
-                                    if (!ViewPortHandler.IsInBoundsY(y)
-                                            || !ViewPortHandler.IsInBoundsLeft(x))
+                                    if (!ViewPortHandler.IsInBoundsX(x)
+                                            || !ViewPortHandler.IsInBoundsBottom(y))
                                         continue;
 
                                     if (barDataSet.IsDrawValuesEnabled)
                                     {
-                                        DrawValue(c,
-                                                barDataSet.ValueFormatter,
-                                                vals[k / 2],
-                                                entry,
-                                                i,
-                                                x,
-                                                y,
+                                        DrawValue(c, formattedValue, x, y + halfTextHeight,
                                                 color);
                                     }
 
@@ -494,85 +449,21 @@ namespace XF.ChartLibrary.Renderer
             }
         }
 
-        public override void DrawHighlighted(SKCanvas c, IList<Highlight.Highlight> indices)
+        protected void DrawValue(SKCanvas c, string value, float x, float y, SKColor color)
         {
-            var barData = Chart.BarData;
-
-            foreach (var high in indices)
-            {
-
-                var set = barData[high.DataSetIndex];
-
-                if (set == null || !set.IsHighlightEnabled)
-                    continue;
-
-                var e = ((IDataSet<BarEntry>)set).EntryForXValue(high.X, high.Y);
-
-                if (!IsInBoundsX(e, set))
-                    continue;
-
-                var trans = Chart.GetTransformer(set.AxisDependency);
-
-                HighlightPaint.Color = set.HighLightColor.WithAlpha(set.HighLightAlpha);
-
-                var isStack = high.StackIndex >= 0 && e.IsStacked;
-
-                float y1;
-                float y2;
-
-                if (isStack)
-                {
-
-                    if (Chart.IsHighlightFullBar)
-                    {
-
-                        y1 = e.PositiveSum;
-                        y2 = -e.NegativeSum;
-
-                    }
-                    else
-                    {
-
-                        var range = e.Ranges[high.StackIndex];
-
-                        y1 = range.From;
-                        y2 = range.To;
-                    }
-
-                }
-                else
-                {
-                    y1 = e.Y;
-                    y2 = 0.0f;
-                }
-
-                float barWidthHalf = barData.BarWidth / 2f;
-                var x = e.X;
-
-                SKRect rect = PrepareBarHighlight(new SKRect(x - barWidthHalf, y1, x + barWidthHalf, y2), trans);
-                SetHighlightDrawPos(high, rect);
-
-                c.DrawRect(rect, HighlightPaint);
-            }
+            ValuePaint.Color = color;
+            c.DrawText(value, x, y, ValuePaint);
         }
 
-        protected virtual SKRect PrepareBarHighlight(SKRect rect, Transformer trans)
+        protected override void SetHighlightDrawPos(Highlight.Highlight high, SKRect rect)
         {
-            return trans.RectToPixelPhase(rect, Animator.PhaseY);
+            high.SetDraw(rect.MidY, rect.Top);
         }
 
-        /// <summary>
-        /// Sets the drawing position of the highlight object based on the riven bar-rect.
-        /// </summary>
-        /// <param name="high"></param>
-        /// <param name="rect"></param>
-        protected virtual void SetHighlightDrawPos(Highlight.Highlight high, SKRect rect)
+        public override bool IsDrawingValuesAllowed(IChartDataProvider dataProvider)
         {
-            high.SetDraw(rect.MidX, rect.Top);
-        }
-
-        public override void DrawExtras(SKCanvas c)
-        {
+            return Chart.BarData.EntryCount < Chart.MaxVisibleCount
+                * ViewPortHandler.ScaleY;
         }
     }
 }

@@ -27,10 +27,9 @@ namespace XF.ChartLibrary.Renderer
         public abstract void DrawExtras(Canvas c);
 
 
-
         public abstract void InitBuffers();
 
-        public bool IsDrawingValuesAllowed(IChartDataProvider dataProvider)
+        public virtual bool IsDrawingValuesAllowed(IChartDataProvider dataProvider)
         {
             return dataProvider.Data.EntryCount > dataProvider.MaxVisibleCount
                 * ViewPortHandler.ScaleX;

@@ -22,6 +22,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Charts\LineChart.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Charts\PieChart.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Charts\PieRadarChartBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Charts\RadarChart.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Components\AxisBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Components\ComponentBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Components\Description.cs" />
@@ -49,6 +50,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Data\PieData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Data\PieDataSet.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Data\PieEntry.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Data\RadarData.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Data\RadarDataSet.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Data\RadarEntry.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Formatter\DefaultAxisValueFormatter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Formatter\DefaultFillFormatter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Formatter\DefaultValueFormatter.cs" />
@@ -63,6 +67,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Highlight\IHighlighter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Highlight\PieHighligher.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Highlight\PieRadarHighlighter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Highlight\RadarHighlighter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Highlight\Range.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces\DataProvider\IBarDataProvider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces\DataProvider\IBarLineScatterCandleBubbleDataProvider.cs" />
@@ -76,13 +81,17 @@
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces\DataSets\ILineRadarDataSet.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces\DataSets\ILineScatterCandleRadarDataSet.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces\DataSets\IPieDataSet.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Interfaces\DataSets\IRadarDataSet.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces\IChartData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Jobs\AnimatedViewPortJob.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Renderer\BarChartRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Renderer\HorizontalBarChartRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Renderer\PieChartRenderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Renderer\RadarChartRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Renderer\XAxisRendererHorizontalBarChart.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Renderer\XAxisRendererRadarChart.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Renderer\YAxisRendererHorizontalBarChart.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Renderer\YAxisRendererRadarChart.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utils\TransformerHorizontalBarChart.cs" />
     <Compile Include="..\XF.ChartLibrary.Shared\Jobs\MoveViewJob.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Jobs\ViewPortJob.cs" />

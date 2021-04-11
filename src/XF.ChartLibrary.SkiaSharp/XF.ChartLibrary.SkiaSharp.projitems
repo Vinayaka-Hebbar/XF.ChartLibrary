@@ -12,6 +12,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Charts\BarLineChartBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Charts\HorizontalBarChart.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Charts\PieChart.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Charts\RadarChart.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Components\AxisBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Components\BitmapDrawable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Components\ComponentBase.cs" />
@@ -35,10 +36,13 @@
     <Compile Include="$(MSBuildThisFileDirectory)Renderer\LineRadarRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Renderer\LineScatterCandleRadarRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Renderer\PieChartRenderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Renderer\RadarChartRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Renderer\XAxisRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Renderer\XAxisRendererHorizontalBarChart.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Renderer\XAxisRendererRadarChart.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Renderer\YAxisRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Renderer\YAxisRendererHorizontalBarChart.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Renderer\YAxisRendererRadarChart.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utils\ChartFont.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utils\ChartUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utils\GradientFill.cs" />

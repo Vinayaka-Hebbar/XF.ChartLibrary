@@ -56,7 +56,11 @@ namespace XF.ChartLibrary.Components
         /// <summary>
         /// the number of decimal digits to use
         /// </summary>
-        public int Decimals { get; set; }
+        public int Decimals
+        {
+            get => decimals;
+            set => decimals = value;
+        }
 
         /// <summary>
         ///  the number of label entries the axis should have, default 6
@@ -126,6 +130,9 @@ namespace XF.ChartLibrary.Components
 
         internal int entryCount;
 
+        internal int decimals;
+
+
         /// <summary>
         /// the total range of values this axis covers
         /// </summary>
@@ -154,7 +161,6 @@ namespace XF.ChartLibrary.Components
         private DashPathEffect axisLineDashPathEffect;
 
         private DashPathEffect gridDashPathEffect;
-
         /// <summary>
         ///  Enables the grid line to be drawn in dashed mode, e.g.like this
         /// "- - - - - -". THIS ONLY WORKS IF HARDWARE-ACCELERATION IS TURNED OFF.

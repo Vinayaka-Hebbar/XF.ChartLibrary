@@ -101,5 +101,12 @@ namespace XF.ChartLibrary
                             (float)Math.Cos(radians))
             );
         }
+
+
+        public static SKPoint GetPosition(SKPoint center, float dist, float angle)
+        {
+            return new SKPoint((float)(center.X + dist * Math.Cos(angle * FDegToRad)),
+                (float)(center.Y + dist * Math.Sin(angle * FDegToRad)));
+        }
     }
 }

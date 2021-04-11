@@ -1,4 +1,6 @@
-﻿using UIKit;
+﻿using SkiaSharp;
+using System;
+using UIKit;
 
 namespace XF.ChartLibrary
 {

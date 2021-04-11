@@ -1,4 +1,6 @@
-﻿using XF.ChartLibrary.Data;
+﻿#nullable enable
+
+using XF.ChartLibrary.Data;
 
 #if NETSTANDARD || SKIASHARP
 using Color = SkiaSharp.SKColor;

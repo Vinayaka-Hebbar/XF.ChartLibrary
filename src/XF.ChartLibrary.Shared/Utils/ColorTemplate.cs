@@ -22,6 +22,8 @@ namespace XF.ChartLibrary.Utils
 
         public static readonly Color Black = FromRGB(0, 0, 0);
 
+        public static readonly Color White = FromRGB(255, 255, 255);
+
         public static readonly Color DefaultValueTextColor = FromRGB(140, 234, 255);
 
         public static readonly Color[] LibreryColors = {

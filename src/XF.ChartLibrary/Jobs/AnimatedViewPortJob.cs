@@ -10,7 +10,6 @@ namespace XF.ChartLibrary.Jobs
         private long endTime;
         protected Animation.EasingFunction easing;
 
-
         public AnimatedViewPortJob(ViewPortHandler viewPortHandler, float xValue, float yValue, Transformer trans, IChartBase v, float xOrigin, float yOrigin, long duration) :
             base(viewPortHandler, xValue, yValue, trans, v)
         {

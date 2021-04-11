@@ -1,7 +1,4 @@
-﻿using XF.ChartLibrary.Charts;
-using XF.ChartLibrary.Utils;
-
-namespace XF.ChartLibrary.Jobs
+﻿namespace XF.ChartLibrary.Jobs
 {
     public abstract partial class AnimatedViewPortJob : ViewPortJob
     {
